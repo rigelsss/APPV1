@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../screens/widgets_reutilizaveis/appbar.dart';
 
 class PraiasPage extends StatelessWidget {
   const PraiasPage({super.key});
