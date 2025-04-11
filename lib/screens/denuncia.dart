@@ -7,7 +7,6 @@ class DenunciaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
       body: Padding(
         padding: EdgeInsets.all(16),
         child: Column(

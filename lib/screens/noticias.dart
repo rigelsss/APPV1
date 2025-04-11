@@ -7,7 +7,6 @@ class NoticiasPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(),
       body: const Center(
         child: Text('NOTÍCIAS'),
       ),
