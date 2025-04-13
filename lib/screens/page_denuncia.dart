@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sudema_app/screens/aba_localizacao.dart';
 
 class NovaDenunciaPage extends StatefulWidget {
   const NovaDenunciaPage({super.key});
@@ -87,7 +88,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
       case 0:
         return _buildCategoriaContent();
       case 1:
-        return const Center(child: Text("Localização da Denúncia"));
+        return const AbaLocalizacao();
       case 2:
         return const Center(child: Text("Identificação do Denunciante"));
       case 3:
