@@ -16,6 +16,8 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
   ];
   int selectedIndex = 0;
 
+  String? _categoriaSelecionada;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +53,8 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                         opcao[index],
                         style: TextStyle(
                           fontSize: 14,
-                          color: isSelected ? Colors.blue[900] : Colors.grey[700],
+                          color:
+                              isSelected ? Colors.blue[900] : Colors.grey[700],
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -59,7 +62,9 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                         height: 3,
                         width: 60,
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.blue[900] : Colors.transparent,
+                          color: isSelected
+                              ? Colors.blue[900]
+                              : Colors.transparent,
                           borderRadius: BorderRadius.circular(3),
                         ),
                       ),
@@ -69,7 +74,6 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
               }),
             ),
           ),
-
           Expanded(
             child: _buildConteudoSelecionado(),
           ),
@@ -81,7 +85,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
   Widget _buildConteudoSelecionado() {
     switch (selectedIndex) {
       case 0:
-        return const Center(child: Text("Categoria de Denúncia"));
+        return _buildCategoriaContent();
       case 1:
         return const Center(child: Text("Localização da Denúncia"));
       case 2:
@@ -91,5 +95,72 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
       default:
         return const SizedBox();
     }
+  }
+
+  Widget _buildCategoriaContent() {
+    final categorias = [
+      {'icone': Icons.pets, 'texto': 'Contra a fauna'},
+      {'icone': Icons.eco, 'texto': 'Contra a flora'},
+      {'icone': Icons.factory, 'texto': 'Poluição e contaminação ambiental'},
+      {'icone': Icons.park, 'texto': 'Degradação de áreas protegidas'},
+      {'icone': Icons.water, 'texto': 'Recursos hídricos e balneabilidade'},
+      {'icone': Icons.delete, 'texto': 'Relacionadas a resíduos sólidos'},
+      {'icone': Icons.add, 'texto': 'Outra'},
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Text(
+            'Categoria da infração',
+            style: TextStyle(
+              fontSize: 22, 
+              fontWeight: FontWeight.bold
+              ),
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            itemCount: categorias.length,
+            separatorBuilder: (_, __) => const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Divider(
+                height: 1,
+                color: Color.fromRGBO(195, 182, 182, 1),
+              ),
+            ),
+            itemBuilder: (context, index) {
+              final categoria = categorias[index];
+              final selecionado = _categoriaSelecionada == categoria['texto'];
+              return ListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 10),
+                leading: Icon(
+                  categoria['icone'] as IconData,
+                  size: 34,
+                ),
+                title: Text(
+                  categoria['texto'] as String,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,  
+                  ),
+                ),
+                trailing: selecionado
+                    ? const Icon(Icons.check, color: Colors.green, size: 24)
+                    : null,
+                onTap: () {
+                  setState(() {
+                    _categoriaSelecionada = categoria['texto'] as String;
+                  });
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    );
   }
 }
