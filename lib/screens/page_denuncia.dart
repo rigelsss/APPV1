@@ -23,7 +23,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
         title: const Text('Denunciar'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications),
+            icon: const Icon(Icons.notifications_none_outlined),
             onPressed: () {
               print("Botão de notificações apertado");
             },
@@ -32,7 +32,6 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
       ),
       body: Column(
         children: [
-          // Menu fixo com 4 opções
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Row(
@@ -71,7 +70,6 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
             ),
           ),
 
-          // Conteúdo dinâmico baseado na seleção
           Expanded(
             child: _buildConteudoSelecionado(),
           ),

@@ -131,7 +131,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: InkWell(
                       onTap: () {
-                        print('Banner de denúncia clicado!');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const DenunciaPage()),
+                        );
                       },
                       borderRadius: BorderRadius.circular(12),
                       child: Stack(
