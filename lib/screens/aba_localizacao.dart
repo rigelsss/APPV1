@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:http/http.dart' as http;
+import 'package:sudema_app/screens/endereco_modal_sheet.dart';
 
 class AbaLocalizacao extends StatefulWidget {
   const AbaLocalizacao({super.key});
@@ -19,9 +18,6 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
   bool _confirmando = false;
 
   final TextEditingController _buscaController = TextEditingController();
-  List<String> _sugestoes = [];
-
-  static const String _apiKey = 'AIzaSyD-XTfAdL3WxwtBeKfvPhiu1m3niVn1CaM'; 
 
   @override
   void initState() {
@@ -56,42 +52,30 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
     }
   }
 
-  Future<void> _buscarSugestoes(String input) async {
-    final url =
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&key=$_apiKey&components=country:br';
-
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final List predictions = data['predictions'];
-      setState(() {
-        _sugestoes = predictions.map<String>((e) => e['description'] as String).toList();
-      });
-    }
-  }
-
-  Future<void> _selecionarSugestao(String endereco) async {
-    try {
-      final locais = await locationFromAddress(endereco);
-      if (locais.isNotEmpty) {
-        final destino = LatLng(locais.first.latitude, locais.first.longitude);
-        _mapController.animateCamera(CameraUpdate.newLatLng(destino));
-        _buscarEndereco(destino);
-        setState(() {
-          _confirmando = true;
-          _sugestoes.clear();
-          _buscaController.text = endereco;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _endereco = 'Endereço não encontrado';
-      });
-    }
-  }
-
   void _confirmarEndereco() {
     print('Endereço confirmado: $_endereco');
+  }
+
+  Future<void> _abrirBuscaModalEstilizado() async {
+    final resultado = await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const EnderecoModalSheet(),
+    );
+
+    if (resultado != null && resultado['latLng'] != null) {
+      LatLng destino = resultado['latLng'];
+      String enderecoSelecionado = resultado['endereco'];
+
+      _mapController.animateCamera(CameraUpdate.newLatLng(destino));
+      setState(() {
+        _posicaoAtual = destino;
+        _endereco = enderecoSelecionado;
+        _buscaController.text = enderecoSelecionado;
+        _confirmando = true;
+      });
+    }
   }
 
   @override
@@ -147,38 +131,44 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
                 const SizedBox(height: 6),
                 const Text(
                   'Arraste o mapa para mover o marcador',
-                  style: TextStyle(fontSize: 13, color: Colors.grey),
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
-                const SizedBox(height: 24),
-                TextField(
-                  controller: _buscaController,
-                  onChanged: _buscarSugestoes,
-                  decoration: InputDecoration(
-                    hintText: 'Pesquisar',
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
+                const SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: TextField(
+                      controller: _buscaController,
+                      decoration: InputDecoration(
+                        hintText: 'Pesquisar',
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                        suffixIcon: const Icon(Icons.search, color: Colors.grey),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                ..._sugestoes.map((sugestao) => ListTile(
-                      title: Text(sugestao),
-                      onTap: () => _selecionarSugestao(sugestao),
-                    )),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _confirmando ? _confirmarEndereco : () => _buscarSugestoes(_buscaController.text),
+                    onPressed: _confirmando
+                        ? _confirmarEndereco
+                        : _abrirBuscaModalEstilizado,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[800],
+                      backgroundColor: Color(0xFF2A2F8C),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                     ),
                     child: Text(
