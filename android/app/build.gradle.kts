@@ -20,10 +20,10 @@ android {
     }
 
     defaultConfig {
-        // Certifique-se de usar o mesmo ID do namespace, exceto se tiver outro motivo para manter diferente
+
         applicationId = "com.sudema_app"
 
-        minSdk = flutter.minSdkVersion
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

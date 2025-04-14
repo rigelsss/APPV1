@@ -15,6 +15,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
     'Identificação',
     'Denúncia'
   ];
+  
   int selectedIndex = 0;
 
   String? _categoriaSelecionada;
