@@ -44,14 +44,19 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
       if (placemarks.isNotEmpty) {
         final place = placemarks.first;
         final enderecoFinal = '${place.street}, ${place.subLocality}, ${place.locality}';
+
         setState(() {
           _endereco = enderecoFinal;
+          _buscaController.text = enderecoFinal; // atualiza o campo de texto
         });
+
+        DenunciaData().localizacao = posicao;
         DenunciaData().endereco = enderecoFinal;
       }
     } catch (e) {
       setState(() {
         _endereco = 'Endereço não encontrado';
+        _buscaController.text = _endereco;
       });
       DenunciaData().endereco = 'Endereço não encontrado';
     }
@@ -141,12 +146,14 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
                   style: TextStyle(fontSize: 14, color: Colors.grey),
                 ),
                 const SizedBox(height: 20),
+
                 Align(
                   alignment: Alignment.center,
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: TextField(
                       controller: _buscaController,
+                      readOnly: true, // evita que o usuário edite o endereço manualmente
                       decoration: InputDecoration(
                         hintText: 'Pesquisar',
                         hintStyle: const TextStyle(color: Colors.grey),
@@ -164,7 +171,9 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
                     ),
                   ),
                 ),
+
                 const SizedBox(height: 24),
+
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
