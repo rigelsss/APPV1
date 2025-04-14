@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:sudema_app/screens/endereco_modal_sheet.dart';
+import '../models/denuncia_data.dart';
 
 class AbaLocalizacao extends StatefulWidget {
   const AbaLocalizacao({super.key});
@@ -32,6 +33,7 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
     final posicao = await Geolocator.getCurrentPosition();
     setState(() {
       _posicaoAtual = LatLng(posicao.latitude, posicao.longitude);
+      DenunciaData().localizacao = _posicaoAtual;
     });
     _buscarEndereco(_posicaoAtual!);
   }
@@ -41,14 +43,17 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
       final placemarks = await placemarkFromCoordinates(posicao.latitude, posicao.longitude);
       if (placemarks.isNotEmpty) {
         final place = placemarks.first;
+        final enderecoFinal = '${place.street}, ${place.subLocality}, ${place.locality}';
         setState(() {
-          _endereco = '${place.street}, ${place.subLocality}, ${place.locality}';
+          _endereco = enderecoFinal;
         });
+        DenunciaData().endereco = enderecoFinal;
       }
     } catch (e) {
       setState(() {
         _endereco = 'Endereço não encontrado';
       });
+      DenunciaData().endereco = 'Endereço não encontrado';
     }
   }
 
@@ -75,6 +80,8 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
         _buscaController.text = enderecoSelecionado;
         _confirmando = true;
       });
+      DenunciaData().localizacao = _posicaoAtual;
+      DenunciaData().endereco = _endereco;
     }
   }
 
@@ -165,7 +172,7 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
                         ? _confirmarEndereco
                         : _abrirBuscaModalEstilizado,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF2A2F8C),
+                      backgroundColor: const Color(0xFF2A2F8C),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
