@@ -21,6 +21,7 @@ dependencies:
   geocoding: ^2.1.0
   google_maps_webservice: ^0.0.18
   flutter_google_places: ^0.3.0
+  google_place: ^0.4.7
 
   # Utilidades
   http: ^0.13.6
