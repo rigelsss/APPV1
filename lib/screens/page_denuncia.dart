@@ -67,8 +67,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                         opcao[index],
                         style: TextStyle(
                           fontSize: 14,
-                          color:
-                              isSelected ? Colors.blue[900] : Colors.grey[700],
+                          color: isSelected ? Colors.blue[900] : Colors.grey[700],
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -76,9 +75,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                         height: 3,
                         width: 60,
                         decoration: BoxDecoration(
-                          color: isSelected
-                              ? Colors.blue[900]
-                              : Colors.transparent,
+                          color: isSelected ? Colors.blue[900] : Colors.transparent,
                           borderRadius: BorderRadius.circular(3),
                         ),
                       ),
@@ -119,9 +116,9 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
         'subcategorias': [
           'Caça ilegal de animais silvestres',
           'Tráfico de animais silvestres',
-          'Maus-tratos',
-          'Comércio ilegal',
-          'Introdução de espécies exóticas'
+          'Maus-tratos a animais',
+          'Comércio ilegal de espécies protegidas',
+          'Introdução de espécies exóticas invasoras'
         ]
       },
       {
@@ -216,10 +213,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                           _subcategoriaSelecionada = null;
                         });
                       },
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 6,
-                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                       leading: SizedBox(
                         width: 40,
                         height: 40,
@@ -240,13 +234,10 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (selecionado)
-                            const Icon(Icons.check, color: Colors.green),
+                          if (selecionado) const Icon(Icons.check, color: Colors.green),
                           IconButton(
                             icon: Icon(
-                              isExpanded
-                                  ? Icons.keyboard_arrow_up
-                                  : Icons.keyboard_arrow_down,
+                              isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                             ),
                             onPressed: () {
                               setState(() {
@@ -277,16 +268,21 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                                   });
                                 },
                                 child: Container(
+                                  height: 48,
+                                  alignment: Alignment.center,
                                   margin: const EdgeInsets.symmetric(vertical: 4),
-                                  padding: const EdgeInsets.all(8),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
                                   decoration: BoxDecoration(
                                     color: isSelected
-                                        ? Colors.blue[100]
-                                        : Colors.grey[200],
+                                        ? Colors.blue[700]
+                                        : const Color(0xFFB9CD23),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
                                     sub,
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.black87,

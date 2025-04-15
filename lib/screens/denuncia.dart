@@ -81,7 +81,7 @@ class DenunciaPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => const WebViewScreen(
-                          url: 'https://auniao.pb.gov.br/servicos/doe/2024/marco/diario-oficial-26-03-2024-portal.pdf/view',
+                          url: 'https://drive.google.com/file/d/1Bb3IhBcoZLN2FkPm_vzzkhkvhBMT7BQ_/view',
                         ),
                       ),
                     );
@@ -97,7 +97,7 @@ class DenunciaPage extends StatelessWidget {
                     child: const Text(
                       'Decreto Estadual nº 44.889, de 26 de março de 2024',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 14,
                         color: Colors.black,
                         decoration: TextDecoration.underline,
                       ),
