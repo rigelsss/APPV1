@@ -46,6 +46,15 @@ flutter:
     - assets/images/licenciamento.jpg
     - assets/images/educacao_ambiental.jpg
     - assets/images/denuncia.jpg
+    - assets/images/areas_protegidas.png
+    - assets/images/fauna.png
+    - assets/images/flora.png
+    - assets/images/poluicao.png
+    - assets/images/recursosHidricos.png
+    - assets/images/residuos.png
+    - assets/images/outra.png
+    - assets/images/flora_tratada.png
+
 
 
 dependency_overrides:
