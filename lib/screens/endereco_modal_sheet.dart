@@ -32,33 +32,28 @@ class _EnderecoModalSheetState extends State<EnderecoModalSheet> {
     });
   }
 
-void _buscar(String input) async {
-  if (input.isEmpty) {
-    setState(() => _predictions = []);
-    return;
+  void _buscar(String input) async {
+    if (input.isEmpty) {
+      setState(() => _predictions = []);
+      return;
+    }
+
+    setState(() => _carregando = true);
+
+    var result = await _googlePlace.autocomplete.get(
+      input,
+      language: 'pt',
+      components: [Component('country', 'br')],
+    );
+
+    if (result != null && result.predictions != null) {
+      setState(() => _predictions = result.predictions!);
+    } else {
+      debugPrint("Erro ou sem resultados");
+    }
+
+    setState(() => _carregando = false);
   }
-
-  setState(() => _carregando = true);
-
-  var result = await _googlePlace.autocomplete.get(
-    input,
-    language: 'pt',
-    components: [Component('country', 'br')],
-  );
-
-  debugPrint('Resposta do autocomplete: ${result?.status}');
-  debugPrint('Predições retornadas: ${result?.predictions?.length}');
-  debugPrint('Predições: ${result?.predictions?.length}');
-
-  if (result != null && result.predictions != null) {
-    setState(() => _predictions = result.predictions!);
-  } else {
-    debugPrint("Erro ou sem resultados");
-  }
-
-  setState(() => _carregando = false);
-}
-
 
   @override
   void dispose() {
@@ -131,8 +126,6 @@ void _buscar(String input) async {
                           }
 
                           final loc = details.result!.geometry!.location!;
-
-                          // Limpa campo e sugestões
                           _controller.clear();
                           setState(() => _predictions = []);
 
