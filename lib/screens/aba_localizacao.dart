@@ -21,7 +21,6 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
   String _endereco = 'Carregando endereço...';
   String _tipoEndereco = '';
   String _placemarkInfo = '';
-  bool _confirmando = false;
   Timer? _debounce;
 
   final TextEditingController _buscaController = TextEditingController();
@@ -115,6 +114,13 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
 
   void _confirmarEndereco() {
     print('Endereço confirmado: $_endereco');
+
+    // Reforça a gravação dos dados
+    DenunciaData().localizacao = _posicaoAtual;
+    DenunciaData().endereco = _endereco;
+
+    // Libera e navega para a aba "Identificação"
+    DefaultTabController.of(context)?.animateTo(2);
   }
 
   Future<void> _abrirBuscaModalEstilizado() async {
@@ -135,13 +141,6 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
         _posicaoAtual = destino;
         _endereco = enderecoSelecionado;
         _buscaController.text = enderecoSelecionado;
-        _confirmando = true;
-      });
-
-      Timer(const Duration(seconds: 5), () {
-        if (mounted) {
-          setState(() => _confirmando = false);
-        }
       });
 
       DenunciaData().localizacao = _posicaoAtual;
@@ -164,8 +163,6 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
           ),
           onMapCreated: (controller) => _mapController = controller,
           onCameraIdle: () async {
-            if (_confirmando) return;
-
             _debounce?.cancel();
             _debounce = Timer(const Duration(milliseconds: 500), () async {
               LatLngBounds bounds = await _mapController.getVisibleRegion();
@@ -242,25 +239,27 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
                 ),
                 const SizedBox(height: 20),
 
-                Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: TextField(
-                      controller: _buscaController,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        hintText: 'Pesquisar',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                        suffixIcon: const Icon(Icons.search, color: Colors.grey),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
-                          borderRadius: BorderRadius.circular(16),
+                GestureDetector(
+                  onTap: _abrirBuscaModalEstilizado,
+                  child: AbsorbPointer(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: TextField(
+                        controller: _buscaController,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          hintText: 'Pesquisar',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                          suffixIcon: const Icon(Icons.search, color: Colors.grey),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
                       ),
                     ),
@@ -272,7 +271,15 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _confirmando ? _confirmarEndereco : _abrirBuscaModalEstilizado,
+                    onPressed: () {
+                      if (DenunciaData().endereco != null &&
+                          DenunciaData().endereco!.isNotEmpty &&
+                          DenunciaData().endereco != 'Endereço não encontrado') {
+                        _confirmarEndereco();
+                      } else {
+                        _abrirBuscaModalEstilizado();
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2A2F8C),
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -281,7 +288,11 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
                       ),
                     ),
                     child: Text(
-                      _confirmando ? 'Confirmar endereço' : 'Pesquisar',
+                      (DenunciaData().endereco != null &&
+                              DenunciaData().endereco!.isNotEmpty &&
+                              DenunciaData().endereco != 'Endereço não encontrado')
+                          ? 'Confirmar endereço'
+                          : 'Pesquisar',
                       style: const TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
