@@ -52,25 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   obscureText: true,
                 ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Login ainda não implementado')),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2A2F8C),
-                      minimumSize: const Size(300, 60),
-                    ),
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                  ),
-                ),
+                const SizedBox(height: 2),
                 Row(mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Checkbox(
@@ -93,6 +75,29 @@ class _LoginPageState extends State<LoginPage> {
                       child: const Text('Esqueceu a senha?'),
                     ),
                   ],
+                ),
+                SizedBox(height: 8,),
+                SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Login ainda não implementado')),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2A2F8C),
+                      minimumSize: const Size(300, 60),
+                      shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    ),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 24),
                 const Row(
