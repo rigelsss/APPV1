@@ -10,6 +10,12 @@ class NovaDenunciaPage extends StatefulWidget {
 }
 
 class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
+    @override
+    void initState() {
+    super.initState();
+    DenunciaData().limpar(); // isso garante que uma nova denúncia comece limpa
+  }
+
   final List<String> opcao = [
     'Categoria',
     'Localização',
@@ -21,6 +27,48 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
   String? _categoriaSelecionada;
   String? _subcategoriaSelecionada;
   final Set<int> _categoriasExpandidas = {};
+  final TextEditingController _outraController = TextEditingController();
+  String? _mensagemErro;
+
+bool _podeIrParaAba(int index) {
+  if (index == 1) {
+    return _categoriaSelecionada != null && _subcategoriaSelecionada != null;
+  } else if (index == 2) {
+    return DenunciaData().enderecoConfirmado == true; 
+  } else if (index == 3) {
+    return DenunciaData().enderecoConfirmado == true;
+  }
+  return true;
+}
+
+  void _aoSelecionarAba(int index) {
+    if (!_podeIrParaAba(index)) {
+      setState(() {
+        if (index == 1) {
+          _mensagemErro =
+              'Selecione uma categoria e subcategoria antes de continuar.';
+        } else if (index == 2) {
+          _mensagemErro = 'Confirme o endereço antes de continuar.';
+        } else if (index == 3) {
+          _mensagemErro =
+              'Você precisa preencher a localização antes de prosseguir.';
+        }
+      });
+      return;
+    }
+
+    setState(() {
+      selectedIndex = index;
+      _mensagemErro = null;
+    });
+  }
+
+  void _irParaIdentificacao() {
+    setState(() {
+      selectedIndex = 2; 
+      _mensagemErro = null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,21 +92,14 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(opcao.length, (index) {
                 final isSelected = index == selectedIndex;
+                final isEnabled = _podeIrParaAba(index);
                 return GestureDetector(
                   onTap: () {
-                    if (index == 1 && _categoriaSelecionada == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Por favor, selecione uma categoria antes de prosseguir.',
-                          ),
-                        ),
-                      );
-                      return;
+                    if (isEnabled) {
+                      _aoSelecionarAba(index);
+                    } else {
+                      _aoSelecionarAba(index);
                     }
-                    setState(() {
-                      selectedIndex = index;
-                    });
                   },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -67,7 +108,11 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                         opcao[index],
                         style: TextStyle(
                           fontSize: 14,
-                          color: isSelected ? Colors.blue[900] : Colors.grey[700],
+                          color: isSelected
+                              ? Colors.blue[900]
+                              : isEnabled
+                                  ? Colors.grey[700]
+                                  : Colors.grey[400],
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -75,7 +120,9 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                         height: 3,
                         width: 60,
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.blue[900] : Colors.transparent,
+                          color: isSelected
+                              ? Colors.blue[900]
+                              : Colors.transparent,
                           borderRadius: BorderRadius.circular(3),
                         ),
                       ),
@@ -85,6 +132,18 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
               }),
             ),
           ),
+          if (_mensagemErro != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                _mensagemErro!,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
           Expanded(
             child: _buildConteudoSelecionado(),
           ),
@@ -98,7 +157,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
       case 0:
         return _buildCategoriaContent();
       case 1:
-        return const AbaLocalizacao();
+        return AbaLocalizacao(onEnderecoConfirmado: _irParaIdentificacao);
       case 2:
         return const Center(child: Text("Identificação do Denunciante"));
       case 3:
@@ -173,11 +232,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
       {
         'imagem': 'assets/images/outra.png',
         'texto': 'Outra',
-        'subcategorias': [
-          'Danos a cavernas, sítios arqueológicos e áreas de valor ecológico',
-          'Extração ilegal de areia, minérios e outros recursos naturais',
-          'Depredação de formações rochosas, corais e outros ecossistemas sensíveis'
-        ]
+        'subcategorias': []
       },
     ];
 
@@ -198,7 +253,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
               final categoria = categorias[index];
               final isExpanded = _categoriasExpandidas.contains(index);
               final selecionado = _categoriaSelecionada == categoria['texto'];
-              final subcategorias = categoria['subcategorias'] as List<String>;
+              final isOutraCategoria = categoria['texto'] == 'Outra';
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 4),
@@ -211,6 +266,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                           _categoriaSelecionada = categoria['texto'] as String;
                           DenunciaData().categoria = _categoriaSelecionada;
                           _subcategoriaSelecionada = null;
+                          _mensagemErro = null;
                         });
                       },
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -236,9 +292,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                         children: [
                           if (selecionado) const Icon(Icons.check, color: Colors.green),
                           IconButton(
-                            icon: Icon(
-                              isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                            ),
+                            icon: Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
                             onPressed: () {
                               setState(() {
                                 if (isExpanded) {
@@ -254,46 +308,102 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                     ),
                     if (isExpanded)
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(40, 0, 20, 12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: subcategorias.map(
-                            (sub) {
-                              final isSelected = _subcategoriaSelecionada == sub;
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _subcategoriaSelecionada = sub;
-                                    DenunciaData().subCategoria = sub;
-                                  });
-                                },
-                                child: Container(
-                                  height: 48,
-                                  alignment: Alignment.center,
-                                  margin: const EdgeInsets.symmetric(vertical: 4),
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? Colors.blue[700]
-                                        : const Color(0xFFB9CD23),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    sub,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black87,
-                                      height: 1.3,
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                        child: isOutraCategoria
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey.shade400),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    child: TextField(
+                                      controller: _outraController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Especifique',
+                                        hintStyle: TextStyle(color: Colors.grey.shade400),
+                                        border: InputBorder.none,
+                                        isDense: true,
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
-                          ).toList(),
-                        ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color(0xFFB9CD23),
+                                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                          elevation: 0,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _subcategoriaSelecionada = _outraController.text;
+                                            _categoriaSelecionada = 'Outra';
+                                            DenunciaData().categoria = 'Outra';
+                                            DenunciaData().subCategoria = _outraController.text;
+                                            _mensagemErro = null;
+                                          });
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text("Descrição registrada com sucesso!")),
+                                          );
+                                        },
+                                        child: const Text(
+                                          'Confirmar',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: (categoria['subcategorias'] as List<String>).map(
+                                  (sub) {
+                                    final isSelected = _subcategoriaSelecionada == sub;
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _subcategoriaSelecionada = sub;
+                                          _categoriaSelecionada = categoria['texto'] as String;
+                                          DenunciaData().categoria = categoria['texto'] as String;
+                                          DenunciaData().subCategoria = sub;
+                                          _mensagemErro = null;
+                                        });
+                                      },
+                                      child: Container(
+                                        height: 48,
+                                        alignment: Alignment.center,
+                                        margin: const EdgeInsets.symmetric(vertical: 4),
+                                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                                        decoration: BoxDecoration(
+                                          color: isSelected ? const Color(0xFF1B8C00) : const Color(0xFFB9CD23),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Text(
+                                          sub,
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: isSelected ? Colors.white : Colors.black87,
+                                            height: 1.3,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ).toList(),
+                              ),
                       ),
                     const Divider(
                       indent: 20,
