@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/home_screen.dart';
+import 'package:sudema_app/screens/login.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
 
 void main() {
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',                         // Primeira tela que será exibida
       routes: {
         '/': (context) => const SplashScreen(),  // Tela splash
-        '/home': (context) => const HomeScreen(),// HomeScreen
+        '/home': (context) => const HomeScreen(), //
+        '/login': (context) => const LoginPage(),// HomeScreen
         // outras rotas virão depois
       },
     );
