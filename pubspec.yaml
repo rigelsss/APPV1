@@ -22,6 +22,7 @@ dependencies:
   google_maps_webservice: ^0.0.18
   flutter_google_places: ^0.3.0
   google_place: ^0.4.7
+  google_fonts: ^4.0.4
 
   # Utilidades
   http: ^0.13.6
@@ -46,6 +47,15 @@ flutter:
     - assets/images/licenciamento.jpg
     - assets/images/educacao_ambiental.jpg
     - assets/images/denuncia.jpg
+    - assets/images/areas_protegidas.png
+    - assets/images/fauna.png
+    - assets/images/flora.png
+    - assets/images/poluicao.png
+    - assets/images/recursosHidricos.png
+    - assets/images/residuos.png
+    - assets/images/outra.png
+    - assets/images/flora_tratada.png
+
 
 
 dependency_overrides:

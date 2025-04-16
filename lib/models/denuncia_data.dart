@@ -5,10 +5,11 @@ class DenunciaData {
   factory DenunciaData() => _instance;
   DenunciaData._internal() {
     categoria = null;
+    subCategoria = null;
     localizacao = null;
     endereco = null;
   }
-
+  String? subCategoria;
   String? categoria;
   LatLng? localizacao;
   String? endereco;

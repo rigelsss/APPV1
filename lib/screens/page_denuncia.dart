@@ -19,6 +19,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
 
   int selectedIndex = 0;
   String? _categoriaSelecionada;
+  String? _subcategoriaSelecionada;
   final Set<int> _categoriasExpandidas = {};
 
   @override
@@ -45,6 +46,16 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                 final isSelected = index == selectedIndex;
                 return GestureDetector(
                   onTap: () {
+                    if (index == 1 && _categoriaSelecionada == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Por favor, selecione uma categoria antes de prosseguir.',
+                          ),
+                        ),
+                      );
+                      return;
+                    }
                     setState(() {
                       selectedIndex = index;
                     });
@@ -56,8 +67,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                         opcao[index],
                         style: TextStyle(
                           fontSize: 14,
-                          color:
-                              isSelected ? Colors.blue[900] : Colors.grey[700],
+                          color: isSelected ? Colors.blue[900] : Colors.grey[700],
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -65,9 +75,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                         height: 3,
                         width: 60,
                         decoration: BoxDecoration(
-                          color: isSelected
-                              ? Colors.blue[900]
-                              : Colors.transparent,
+                          color: isSelected ? Colors.blue[900] : Colors.transparent,
                           borderRadius: BorderRadius.circular(3),
                         ),
                       ),
@@ -103,18 +111,18 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
   Widget _buildCategoriaContent() {
     final categorias = [
       {
-        'icone': Icons.pets,
+        'imagem': 'assets/images/fauna.png',
         'texto': 'Contra a fauna',
         'subcategorias': [
           'Caça ilegal de animais silvestres',
           'Tráfico de animais silvestres',
-          'Maus-tratos',
-          'Comércio ilegal',
-          'Introdução de espécies exóticas'
+          'Maus-tratos a animais',
+          'Comércio ilegal de espécies protegidas',
+          'Introdução de espécies exóticas invasoras'
         ]
       },
       {
-        'icone': Icons.eco,
+        'imagem': 'assets/images/flora.png',
         'texto': 'Contra a flora',
         'subcategorias': [
           'Desmatamento ilegal',
@@ -124,7 +132,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
         ]
       },
       {
-        'icone': Icons.factory,
+        'imagem': 'assets/images/poluicao.png',
         'texto': 'Poluição e contaminação ambiental',
         'subcategorias': [
           'Lançamento irregular de esgoto e resíduos industriais em rios e mares',
@@ -134,7 +142,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
         ]
       },
       {
-        'icone': Icons.park,
+        'imagem': 'assets/images/areas_protegidas.png',
         'texto': 'Degradação de áreas protegidas',
         'subcategorias': [
           'Construlção irregular em áreas de preservação',
@@ -144,7 +152,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
         ]
       },
       {
-        'icone': Icons.water,
+        'imagem': 'assets/images/recursosHidricos.png',
         'texto': 'Recursos hídricos e balneabilidade',
         'subcategorias': [
           'Contaminação de rios, lagos e oceanos por despejo de resíduos',
@@ -153,7 +161,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
         ]
       },
       {
-        'icone': Icons.delete,
+        'imagem': 'assets/images/residuos.png',
         'texto': 'Relacionadas a resíduos sólidos',
         'subcategorias': [
           'Lixões irregulares e descarte inadequado de resíduos',
@@ -163,7 +171,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
         ]
       },
       {
-        'icone': Icons.add,
+        'imagem': 'assets/images/outra.png',
         'texto': 'Outra',
         'subcategorias': [
           'Danos a cavernas, sítios arqueológicos e áreas de valor ecológico',
@@ -202,15 +210,19 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                         setState(() {
                           _categoriaSelecionada = categoria['texto'] as String;
                           DenunciaData().categoria = _categoriaSelecionada;
+                          _subcategoriaSelecionada = null;
                         });
                       },
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 6,
-                      ),
-                      leading: Icon(
-                        categoria['icone'] as IconData,
-                        size: 30,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      leading: SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Center(
+                          child: Image.asset(
+                            categoria['imagem'] as String,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                       title: Text(
                         categoria['texto'] as String,
@@ -222,13 +234,10 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (selecionado)
-                            const Icon(Icons.check, color: Colors.green),
+                          if (selecionado) const Icon(Icons.check, color: Colors.green),
                           IconButton(
                             icon: Icon(
-                              isExpanded
-                                  ? Icons.keyboard_arrow_up
-                                  : Icons.keyboard_arrow_down,
+                              isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
                             ),
                             onPressed: () {
                               setState(() {
@@ -248,13 +257,32 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                         padding: const EdgeInsets.fromLTRB(40, 0, 20, 12),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: subcategorias
-                              .map(
-                                (sub) => Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 4),
+                          children: subcategorias.map(
+                            (sub) {
+                              final isSelected = _subcategoriaSelecionada == sub;
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _subcategoriaSelecionada = sub;
+                                    DenunciaData().subCategoria = sub;
+                                  });
+                                },
+                                child: Container(
+                                  height: 48,
+                                  alignment: Alignment.center,
+                                  margin: const EdgeInsets.symmetric(vertical: 4),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? Colors.blue[700]
+                                        : const Color(0xFFB9CD23),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                   child: Text(
-                                    '• $sub',
+                                    sub,
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.black87,
@@ -262,8 +290,9 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                                     ),
                                   ),
                                 ),
-                              )
-                              .toList(),
+                              );
+                            },
+                          ).toList(),
                         ),
                       ),
                     const Divider(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';  
 import '../services/getnoticia.dart';
 import '../models/noticia.dart';
 import '../screens/widgets_reutilizaveis/appbar.dart';
@@ -20,21 +21,18 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Noticia> _noticias = [];
   int _selectedIndex = 0;
 
-
   @override
   void initState() {
     super.initState();
     _carregarNoticias();
-
   }
 
   List<Widget> get _pages => [
-  buildHomeBody(),
-  const PraiasPage(),
-  const NoticiasPage(),
-  const DenunciaPage(),
-  ];
-
+        buildHomeBody(),
+        const PraiasPage(),
+        const NoticiasPage(),
+        const DenunciaPage(),
+      ];
 
   void _simulateLogin() {
     setState(() {
@@ -45,13 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void _carregarNoticias() async {
     try {
       final listaNoticias = await CarregarNoticias().buscarNoticias();
-      print('Notícias carregadas: ${listaNoticias.length}');
-      for (var noticia in listaNoticias) {
-        print('Título: ${noticia.titulo}');
-        print('Imagem: ${noticia.imagemUrl}');
-        print('Link: ${noticia.url}');
-        print('---');
-      }
       setState(() {
         _noticias = listaNoticias;
       });
@@ -98,27 +89,6 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20),
-              Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: 370,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: const TextField(
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.search),
-                        hintText: 'Pesquisar...',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
               const SizedBox(height: 20),
               Align(
                 alignment: Alignment.center,
@@ -271,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           print('Ver todas as notícias clicado!');
                         },
                         child: const Text(
-                          'Ver tudo',
+                          'Ver todas',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -285,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 20),
               SizedBox(
-                height: 200,
+                height: 340,
                 child: _noticias.isEmpty
                     ? const Center(child: CircularProgressIndicator())
                     : ListView.builder(
@@ -350,47 +320,85 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCardNoticia(Noticia noticia) {
-    return Container(
-      width: 250,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.grey[100],
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: const Offset(0, 2),
+  DateTime data = DateTime.tryParse(noticia.dataHoraPublicacao) ?? DateTime.now();
+  String dataFormatada = "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
+  String horaFormatada = "${data.hour.toString().padLeft(2, '0')}h${data.minute.toString().padLeft(2, '0')}";
+
+  return Container(
+    width: 260,
+    margin: const EdgeInsets.symmetric(horizontal: 8),
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.grey.shade300),
+      borderRadius: BorderRadius.circular(16),
+      color: Colors.white,
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          child: Image.network(
+            noticia.imagemUrl,
+            height: 140,
+            width: double.infinity,
+            fit: BoxFit.cover,
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-            child: Image.network(
-              noticia.imagemUrl,
-              height: 120,
-              width: double.infinity,
-              fit: BoxFit.cover,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 6, right: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                '$dataFormatada  $horaFormatada',
+                style: GoogleFonts.inter(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w300,
+                  color: Colors.grey[700],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: Text(
+            noticia.titulo,
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(
+              fontSize: 15, // reduzido
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+              height: 1.3,
             ),
           ),
+        ),
+        if (noticia.descricao.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              noticia.titulo,
-              maxLines: 2,
+              noticia.descricao,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
+              style: GoogleFonts.inter(
+                fontSize: 13, // reduzido
+                fontWeight: FontWeight.w400,
+                color: Colors.black54,
+                height: 1.3,
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        const SizedBox(height: 10),
+      ],
+    ),
+  );
+}
 }
