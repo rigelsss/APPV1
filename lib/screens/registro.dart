@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:sudema_app/screens/TermosCondicoes.dart';
 import 'package:sudema_app/screens/widgets_reutilizaveis/appbardenuncia.dart';
 import 'login.dart';
 
@@ -11,8 +12,26 @@ class RegistroPage extends StatefulWidget {
 }
 
 class _RegistroPageState extends State<RegistroPage> {
+
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _cpfController = TextEditingController();
+  final TextEditingController _contatoController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _senhaController = TextEditingController();
+
   bool _obscureText = true;
   bool _isChecked = false;
+
+
+  @override
+  void dispose() {
+    _nomeController.dispose();
+    _cpfController.dispose();
+    _contatoController.dispose();
+    _emailController.dispose();
+    _senhaController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +44,8 @@ class _RegistroPageState extends State<RegistroPage> {
           children: [
             Text('Nome', style: TextStyle(fontSize: 18)),
             TextField(
+              controller: _nomeController,
+                keyboardType: TextInputType.text,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
               ),
@@ -32,6 +53,7 @@ class _RegistroPageState extends State<RegistroPage> {
             SizedBox(height: 20),
             Text('CPF', style: TextStyle(fontSize: 18)),
             TextField(
+              controller: _cpfController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -40,15 +62,21 @@ class _RegistroPageState extends State<RegistroPage> {
             SizedBox(height: 20),
             Text('Contato', style: TextStyle(fontSize: 18)),
             TextField(
-              keyboardType: TextInputType.number,
+              controller: _contatoController,
+              keyboardType: TextInputType.phone,
               decoration: InputDecoration(border: OutlineInputBorder()),
             ),
             SizedBox(height: 20),
             Text('E-mail', style: TextStyle(fontSize: 18)),
-            TextField(decoration: InputDecoration(border: OutlineInputBorder())),
+            TextField(
+                controller:_emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder())),
             SizedBox(height: 20),
             Text('Senha', style: TextStyle(fontSize: 18)),
             TextField(
+              controller: _senhaController,
               obscureText: _obscureText,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -84,26 +112,19 @@ class _RegistroPageState extends State<RegistroPage> {
               ],
             ),
             SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Ao usar este aplicativo você concorda com os ',
-                    style: TextStyle(fontSize: 16, color: Colors.black),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    'Termos e condições',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.blue,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            Center(child: RichText
+              (text:TextSpan
+              (children: [TextSpan(text:'Ao usar este aplicativo você concorda com os',
+              style: TextStyle(
+              color: Colors.black,
+              fontSize: 12,
+            ),),
+            TextSpan(text: ' Termos e Condições',
+                style: TextStyle(color: Colors.blue, fontSize: 14,fontWeight: FontWeight.bold),
+            recognizer: TapGestureRecognizer()
+            ..onTap = (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => Termoscondicoes()));
+            },)])),),
             SizedBox(height: 20),
             Center(
               child: ElevatedButton(
