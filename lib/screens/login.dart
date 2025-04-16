@@ -3,14 +3,20 @@ import 'package:sudema_app/screens/Recupera%C3%A7%C3%A3oSenha.dart';
 import 'package:sudema_app/screens/registro.dart';
 import '../screens/widgets_reutilizaveis/appbardenuncia.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
+  _LoginPageState createState() => _LoginPageState();
+}
 
+class _LoginPageState extends State<LoginPage> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool _checkboxValue = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarDenuncia(title: 'Login'),
       body: SingleChildScrollView(
@@ -65,12 +71,29 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                Row(children: [
-                  TextButton(onPressed: (){Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Recuperacaoosenha()),
-                  );}, child: Text('Esqueceu a senha?'))
-                ],),
+                Row(mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Checkbox(
+                      value: _checkboxValue,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _checkboxValue = value ?? false;
+                        });
+                      },
+                    ),
+                    const Text('Mantenha-me conectado'),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Recuperacaoosenha()),
+                        );
+                      },
+                      child: const Text('Esqueceu a senha?'),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 24),
                 const Row(
                   children: [
@@ -97,7 +120,8 @@ class LoginPage extends StatelessWidget {
                     children: const [
                       Icon(Icons.alternate_email, color: Colors.black87, size: 28),
                       SizedBox(width: 8),
-                      Text('Login com Google',
+                      Text(
+                        'Login com Google',
                         style: TextStyle(color: Colors.black87, fontSize: 18),
                       ),
                     ],
@@ -116,8 +140,11 @@ class LoginPage extends StatelessWidget {
                           MaterialPageRoute(builder: (context) => const RegistroPage()),
                         );
                       },
-                      child: const Text('Cadastre-se', style: TextStyle(color: Color(0xFF2A2F8C), fontWeight: FontWeight.bold,),
-                      ),)
+                      child: const Text(
+                        'Cadastre-se',
+                        style: TextStyle(color: Color(0xFF2A2F8C), fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 24),
