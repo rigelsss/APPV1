@@ -286,6 +286,8 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                                         onPressed: () {
                                           setState(() {
                                             _subcategoriaSelecionada = _outraController.text;
+                                            _categoriaSelecionada = 'Outra';
+                                            DenunciaData().categoria = 'Outra';
                                             DenunciaData().subCategoria = _outraController.text;
                                           });
                                           ScaffoldMessenger.of(context).showSnackBar(
@@ -315,6 +317,8 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                                       onTap: () {
                                         setState(() {
                                           _subcategoriaSelecionada = sub;
+                                          _categoriaSelecionada = categoria['texto'] as String; 
+                                          DenunciaData().categoria = categoria['texto'] as String; 
                                           DenunciaData().subCategoria = sub;
                                         });
                                       },
@@ -325,7 +329,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                                         padding: const EdgeInsets.symmetric(horizontal: 12),
                                         decoration: BoxDecoration(
                                           color: isSelected
-                                              ? Colors.blue[700]
+                                              ? const Color(0xFF1B8C00)
                                               : const Color(0xFFB9CD23),
                                           borderRadius: BorderRadius.circular(8),
                                         ),
