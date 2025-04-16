@@ -9,7 +9,8 @@ import 'package:sudema_app/screens/endereco_modal_sheet.dart';
 import '../models/denuncia_data.dart';
 
 class AbaLocalizacao extends StatefulWidget {
-  const AbaLocalizacao({super.key});
+  final VoidCallback onEnderecoConfirmado;
+  const AbaLocalizacao({super.key, required this.onEnderecoConfirmado});
 
   @override
   State<AbaLocalizacao> createState() => _AbaLocalizacaoState();
@@ -30,6 +31,8 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
   @override
   void initState() {
     super.initState();
+    DenunciaData().enderecoConfirmado = false;
+
     _obterLocalizacaoAtual();
   }
 
@@ -40,7 +43,6 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
     final posicao = await Geolocator.getCurrentPosition();
     setState(() {
       _posicaoAtual = LatLng(posicao.latitude, posicao.longitude);
-      DenunciaData().localizacao = _posicaoAtual;
     });
     _buscarEnderecoGoogle(_posicaoAtual!);
   }
@@ -115,12 +117,11 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
   void _confirmarEndereco() {
     print('Endereço confirmado: $_endereco');
 
-    // Reforça a gravação dos dados
     DenunciaData().localizacao = _posicaoAtual;
     DenunciaData().endereco = _endereco;
+    DenunciaData().enderecoConfirmado = true;
 
-    // Libera e navega para a aba "Identificação"
-    DefaultTabController.of(context)?.animateTo(2);
+    widget.onEnderecoConfirmado();
   }
 
   Future<void> _abrirBuscaModalEstilizado() async {
@@ -150,42 +151,45 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
 
   @override
   Widget build(BuildContext context) {
-    if (_posicaoAtual == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    final enderecoValido = DenunciaData().endereco != null &&
+        DenunciaData().endereco!.isNotEmpty &&
+        DenunciaData().endereco != 'Endereço não encontrado';
 
     return Stack(
       children: [
-        GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: _posicaoAtual!,
-            zoom: 17,
-          ),
-          onMapCreated: (controller) => _mapController = controller,
-          onCameraIdle: () async {
-            _debounce?.cancel();
-            _debounce = Timer(const Duration(milliseconds: 500), () async {
-              LatLngBounds bounds = await _mapController.getVisibleRegion();
-              final centerLat = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
-              final centerLng = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
-              final center = LatLng(centerLat, centerLng);
+        if (_posicaoAtual != null)
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: _posicaoAtual!,
+              zoom: 17,
+            ),
+            onMapCreated: (controller) => _mapController = controller,
+            onCameraIdle: () async {
+              _debounce?.cancel();
+              _debounce = Timer(const Duration(milliseconds: 500), () async {
+                LatLngBounds bounds = await _mapController.getVisibleRegion();
+                final centerLat = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
+                final centerLng = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
+                final center = LatLng(centerLat, centerLng);
 
-              setState(() {
-                _posicaoAtual = center;
+                setState(() {
+                  _posicaoAtual = center;
+                });
+
+                _buscarEnderecoGoogle(center);
               });
-
-              _buscarEnderecoGoogle(center);
-            });
-          },
-          myLocationEnabled: true,
-          myLocationButtonEnabled: true,
-        ),
+            },
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+          )
+        else
+          const Center(child: CircularProgressIndicator()),
 
         const Center(
           child: Icon(Icons.location_pin, size: 40, color: Colors.red),
         ),
 
-        if (devMode)
+        if (devMode && _posicaoAtual != null)
           Positioned(
             top: 20,
             left: 10,
@@ -271,15 +275,7 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (DenunciaData().endereco != null &&
-                          DenunciaData().endereco!.isNotEmpty &&
-                          DenunciaData().endereco != 'Endereço não encontrado') {
-                        _confirmarEndereco();
-                      } else {
-                        _abrirBuscaModalEstilizado();
-                      }
-                    },
+                    onPressed: enderecoValido ? _confirmarEndereco : _abrirBuscaModalEstilizado,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2A2F8C),
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -288,11 +284,7 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
                       ),
                     ),
                     child: Text(
-                      (DenunciaData().endereco != null &&
-                              DenunciaData().endereco!.isNotEmpty &&
-                              DenunciaData().endereco != 'Endereço não encontrado')
-                          ? 'Confirmar endereço'
-                          : 'Pesquisar',
+                      enderecoValido ? 'Confirmar endereço' : 'Pesquisar',
                       style: const TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),

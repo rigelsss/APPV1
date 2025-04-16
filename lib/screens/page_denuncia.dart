@@ -10,6 +10,12 @@ class NovaDenunciaPage extends StatefulWidget {
 }
 
 class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
+    @override
+    void initState() {
+    super.initState();
+    DenunciaData().limpar(); // isso garante que uma nova denúncia comece limpa
+  }
+
   final List<String> opcao = [
     'Categoria',
     'Localização',
@@ -23,6 +29,46 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
   final Set<int> _categoriasExpandidas = {};
   final TextEditingController _outraController = TextEditingController();
   String? _mensagemErro;
+
+bool _podeIrParaAba(int index) {
+  if (index == 1) {
+    return _categoriaSelecionada != null && _subcategoriaSelecionada != null;
+  } else if (index == 2) {
+    return DenunciaData().enderecoConfirmado == true; 
+  } else if (index == 3) {
+    return DenunciaData().enderecoConfirmado == true;
+  }
+  return true;
+}
+
+  void _aoSelecionarAba(int index) {
+    if (!_podeIrParaAba(index)) {
+      setState(() {
+        if (index == 1) {
+          _mensagemErro =
+              'Selecione uma categoria e subcategoria antes de continuar.';
+        } else if (index == 2) {
+          _mensagemErro = 'Confirme o endereço antes de continuar.';
+        } else if (index == 3) {
+          _mensagemErro =
+              'Você precisa preencher a localização antes de prosseguir.';
+        }
+      });
+      return;
+    }
+
+    setState(() {
+      selectedIndex = index;
+      _mensagemErro = null;
+    });
+  }
+
+  void _irParaIdentificacao() {
+    setState(() {
+      selectedIndex = 2; 
+      _mensagemErro = null;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,39 +92,14 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(opcao.length, (index) {
                 final isSelected = index == selectedIndex;
+                final isEnabled = _podeIrParaAba(index);
                 return GestureDetector(
                   onTap: () {
-                    if (index == 1 &&
-                        (_categoriaSelecionada == null ||
-                            _subcategoriaSelecionada == null)) {
-                      setState(() {
-                        _mensagemErro =
-                            'Selecione uma categoria e subcategoria antes de continuar.';
-                      });
-                      return;
+                    if (isEnabled) {
+                      _aoSelecionarAba(index);
+                    } else {
+                      _aoSelecionarAba(index);
                     }
-                    if (index == 2 &&
-                        (DenunciaData().endereco == null ||
-                            DenunciaData().endereco!.isEmpty)) {
-                      setState(() {
-                        _mensagemErro =
-                            'Confirme o endereço antes de continuar.';
-                      });
-                      return;
-                    }
-                    if (index == 3 &&
-                        (DenunciaData().endereco == null ||
-                            DenunciaData().endereco!.isEmpty)) {
-                      setState(() {
-                        _mensagemErro =
-                            'Você precisa preencher a localização antes de prosseguir.';
-                      });
-                      return;
-                    }
-                    setState(() {
-                      selectedIndex = index;
-                      _mensagemErro = null;
-                    });
                   },
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -89,7 +110,9 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                           fontSize: 14,
                           color: isSelected
                               ? Colors.blue[900]
-                              : Colors.grey[700],
+                              : isEnabled
+                                  ? Colors.grey[700]
+                                  : Colors.grey[400],
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -134,7 +157,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
       case 0:
         return _buildCategoriaContent();
       case 1:
-        return const AbaLocalizacao();
+        return AbaLocalizacao(onEnderecoConfirmado: _irParaIdentificacao);
       case 2:
         return const Center(child: Text("Identificação do Denunciante"));
       case 3:
@@ -229,8 +252,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
             itemBuilder: (context, index) {
               final categoria = categorias[index];
               final isExpanded = _categoriasExpandidas.contains(index);
-              final selecionado =
-                  _categoriaSelecionada == categoria['texto'];
+              final selecionado = _categoriaSelecionada == categoria['texto'];
               final isOutraCategoria = categoria['texto'] == 'Outra';
 
               return Padding(
@@ -241,15 +263,13 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                     ListTile(
                       onTap: () {
                         setState(() {
-                          _categoriaSelecionada =
-                              categoria['texto'] as String;
+                          _categoriaSelecionada = categoria['texto'] as String;
                           DenunciaData().categoria = _categoriaSelecionada;
                           _subcategoriaSelecionada = null;
                           _mensagemErro = null;
                         });
                       },
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 6),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                       leading: SizedBox(
                         width: 40,
                         height: 40,
@@ -270,12 +290,9 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (selecionado)
-                            const Icon(Icons.check, color: Colors.green),
+                          if (selecionado) const Icon(Icons.check, color: Colors.green),
                           IconButton(
-                            icon: Icon(isExpanded
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down),
+                            icon: Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
                             onPressed: () {
                               setState(() {
                                 if (isExpanded) {
@@ -291,65 +308,48 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                     ),
                     if (isExpanded)
                       Padding(
-                        padding:
-                            const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
                         child: isOutraCategoria
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
                                     decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.grey.shade400),
-                                      borderRadius:
-                                          BorderRadius.circular(12),
+                                      border: Border.all(color: Colors.grey.shade400),
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
                                     child: TextField(
                                       controller: _outraController,
                                       decoration: InputDecoration(
                                         hintText: 'Especifique',
-                                        hintStyle: TextStyle(
-                                            color: Colors.grey.shade400),
+                                        hintStyle: TextStyle(color: Colors.grey.shade400),
                                         border: InputBorder.none,
                                         isDense: true,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 4, vertical: 12),
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
                                       ),
                                     ),
                                   ),
                                   const SizedBox(height: 10),
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.end,
+                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFFB9CD23),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 12),
+                                          backgroundColor: const Color(0xFFB9CD23),
+                                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                           elevation: 0,
                                         ),
                                         onPressed: () {
                                           setState(() {
-                                            _subcategoriaSelecionada =
-                                                _outraController.text;
+                                            _subcategoriaSelecionada = _outraController.text;
                                             _categoriaSelecionada = 'Outra';
-                                            DenunciaData().categoria =
-                                                'Outra';
-                                            DenunciaData().subCategoria =
-                                                _outraController.text;
+                                            DenunciaData().categoria = 'Outra';
+                                            DenunciaData().subCategoria = _outraController.text;
                                             _mensagemErro = null;
                                           });
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                  "Descrição registrada com sucesso!"),
-                                            ),
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text("Descrição registrada com sucesso!")),
                                           );
                                         },
                                         child: const Text(
@@ -365,22 +365,16 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                                 ],
                               )
                             : Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: (categoria['subcategorias']
-                                        as List<String>)
-                                    .map(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: (categoria['subcategorias'] as List<String>).map(
                                   (sub) {
-                                    final isSelected =
-                                        _subcategoriaSelecionada == sub;
+                                    final isSelected = _subcategoriaSelecionada == sub;
                                     return GestureDetector(
                                       onTap: () {
                                         setState(() {
                                           _subcategoriaSelecionada = sub;
-                                          _categoriaSelecionada =
-                                              categoria['texto'] as String;
-                                          DenunciaData().categoria =
-                                              categoria['texto'] as String;
+                                          _categoriaSelecionada = categoria['texto'] as String;
+                                          DenunciaData().categoria = categoria['texto'] as String;
                                           DenunciaData().subCategoria = sub;
                                           _mensagemErro = null;
                                         });
@@ -388,17 +382,11 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                                       child: Container(
                                         height: 48,
                                         alignment: Alignment.center,
-                                        margin: const EdgeInsets.symmetric(
-                                            vertical: 4),
-                                        padding:
-                                            const EdgeInsets.symmetric(
-                                                horizontal: 12),
+                                        margin: const EdgeInsets.symmetric(vertical: 4),
+                                        padding: const EdgeInsets.symmetric(horizontal: 12),
                                         decoration: BoxDecoration(
-                                          color: isSelected
-                                              ? const Color(0xFF1B8C00)
-                                              : const Color(0xFFB9CD23),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                                          color: isSelected ? const Color(0xFF1B8C00) : const Color(0xFFB9CD23),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: Text(
                                           sub,
@@ -407,9 +395,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: isSelected
-                                                ? Colors.white
-                                                : Colors.black87,
+                                            color: isSelected ? Colors.white : Colors.black87,
                                             height: 1.3,
                                           ),
                                         ),

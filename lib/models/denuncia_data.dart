@@ -8,15 +8,21 @@ class DenunciaData {
     subCategoria = null;
     localizacao = null;
     endereco = null;
+    enderecoConfirmado = false;
   }
+
   String? subCategoria;
   String? categoria;
   LatLng? localizacao;
   String? endereco;
+  bool enderecoConfirmado = false;
 
   void limpar() {
     categoria = null;
+    subCategoria = null;
     localizacao = null;
     endereco = null;
+    enderecoConfirmado = false;
   }
 }
+
