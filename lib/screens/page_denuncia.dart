@@ -21,6 +21,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
   String? _categoriaSelecionada;
   String? _subcategoriaSelecionada;
   final Set<int> _categoriasExpandidas = {};
+  final TextEditingController _outraController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -173,11 +174,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
       {
         'imagem': 'assets/images/outra.png',
         'texto': 'Outra',
-        'subcategorias': [
-          'Danos a cavernas, sítios arqueológicos e áreas de valor ecológico',
-          'Extração ilegal de areia, minérios e outros recursos naturais',
-          'Depredação de formações rochosas, corais e outros ecossistemas sensíveis'
-        ]
+        'subcategorias': []
       },
     ];
 
@@ -198,7 +195,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
               final categoria = categorias[index];
               final isExpanded = _categoriasExpandidas.contains(index);
               final selecionado = _categoriaSelecionada == categoria['texto'];
-              final subcategorias = categoria['subcategorias'] as List<String>;
+              final isOutraCategoria = categoria['texto'] == 'Outra';
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 4),
@@ -254,46 +251,100 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                     ),
                     if (isExpanded)
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(40, 0, 20, 12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: subcategorias.map(
-                            (sub) {
-                              final isSelected = _subcategoriaSelecionada == sub;
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _subcategoriaSelecionada = sub;
-                                    DenunciaData().subCategoria = sub;
-                                  });
-                                },
-                                child: Container(
-                                  height: 48,
-                                  alignment: Alignment.center,
-                                  margin: const EdgeInsets.symmetric(vertical: 4),
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? Colors.blue[700]
-                                        : const Color(0xFFB9CD23),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    sub,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black87,
-                                      height: 1.3,
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                        child: isOutraCategoria
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey.shade400),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    child: TextField(
+                                      controller: _outraController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Especifique',
+                                        hintStyle: TextStyle(color: Colors.grey.shade400),
+                                        border: InputBorder.none,
+                                        isDense: true,
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
-                          ).toList(),
-                        ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: const Color(0xFFB9CD23),
+                                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                          elevation: 0,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _subcategoriaSelecionada = _outraController.text;
+                                            DenunciaData().subCategoria = _outraController.text;
+                                          });
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text("Descrição registrada com sucesso!"),
+                                            ),
+                                          );
+                                        },
+                                        child: const Text(
+                                          'Confirmar',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: (categoria['subcategorias'] as List<String>).map(
+                                  (sub) {
+                                    final isSelected = _subcategoriaSelecionada == sub;
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _subcategoriaSelecionada = sub;
+                                          DenunciaData().subCategoria = sub;
+                                        });
+                                      },
+                                      child: Container(
+                                        height: 48,
+                                        alignment: Alignment.center,
+                                        margin: const EdgeInsets.symmetric(vertical: 4),
+                                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? Colors.blue[700]
+                                              : const Color(0xFFB9CD23),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Text(
+                                          sub,
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black87,
+                                            height: 1.3,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ).toList(),
+                              ),
                       ),
                     const Divider(
                       indent: 20,
