@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/denuncia.dart';
 import 'package:sudema_app/screens/widgets_reutilizaveis/appbardenuncia.dart';
 
 class Recuperacaoosenha extends StatelessWidget {
