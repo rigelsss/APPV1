@@ -62,7 +62,9 @@ flutter:
     - assets/images/flora_tratada.png
     - assets/images/impropria.svg
     - assets/images/propria.svg
-        
+    - assets/images/impropria.png
+    - assets/images/propria.png
+
 
 
 
