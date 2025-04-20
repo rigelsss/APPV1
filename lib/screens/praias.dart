@@ -65,10 +65,14 @@ class _PraiasPageState extends State<PraiasPage> {
   }
 
   Future<void> _carregarIcones() async {
+    // apesar de 'deprecated', o método fromAssetImage ainda é o único aceito pelo Google Maps
+    // ignore: deprecated_member_use
     _iconePropria = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(size: Size(14, 14)),
       'assets/images/propria.png',
     );
+    // apesar de 'deprecated', o método fromAssetImage ainda é o único aceito pelo Google Maps
+    // ignore: deprecated_member_use
     _iconeImpropria = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(size: Size(14, 14)),
       'assets/images/impropria.png',
