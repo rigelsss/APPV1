@@ -240,7 +240,7 @@ class _PraiasPageState extends State<PraiasPage> {
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 flex: 5,
@@ -254,16 +254,18 @@ class _PraiasPageState extends State<PraiasPage> {
                 ),
               ),
               const SizedBox(width: 8),
-              SizedBox(
-                width: 30,
-                height: 30,
-                child: PieChart(
-                  dataMap: dataMap,
-                  chartType: ChartType.ring,
-                  baseChartColor: Colors.grey.shade300,
-                  colorList: [Colors.green, Colors.red],
-                  legendOptions: const LegendOptions(showLegends: false),
-                  chartValuesOptions: const ChartValuesOptions(showChartValues: false),
+              Center(
+                child: SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: PieChart(
+                    dataMap: dataMap,
+                    chartType: ChartType.ring,
+                    baseChartColor: Colors.grey.shade300,
+                    colorList: [Colors.green, Colors.red],
+                    legendOptions: const LegendOptions(showLegends: false),
+                    chartValuesOptions: const ChartValuesOptions(showChartValues: false),
+                  ),
                 ),
               ),
             ],
@@ -301,9 +303,7 @@ class _PraiasPageState extends State<PraiasPage> {
                 setState(() => municipioSelecionado = value);
                 if (value != 'Todos') _moverMapaParaMunicipio(value);
               },
-              itemBuilder: (context) => municipios
-                  .map((m) => PopupMenuItem<String>(value: m, child: Text(m)))
-                  .toList(),
+              itemBuilder: (context) => municipios.map((m) => PopupMenuItem<String>(value: m, child: Text(m))).toList(),
               child: _popupButton(municipioSelecionado),
             ),
           ],
