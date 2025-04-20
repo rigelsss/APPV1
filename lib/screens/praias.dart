@@ -11,6 +11,12 @@ class PraiasPage extends StatefulWidget {
   State<PraiasPage> createState() => _PraiasPageState();
 }
 
+class _PraiaMarker {
+  final Marker marker;
+  final String classificacao;
+  _PraiaMarker({required this.marker, required this.classificacao});
+}
+
 class _PraiasPageState extends State<PraiasPage> {
   final int totalPraias = 62;
   final int praiasProprias = 58;
@@ -19,7 +25,7 @@ class _PraiasPageState extends State<PraiasPage> {
   late GoogleMapController mapController;
   final LatLng _initialPosition = const LatLng(-7.1202, -34.8802);
 
-  List<String> classificacoesSelecionadas = ['Próprias', 'Impróprias'];
+  List<String> classificacoesSelecionadas = [];
   String municipioSelecionado = 'Todos';
   String praiaSelecionada = '';
 
@@ -52,49 +58,19 @@ class _PraiasPageState extends State<PraiasPage> {
   final List<_PraiaMarker> _todosMarcadores = [];
   final Set<Marker> _marcadoresVisiveis = {};
 
-  void _toggleClassificacao(String item) {
-    setState(() {
-      if (item == 'Selecionar tudo') {
-        if (classificacoesSelecionadas.length < 2) {
-          classificacoesSelecionadas = ['Próprias', 'Impróprias'];
-        } else {
-          classificacoesSelecionadas.clear();
-        }
-      } else {
-        if (classificacoesSelecionadas.contains(item)) {
-          classificacoesSelecionadas.remove(item);
-        } else {
-          classificacoesSelecionadas.add(item);
-        }
-      }
-      _filtrarMarcadores();
-    });
-  }
-
-  String _getClassificacaoLabel() {
-    if (classificacoesSelecionadas.length == 2) {
-      return 'Selecionar tudo';
-    } else if (classificacoesSelecionadas.length == 1) {
-      return classificacoesSelecionadas.first;
-    } else {
-      return 'Classificação';
-    }
-  }
-
-  void _moverMapaParaMunicipio(String municipio) {
-    if (coordenadasMunicipios.containsKey(municipio)) {
-      final destino = coordenadasMunicipios[municipio]!;
-      mapController.animateCamera(CameraUpdate.newLatLngZoom(destino, 13));
-    }
+  @override
+  void initState() {
+    super.initState();
+    _carregarIcones().then((_) => _adicionarMarcadoresSimulados());
   }
 
   Future<void> _carregarIcones() async {
     _iconePropria = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(12, 12)),
+      const ImageConfiguration(size: Size(14, 14)),
       'assets/images/propria.png',
     );
     _iconeImpropria = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(12, 12)),
+      const ImageConfiguration(size: Size(14, 14)),
       'assets/images/impropria.png',
     );
   }
@@ -102,7 +78,6 @@ class _PraiasPageState extends State<PraiasPage> {
   void _adicionarMarcadoresSimulados() {
     final random = Random();
     _todosMarcadores.clear();
-
     for (var entry in coordenadasMunicipios.entries) {
       bool isPropria = random.nextBool();
       _todosMarcadores.add(_PraiaMarker(
@@ -118,7 +93,6 @@ class _PraiasPageState extends State<PraiasPage> {
         classificacao: isPropria ? 'Próprias' : 'Impróprias',
       ));
     }
-
     _filtrarMarcadores();
   }
 
@@ -131,12 +105,30 @@ class _PraiasPageState extends State<PraiasPage> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _carregarIcones().then((_) {
-      _adicionarMarcadoresSimulados();
+  void _toggleClassificacao(String item) {
+    setState(() {
+      if (item == 'Selecionar tudo') {
+        classificacoesSelecionadas = classificacoesSelecionadas.length < 2 ? ['Próprias', 'Impróprias'] : [];
+      } else {
+        classificacoesSelecionadas.contains(item)
+            ? classificacoesSelecionadas.remove(item)
+            : classificacoesSelecionadas.add(item);
+      }
+      _filtrarMarcadores();
     });
+  }
+
+  void _moverMapaParaMunicipio(String municipio) {
+    if (coordenadasMunicipios.containsKey(municipio)) {
+      final destino = coordenadasMunicipios[municipio]!;
+      mapController.animateCamera(CameraUpdate.newLatLngZoom(destino, 13));
+    }
+  }
+
+  String _getClassificacaoLabel() {
+    if (classificacoesSelecionadas.length == 2) return 'Selecionar tudo';
+    if (classificacoesSelecionadas.length == 1) return classificacoesSelecionadas.first;
+    return 'Classificação';
   }
 
   @override
@@ -186,10 +178,7 @@ class _PraiasPageState extends State<PraiasPage> {
                   onMapCreated: (GoogleMapController controller) {
                     mapController = controller;
                   },
-                  initialCameraPosition: CameraPosition(
-                    target: _initialPosition,
-                    zoom: 13,
-                  ),
+                  initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 11),
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
                   markers: _marcadoresVisiveis,
@@ -202,27 +191,44 @@ class _PraiasPageState extends State<PraiasPage> {
     );
   }
 
-  Widget _buildTotalCard() {
-    return Expanded(
-      flex: 3,
-      child: Card(
-        elevation: 7,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Praias monitoradas", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 6),
-              Text("$totalPraias", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            ],
-          ),
+  Widget _buildLinhaStatus(String asset, String label, int valor, double percentual, Color cor, {bool isPng = false}) {
+    return Row(
+      children: [
+        Image.asset(
+          'assets/images/$asset',
+          width: 22,
+          height: 22,
+          fit: BoxFit.contain,
         ),
-      ),
+        const SizedBox(width: 6),
+        Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+        const Spacer(),
+        Text("$valor", style: TextStyle(fontSize: 10, color: cor)),
+        const SizedBox(width: 4),
+        Text("${percentual.toStringAsFixed(1)}%", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: cor)),
+      ],
     );
   }
+
+  Widget _buildTotalCard() => Expanded(
+        flex: 3,
+        child: Card(
+          elevation: 7,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Praias monitoradas", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 6),
+                Text("$totalPraias", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+        ),
+      );
 
   Widget _buildStatusCard(Map<String, double> dataMap, double percentualPropria, double percentualImpropria) {
     return Expanded(
@@ -241,9 +247,9 @@ class _PraiasPageState extends State<PraiasPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildLinhaStatus('propria.svg', 'Própria para banho', praiasProprias, percentualPropria, Colors.green),
+                    _buildLinhaStatus('propria.png', 'Própria para banho', praiasProprias, percentualPropria, Colors.green, isPng: true),
                     const SizedBox(height: 15),
-                    _buildLinhaStatus('impropria.svg', 'Imprópria para banho', praiasImproprias, percentualImpropria, Colors.red),
+                    _buildLinhaStatus('impropria.png', 'Imprópria para banho', praiasImproprias, percentualImpropria, Colors.red, isPng: true),
                   ],
                 ),
               ),
@@ -267,114 +273,76 @@ class _PraiasPageState extends State<PraiasPage> {
     );
   }
 
-  Widget _buildLinhaStatus(String asset, String label, int valor, double percentual, MaterialColor cor) {
-    return Row(
-      children: [
-        SvgPicture.asset('assets/images/$asset', width: 12, height: 12),
-        const SizedBox(width: 6),
-        Text(label, style: const TextStyle(fontSize: 10)),
-        const Spacer(),
-        Text("$valor", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: cor)),
-        const SizedBox(width: 4),
-        Text("${percentual.toStringAsFixed(1)}%", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: cor.shade700)),
-      ],
-    );
-  }
+  Widget _buildFiltroClassificacao() => Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Exibir por", style: TextStyle(fontSize: 12)),
+            PopupMenuButton<String>(
+              onSelected: _toggleClassificacao,
+              itemBuilder: (context) => [
+                _popupItem('Selecionar tudo', classificacoesSelecionadas.length == 2),
+                _popupItem('Próprias', classificacoesSelecionadas.contains('Próprias')),
+                _popupItem('Impróprias', classificacoesSelecionadas.contains('Impróprias')),
+              ],
+              child: _popupButton(_getClassificacaoLabel()),
+            ),
+          ],
+        ),
+      );
 
-  Widget _popupButton(String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.white,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
-          const Icon(Icons.arrow_drop_down),
-        ],
-      ),
-    );
-  }
+  Widget _buildFiltroMunicipio() => Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Filtrar por", style: TextStyle(fontSize: 12)),
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                setState(() => municipioSelecionado = value);
+                if (value != 'Todos') _moverMapaParaMunicipio(value);
+              },
+              itemBuilder: (context) => municipios
+                  .map((m) => PopupMenuItem<String>(value: m, child: Text(m)))
+                  .toList(),
+              child: _popupButton(municipioSelecionado),
+            ),
+          ],
+        ),
+      );
 
-  PopupMenuItem<String> _popupItem(String label, bool isChecked) {
-    return PopupMenuItem<String>(
-      value: label,
-      child: Row(
-        children: [
-          Checkbox(value: isChecked, onChanged: (_) => Navigator.pop(context, label)),
-          Flexible(child: Text(label)),
-        ],
-      ),
-    );
-  }
+  Widget _buildFiltroPraia() => Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Praia", style: TextStyle(fontSize: 12)),
+            _popupButton("Praia"),
+          ],
+        ),
+      );
 
-  Widget _buildFiltroClassificacao() {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("Exibir por", style: TextStyle(fontSize: 12)),
-          PopupMenuButton<String>(
-            onSelected: _toggleClassificacao,
-            itemBuilder: (BuildContext context) => [
-              _popupItem('Selecionar tudo', classificacoesSelecionadas.length == 2),
-              _popupItem('Próprias', classificacoesSelecionadas.contains('Próprias')),
-              _popupItem('Impróprias', classificacoesSelecionadas.contains('Impróprias')),
-            ],
-            child: _popupButton(_getClassificacaoLabel()),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _popupButton(String label) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
+            const Icon(Icons.arrow_drop_down),
+          ],
+        ),
+      );
 
-  Widget _buildFiltroMunicipio() {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("Filtrar por", style: TextStyle(fontSize: 12)),
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              setState(() => municipioSelecionado = value);
-              if (value != 'Todos') {
-                _moverMapaParaMunicipio(value);
-              }
-            },
-            itemBuilder: (BuildContext context) {
-              return municipios.map((String m) {
-                return PopupMenuItem<String>(
-                  value: m,
-                  child: Text(m),
-                );
-              }).toList();
-            },
-            child: _popupButton(municipioSelecionado),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFiltroPraia() {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("Praia", style: TextStyle(fontSize: 12)),
-          _popupButton("Praia"),
-        ],
-      ),
-    );
-  }
-}
-
-class _PraiaMarker {
-  final Marker marker;
-  final String classificacao;
-
-  _PraiaMarker({required this.marker, required this.classificacao});
+  PopupMenuItem<String> _popupItem(String label, bool isChecked) => PopupMenuItem<String>(
+        value: label,
+        child: Row(
+          children: [
+            Checkbox(value: isChecked, onChanged: (_) => Navigator.pop(context, label)),
+            Flexible(child: Text(label)),
+          ],
+        ),
+      );
 }
