@@ -17,9 +17,11 @@ class _PraiaMarker {
 }
 
 class _PraiasPageState extends State<PraiasPage> {
-  final int totalPraias = 62;
-  final int praiasProprias = 58;
-  final int praiasImproprias = 4;
+  
+  int totalPraias = 62;
+  
+  late int praiasProprias =  Random().nextInt(62 + 1); 
+  late int praiasImproprias = totalPraias - praiasProprias;
 
   late GoogleMapController mapController;
   final LatLng _initialPosition = const LatLng(-7.1202, -34.8802);
@@ -60,6 +62,9 @@ class _PraiasPageState extends State<PraiasPage> {
   @override
   void initState() {
     super.initState();
+    final random = Random();    
+    praiasProprias = random.nextInt(totalPraias); 
+    praiasImproprias = totalPraias - praiasProprias;
     _carregarIcones().then((_) => _adicionarMarcadoresSimulados());
   }
 
@@ -67,13 +72,17 @@ class _PraiasPageState extends State<PraiasPage> {
     // apesar de 'deprecated', o método fromAssetImage ainda é o único aceito pelo Google Maps
     // ignore: deprecated_member_use
     _iconePropria = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(14, 14)),
+      const ImageConfiguration(
+        size: Size(14, 14)
+        ),
       'assets/images/propria.png',
     );
     // apesar de 'deprecated', o método fromAssetImage ainda é o único aceito pelo Google Maps
     // ignore: deprecated_member_use
     _iconeImpropria = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(14, 14)),
+      const ImageConfiguration(
+        size: Size(14, 14)
+        ),
       'assets/images/impropria.png',
     );
   }
@@ -151,14 +160,20 @@ class _PraiasPageState extends State<PraiasPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Balneabilidade", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const Text(
+              "Balneabilidade", 
+              style: TextStyle(
+                fontSize: 22, 
+                fontWeight: FontWeight.bold
+                )
+              ),
             const SizedBox(height: 16),
             IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildTotalCard(),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   _buildStatusCard(dataMap, percentualPropria, percentualImpropria),
                 ],
               ),
@@ -204,11 +219,31 @@ class _PraiasPageState extends State<PraiasPage> {
           fit: BoxFit.contain,
         ),
         const SizedBox(width: 6),
-        Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+        Text(
+          label, 
+          style: const TextStyle(
+            fontSize: 10, 
+            fontWeight: FontWeight.bold
+            )
+          ),
         const Spacer(),
-        Text("$valor", style: TextStyle(fontSize: 10, color: cor)),
+        Text(
+          "$valor", 
+          style: TextStyle(
+            fontSize: 10, 
+            color: cor, 
+            fontWeight: FontWeight.bold
+            )
+          ),
         const SizedBox(width: 4),
-        Text("${percentual.toStringAsFixed(1)}%", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: cor)),
+        Text(
+          "${percentual.toStringAsFixed(1)}%", 
+          style: TextStyle(
+            fontWeight: FontWeight.bold, 
+            fontSize: 10, 
+            color: cor
+            )
+          ),
       ],
     );
   }
@@ -224,14 +259,27 @@ class _PraiasPageState extends State<PraiasPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Praias monitoradas", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                const Text(
+                  "Praias monitoradas", 
+                  style: TextStyle(
+                    fontSize: 10,
+                     fontWeight: FontWeight.bold
+                     )
+                     ),
                 const SizedBox(height: 6),
-                Text("$totalPraias", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(
+                  "$totalPraias", 
+                  style: const TextStyle(
+                    fontSize: 20, 
+                    fontWeight: FontWeight.bold
+                    )
+                    ),
               ],
             ),
           ),
         ),
       );
+
 
   Widget _buildStatusCard(Map<String, double> dataMap, double percentualPropria, double percentualImpropria) {
     return Expanded(
@@ -241,7 +289,7 @@ class _PraiasPageState extends State<PraiasPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         color: Colors.white,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -251,7 +299,7 @@ class _PraiasPageState extends State<PraiasPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildLinhaStatus('propria.png', 'Própria para banho', praiasProprias, percentualPropria, Colors.green, isPng: true),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 10),
                     _buildLinhaStatus('impropria.png', 'Imprópria para banho', praiasImproprias, percentualImpropria, Colors.red, isPng: true),
                   ],
                 ),
@@ -278,11 +326,17 @@ class _PraiasPageState extends State<PraiasPage> {
     );
   }
 
+
   Widget _buildFiltroClassificacao() => Expanded(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Exibir por", style: TextStyle(fontSize: 12)),
+            const Text(
+              "Exibir por", 
+              style: TextStyle(
+                fontSize: 12
+                )
+              ),
             PopupMenuButton<String>(
               onSelected: _toggleClassificacao,
               itemBuilder: (context) => [
@@ -300,14 +354,20 @@ class _PraiasPageState extends State<PraiasPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Filtrar por", style: TextStyle(fontSize: 12)),
+            const Text(
+              "Filtrar por", 
+              style: TextStyle(
+                fontSize: 12
+                )
+              ),
             PopupMenuButton<String>(
               onSelected: (value) {
                 setState(() => municipioSelecionado = value);
                 if (value != 'Todos') _moverMapaParaMunicipio(value);
               },
               itemBuilder: (context) => municipios.map((m) => PopupMenuItem<String>(value: m, child: Text(m))).toList(),
-              child: _popupButton(municipioSelecionado),
+              child: 
+                _popupButton(municipioSelecionado),
             ),
           ],
         ),
@@ -317,7 +377,12 @@ class _PraiasPageState extends State<PraiasPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Praia", style: TextStyle(fontSize: 12)),
+            const Text(
+              "Praia", 
+              style: TextStyle(
+                fontSize: 12
+                )
+                ),
             _popupButton("Praia"),
           ],
         ),
@@ -326,14 +391,21 @@ class _PraiasPageState extends State<PraiasPage> {
   Widget _popupButton(String label) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
+          border: Border.all(
+            color: Colors.grey
+            ),
           borderRadius: BorderRadius.circular(8),
           color: Colors.white,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
+            Flexible(
+              child: Text(
+                label, 
+                overflow: TextOverflow.ellipsis
+                )
+                ),
             const Icon(Icons.arrow_drop_down),
           ],
         ),
