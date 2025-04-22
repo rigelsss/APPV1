@@ -113,21 +113,30 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    minimumSize: const Size(300, 60),
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
                     side: const BorderSide(color: Colors.white),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.alternate_email, color: Colors.black87, size: 28),
-                      SizedBox(width: 8),
-                      Text(
-                        'Login com Google',
-                        style: TextStyle(color: Colors.black87, fontSize: 18),
+                    children: [
+                      Image.asset(
+                        'assets/images/OIP.jpg',
+                        width: 32,
+                        height: 24,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(width: 8),
+                      const Flexible(
+                        child: Text(
+                          'Login com Google',
+                          style: TextStyle(color: Colors.black87, fontSize: 18),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),

@@ -95,12 +95,6 @@ class _RegistroPageState extends State<RegistroPage> {
             SizedBox(height: 20),
             Row(
               children: [
-                Expanded(
-                  child: Text(
-                    'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
-                    style: TextStyle(fontSize: 16, color: Colors.black),
-                  ),
-                ),
                 Checkbox(
                   value: _isChecked,
                   onChanged: (bool? value) {
@@ -108,6 +102,12 @@ class _RegistroPageState extends State<RegistroPage> {
                       _isChecked = value ?? false;
                     });
                   },
+                ),
+                Expanded(
+                  child: Text(
+                    'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
+                    style: TextStyle(fontSize: 16, color: Colors.black),
+                  ),
                 ),
               ],
             ),
@@ -157,7 +157,7 @@ class _RegistroPageState extends State<RegistroPage> {
                     TextSpan(
                       text: 'Faça login',
                       style: TextStyle(
-                        color: Colors.purple,
+                        color: Color(0xFF2A2F8C),
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         decoration: TextDecoration.underline,
