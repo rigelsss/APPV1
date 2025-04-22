@@ -42,29 +42,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/background.jpg
-    - assets/images/logo_gov.webp
-    - assets/images/logo_sudema.webp
-    - assets/images/megafone.png
-    - assets/images/denuncia_bg.png
-    - assets/images/bauneabilidade.jpg
-    - assets/images/fiscalizacao.jpg
-    - assets/images/licenciamento.jpg
-    - assets/images/educacao_ambiental.jpg
-    - assets/images/denuncia.jpg
-    - assets/images/areas_protegidas.png
-    - assets/images/fauna.png
-    - assets/images/flora.png
-    - assets/images/poluicao.png
-    - assets/images/recursosHidricos.png
-    - assets/images/residuos.png
-    - assets/images/outra.png
-    - assets/images/flora_tratada.png
-    - assets/images/impropria.svg
-    - assets/images/propria.svg
-    - assets/images/impropria.png
-    - assets/images/propria.png
-
+    - assets/images/
 
 
 

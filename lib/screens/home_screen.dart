@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';  
+import 'package:google_fonts/google_fonts.dart';
 import '../services/getnoticia.dart';
 import '../models/noticia.dart';
 import '../screens/widgets_reutilizaveis/appbar.dart';
@@ -28,11 +28,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<Widget> get _pages => [
-        buildHomeBody(),
-        const PraiasPage(),
-        const NoticiasPage(),
-        const DenunciaPage(),
-      ];
+    buildHomeBody(),
+    const PraiasPage(),
+    const NoticiasPage(),
+    const DenunciaPage(),
+  ];
 
   void _simulateLogin() {
     setState(() {
@@ -82,10 +82,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildHomeBody() {
+    final screenWidth = MediaQuery.of(context).size.width;
     return SafeArea(
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(1.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -93,9 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: 370,
+                  width: screenWidth * 0.9, // Ajuste responsivo
                   child: Container(
-                    height: 100,
+                    height: screenWidth * 0.25, // Ajuste proporcional à tela
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -149,8 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 Image.asset(
                                   'assets/images/megafone.png',
-                                  width: 64,
-                                  height: 64,
+                                  width: screenWidth * 0.18, // Ajuste responsivo
+                                  height: screenWidth * 0.18, // Ajuste responsivo
                                   color: Colors.white,
                                 ),
                               ],
@@ -166,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: 370,
+                  width: screenWidth * 0.9, // Ajuste responsivo
                   child: Row(
                     children: const [
                       Text(
@@ -188,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: 370,
+                  width: screenWidth * 0.9, // Ajuste responsivo
                   height: 130,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
@@ -221,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: 370,
+                  width: screenWidth * 0.9, // Ajuste responsivo
                   child: Row(
                     children: [
                       const Text(
@@ -259,13 +260,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _noticias.isEmpty
                     ? const Center(child: CircularProgressIndicator())
                     : ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _noticias.length,
-                        itemBuilder: (context, index) {
-                          final noticia = _noticias[index];
-                          return _buildCardNoticia(noticia);
-                        },
-                      ),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _noticias.length,
+                  itemBuilder: (context, index) {
+                    final noticia = _noticias[index];
+                    return _buildCardNoticia(noticia);
+                  },
+                ),
               ),
             ],
           ),
@@ -320,86 +321,55 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCardNoticia(Noticia noticia) {
-  DateTime data = DateTime.tryParse(noticia.dataHoraPublicacao) ?? DateTime.now();
-  String dataFormatada = "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
-  String horaFormatada = "${data.hour.toString().padLeft(2, '0')}h${data.minute.toString().padLeft(2, '0')}";
+    DateTime data = DateTime.tryParse(noticia.dataHoraPublicacao) ?? DateTime.now();
+    String dataFormatada = "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
+    String horaFormatada = "${data.hour.toString().padLeft(2, '0')}h${data.minute.toString().padLeft(2, '0')}";
 
-  return Container(
-    width: 260,
-    margin: const EdgeInsets.symmetric(horizontal: 8),
-    decoration: BoxDecoration(
-      border: Border.all(color: Colors.grey.shade300),
-      borderRadius: BorderRadius.circular(16),
-      color: Colors.white,
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.05),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-          child: Image.network(
-            noticia.imagemUrl,
-            height: 140,
-            width: double.infinity,
-            fit: BoxFit.cover,
+    return Container(
+      width: 260,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 6, right: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                '$dataFormatada  $horaFormatada',
-                style: GoogleFonts.inter(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w300,
-                  color: Colors.grey[700],
-                ),
-              ),
-            ],
-          ),
-        ),
-        //Comentário teste
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          child: Text(
-            noticia.titulo,
-            maxLines: 4,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.inter(
-              fontSize: 15, // reduzido
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-              height: 1.3,
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: Image.network(
+              noticia.imagemUrl,
+              height: 140,
+              width: double.infinity,
+              fit: BoxFit.cover,
             ),
           ),
-        ),
-        if (noticia.descricao.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.all(8.0),
             child: Text(
-              noticia.descricao,
-              maxLines: 3,
+              noticia.titulo,
+              style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 14),
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.inter(
-                fontSize: 13, // reduzido
-                fontWeight: FontWeight.w400,
-                color: Colors.black54,
-                height: 1.3,
-              ),
             ),
           ),
-        const SizedBox(height: 10),
-      ],
-    ),
-  );
-}
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              "$dataFormatada às $horaFormatada",
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

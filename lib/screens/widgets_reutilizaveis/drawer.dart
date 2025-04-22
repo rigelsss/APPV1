@@ -14,9 +14,9 @@ class CustomDrawer extends StatelessWidget {
             padding: const EdgeInsets.only(top: 40, bottom: 16),
             child: Center(
               child: Image.asset(
-                'assets/images/logo_sudema.webp',
+                'assets/images/logosimples.png',
                 width: 260,
-                height: 120,
+                height: 100,
                 fit: BoxFit.contain,
               ),
             ),
@@ -27,7 +27,10 @@ class CustomDrawer extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.campaign),
                   title: const Text('Denúncias'),
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/denuncias');
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.beach_access),
@@ -69,7 +72,7 @@ class CustomDrawer extends StatelessWidget {
                           style: TextStyle(fontSize: 18),
                         ),
                       ),
-                      const Icon(Icons.arrow_forward_ios, size: 18),
+                      const Icon(Icons.login, size: 18),
                     ],
                   ),
                 ],
