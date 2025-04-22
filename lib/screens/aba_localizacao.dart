@@ -9,7 +9,8 @@ import 'package:sudema_app/screens/endereco_modal_sheet.dart';
 import '../models/denuncia_data.dart';
 
 class AbaLocalizacao extends StatefulWidget {
-  const AbaLocalizacao({super.key});
+  final VoidCallback onEnderecoConfirmado;
+  const AbaLocalizacao({super.key, required this.onEnderecoConfirmado});
 
   @override
   State<AbaLocalizacao> createState() => _AbaLocalizacaoState();
@@ -21,7 +22,6 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
   String _endereco = 'Carregando endereço...';
   String _tipoEndereco = '';
   String _placemarkInfo = '';
-  bool _confirmando = false;
   Timer? _debounce;
 
   final TextEditingController _buscaController = TextEditingController();
@@ -31,6 +31,8 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
   @override
   void initState() {
     super.initState();
+    DenunciaData().enderecoConfirmado = false;
+
     _obterLocalizacaoAtual();
   }
 
@@ -41,7 +43,6 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
     final posicao = await Geolocator.getCurrentPosition();
     setState(() {
       _posicaoAtual = LatLng(posicao.latitude, posicao.longitude);
-      DenunciaData().localizacao = _posicaoAtual;
     });
     _buscarEnderecoGoogle(_posicaoAtual!);
   }
@@ -115,6 +116,12 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
 
   void _confirmarEndereco() {
     print('Endereço confirmado: $_endereco');
+
+    DenunciaData().localizacao = _posicaoAtual;
+    DenunciaData().endereco = _endereco;
+    DenunciaData().enderecoConfirmado = true;
+
+    widget.onEnderecoConfirmado();
   }
 
   Future<void> _abrirBuscaModalEstilizado() async {
@@ -135,13 +142,6 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
         _posicaoAtual = destino;
         _endereco = enderecoSelecionado;
         _buscaController.text = enderecoSelecionado;
-        _confirmando = true;
-      });
-
-      Timer(const Duration(seconds: 5), () {
-        if (mounted) {
-          setState(() => _confirmando = false);
-        }
       });
 
       DenunciaData().localizacao = _posicaoAtual;
@@ -151,44 +151,45 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
 
   @override
   Widget build(BuildContext context) {
-    if (_posicaoAtual == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    final enderecoValido = DenunciaData().endereco != null &&
+        DenunciaData().endereco!.isNotEmpty &&
+        DenunciaData().endereco != 'Endereço não encontrado';
 
     return Stack(
       children: [
-        GoogleMap(
-          initialCameraPosition: CameraPosition(
-            target: _posicaoAtual!,
-            zoom: 17,
-          ),
-          onMapCreated: (controller) => _mapController = controller,
-          onCameraIdle: () async {
-            if (_confirmando) return;
+        if (_posicaoAtual != null)
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: _posicaoAtual!,
+              zoom: 17,
+            ),
+            onMapCreated: (controller) => _mapController = controller,
+            onCameraIdle: () async {
+              _debounce?.cancel();
+              _debounce = Timer(const Duration(milliseconds: 500), () async {
+                LatLngBounds bounds = await _mapController.getVisibleRegion();
+                final centerLat = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
+                final centerLng = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
+                final center = LatLng(centerLat, centerLng);
 
-            _debounce?.cancel();
-            _debounce = Timer(const Duration(milliseconds: 500), () async {
-              LatLngBounds bounds = await _mapController.getVisibleRegion();
-              final centerLat = (bounds.northeast.latitude + bounds.southwest.latitude) / 2;
-              final centerLng = (bounds.northeast.longitude + bounds.southwest.longitude) / 2;
-              final center = LatLng(centerLat, centerLng);
+                setState(() {
+                  _posicaoAtual = center;
+                });
 
-              setState(() {
-                _posicaoAtual = center;
+                _buscarEnderecoGoogle(center);
               });
-
-              _buscarEnderecoGoogle(center);
-            });
-          },
-          myLocationEnabled: true,
-          myLocationButtonEnabled: true,
-        ),
+            },
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+          )
+        else
+          const Center(child: CircularProgressIndicator()),
 
         const Center(
           child: Icon(Icons.location_pin, size: 40, color: Colors.red),
         ),
 
-        if (devMode)
+        if (devMode && _posicaoAtual != null)
           Positioned(
             top: 20,
             left: 10,
@@ -242,25 +243,27 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
                 ),
                 const SizedBox(height: 20),
 
-                Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: TextField(
-                      controller: _buscaController,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        hintText: 'Pesquisar',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                        suffixIcon: const Icon(Icons.search, color: Colors.grey),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
-                          borderRadius: BorderRadius.circular(16),
+                GestureDetector(
+                  onTap: _abrirBuscaModalEstilizado,
+                  child: AbsorbPointer(
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: TextField(
+                        controller: _buscaController,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          hintText: 'Pesquisar',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                          suffixIcon: const Icon(Icons.search, color: Colors.grey),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                         ),
                       ),
                     ),
@@ -272,7 +275,7 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _confirmando ? _confirmarEndereco : _abrirBuscaModalEstilizado,
+                    onPressed: enderecoValido ? _confirmarEndereco : _abrirBuscaModalEstilizado,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2A2F8C),
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -281,7 +284,7 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
                       ),
                     ),
                     child: Text(
-                      _confirmando ? 'Confirmar endereço' : 'Pesquisar',
+                      enderecoValido ? 'Confirmar endereço' : 'Pesquisar',
                       style: const TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
