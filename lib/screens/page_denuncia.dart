@@ -13,7 +13,7 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
     @override
     void initState() {
     super.initState();
-    DenunciaData().limpar(); // isso garante que uma nova denúncia comece limpa
+    DenunciaData().limpar();
   }
 
   final List<String> opcao = [

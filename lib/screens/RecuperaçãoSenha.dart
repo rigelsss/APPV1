@@ -21,6 +21,7 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBarDenuncia(title: 'Recuperação de Senha'),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 24),

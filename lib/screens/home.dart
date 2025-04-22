@@ -37,11 +37,11 @@ class _HomePageState extends State<HomePage> {
         },
       ),
       drawer: const CustomDrawer(),
-      body: buildHomeBody(context), // 👈 refatorado aqui
+      body: buildHomeBody(context),
     );
   }
 
-  // 👇 MÉTODO PRINCIPAL DA HOME
+  // MÉTODO PRINCIPAL DA HOME
   Widget buildHomeBody(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -71,11 +71,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 👇 MÉTODOS AUXILIARES
+  // MÉTODOS AUXILIARES
   Widget _buildSearchBar(double width) {
     return Center(
       child: SizedBox(
-        width: width * 0.9,
+        width: width * 0.9, // Ajuste para uma largura responsiva
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
@@ -242,17 +242,16 @@ class _HomePageState extends State<HomePage> {
       child: widget.noticias.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: widget.noticias.length,
-              itemBuilder: (context, index) {
-                final noticia = widget.noticias[index];
-                return _buildCardNoticia(noticia); // Certifique-se de ter esse método!
-              },
-            ),
+        scrollDirection: Axis.horizontal,
+        itemCount: widget.noticias.length,
+        itemBuilder: (context, index) {
+          final noticia = widget.noticias[index];
+          return _buildCardNoticia(noticia);
+        },
+      ),
     );
   }
 
-  // ⛳ Esse método você já deve ter criado em outro lugar
   Widget _buildServiceCardComImagem({
     required String label,
     required String imagePath,
@@ -287,7 +286,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // ⛳ Certifique-se de ter isso ou adapte ao que você já tem
   Widget _buildCardNoticia(Noticia noticia) {
     return Container(
       width: 250,

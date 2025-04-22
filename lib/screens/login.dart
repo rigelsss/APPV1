@@ -18,7 +18,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Pegando o tamanho da tela
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -123,7 +122,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 24),
 
-                // Divisor com a opção 'ou'
                 const Row(
                   children: [
                     Expanded(
@@ -167,7 +165,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 24),
 
-                // Link para Cadastro
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
