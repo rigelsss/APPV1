@@ -15,10 +15,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+       backgroundColor: Colors.white,
       centerTitle: true,
       title: SizedBox(
         height: 40,
-        child: Image.asset('assets/images/logo_sudema.webp'),
+        child: Image.asset('assets/images/logosimples.png'),
       ),
       leading: IconButton(
         icon: const Icon(Icons.menu),

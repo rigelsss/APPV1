@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'webview_screen.dart'; 
+import 'webview_screen.dart';
 import 'page_denuncia.dart';
 
 class DenunciaPage extends StatelessWidget {
@@ -10,6 +10,7 @@ class DenunciaPage extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -74,6 +75,7 @@ class DenunciaPage extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
+              // Botão para abrir o Decreto
               Center(
                 child: InkWell(
                   onTap: () {
@@ -92,13 +94,13 @@ class DenunciaPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: const Color(0xFFF5F5F5),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey.shade300),
+                      border: Border.all(color: const Color(0xFF2A2F8C)),
                     ),
                     child: const Text(
                       'Decreto Estadual nº 44.889, de 26 de março de 2024',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.black,
+                        color: Color(0xFF2A2F8C),
                         decoration: TextDecoration.underline,
                       ),
                       textAlign: TextAlign.center,

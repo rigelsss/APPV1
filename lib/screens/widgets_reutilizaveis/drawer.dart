@@ -27,7 +27,10 @@ class CustomDrawer extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.campaign),
                   title: const Text('Denúncias'),
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/denuncias');
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.beach_access),

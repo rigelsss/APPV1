@@ -14,25 +14,31 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool _checkboxValue = false;
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
+    // Pegando o tamanho da tela
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBarDenuncia(title: 'Login'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500),
+            constraints: BoxConstraints(maxWidth: screenWidth > 600 ? 500 : screenWidth * 0.9), // Responsivo
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 40),
                 Container(
-                  constraints: const BoxConstraints(maxWidth: 280, maxHeight: 60),
-                  child: Image.asset('assets/images/logo_sudema.webp'),
+                  constraints: BoxConstraints(maxWidth: screenWidth > 600 ? 280 : 180), // Ajuste de largura
+                  child: Image.asset('assets/images/logosimples.png'),
                 ),
                 const SizedBox(height: 24),
+
+                // Campo de E-mail
                 TextField(
                   controller: emailController,
                   decoration: const InputDecoration(
@@ -43,17 +49,31 @@ class _LoginPageState extends State<LoginPage> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 16),
+
+                // Campo de Senha
                 TextField(
                   controller: passwordController,
-                  decoration: const InputDecoration(
+                  obscureText: _obscureText,
+                  decoration: InputDecoration(
                     labelText: 'Senha',
                     hintText: 'Digite sua senha',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscureText ? Icons.visibility_off : Icons.visibility,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscureText = !_obscureText;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
                 ),
                 const SizedBox(height: 2),
-                Row(mainAxisAlignment: MainAxisAlignment.start,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Checkbox(
                       value: _checkboxValue,
@@ -76,7 +96,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 8,),
+                SizedBox(height: 8),
+
+                // Botão de Login
                 SizedBox(
                   width: double.infinity,
                   height: 60,
@@ -90,8 +112,8 @@ class _LoginPageState extends State<LoginPage> {
                       backgroundColor: const Color(0xFF2A2F8C),
                       minimumSize: const Size(300, 60),
                       shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                     child: const Text(
                       'Login',
@@ -100,6 +122,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 24),
+
+                // Divisor com a opção 'ou'
                 const Row(
                   children: [
                     Expanded(
@@ -112,9 +136,9 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
                 const SizedBox(height: 24),
+
                 ElevatedButton(
-                  onPressed: () {
-                  },
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
@@ -142,6 +166,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 24),
+
+                // Link para Cadastro
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
