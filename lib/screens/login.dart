@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:sudema_app/screens/Recupera%C3%A7%C3%A3oSenha.dart';
 import 'package:sudema_app/screens/registro.dart';
 import '../screens/widgets_reutilizaveis/appbardenuncia.dart';
@@ -15,6 +17,54 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
   bool _checkboxValue = false;
   bool _obscureText = true;
+  String? _token;
+
+  Future<void> realizarLogin() async {
+    final email = emailController.text.trim();
+    final senha = passwordController.text.trim();
+
+    if (email.isEmpty || senha.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha todos os campos')),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:9000/auth/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "login": email,
+          "password": senha,
+          "userType": "MOBILE",
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final token = data['token'];
+
+        setState(() {
+          _token = token;
+        });
+
+        print('Token salvo: $_token');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'] ?? 'Login realizado com sucesso')),
+        );
+
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ${response.statusCode}: ${response.body}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro de conexão: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +76,16 @@ class _LoginPageState extends State<LoginPage> {
         padding: const EdgeInsets.all(24),
         child: Center(
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: screenWidth > 600 ? 500 : screenWidth * 0.9), // Responsivo
+            constraints: BoxConstraints(maxWidth: screenWidth > 600 ? 500 : screenWidth * 0.9),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 40),
                 Container(
-                  constraints: BoxConstraints(maxWidth: screenWidth > 600 ? 280 : 180), // Ajuste de largura
+                  constraints: BoxConstraints(maxWidth: screenWidth > 600 ? 280 : 180),
                   child: Image.asset('assets/images/logosimples.png'),
                 ),
                 const SizedBox(height: 24),
-
-                // Campo de E-mail
                 TextField(
                   controller: emailController,
                   decoration: const InputDecoration(
@@ -48,8 +96,6 @@ class _LoginPageState extends State<LoginPage> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 16),
-
-                // Campo de Senha
                 TextField(
                   controller: passwordController,
                   obscureText: _obscureText,
@@ -95,18 +141,12 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
-
-                // Botão de Login
+                const SizedBox(height: 8),
                 SizedBox(
                   width: double.infinity,
                   height: 60,
                   child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Login ainda não implementado')),
-                      );
-                    },
+                    onPressed: realizarLogin,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2A2F8C),
                       minimumSize: const Size(300, 60),
@@ -121,7 +161,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 24),
-
                 const Row(
                   children: [
                     Expanded(
@@ -134,7 +173,6 @@ class _LoginPageState extends State<LoginPage> {
                   ],
                 ),
                 const SizedBox(height: 24),
-
                 ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
@@ -164,7 +202,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 24),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
