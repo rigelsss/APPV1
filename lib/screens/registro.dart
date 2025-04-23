@@ -19,6 +19,7 @@ class _RegistroPageState extends State<RegistroPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
 
+
   bool _obscureText = true;
   bool _isChecked = false;
 
