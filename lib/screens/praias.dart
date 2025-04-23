@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:pie_chart/pie_chart.dart';
 
 class PraiasPage extends StatefulWidget {
   const PraiasPage({super.key});
@@ -17,17 +16,15 @@ class _PraiaMarker {
 }
 
 class _PraiasPageState extends State<PraiasPage> {
-  
   int totalPraias = 62;
-  
-  late int praiasProprias =  Random().nextInt(62 + 1); 
+  late int praiasProprias = Random().nextInt(62 + 1);
   late int praiasImproprias = totalPraias - praiasProprias;
 
   late GoogleMapController mapController;
   final LatLng _initialPosition = const LatLng(-7.1202, -34.8802);
 
   List<String> classificacoesSelecionadas = [];
-  String municipioSelecionado = 'Todos';
+  String municipioSelecionado = ''; // agora começa sem seleção
   String praiaSelecionada = '';
 
   final List<String> municipios = [
@@ -62,27 +59,19 @@ class _PraiasPageState extends State<PraiasPage> {
   @override
   void initState() {
     super.initState();
-    final random = Random();    
-    praiasProprias = random.nextInt(totalPraias); 
+    final random = Random();
+    praiasProprias = random.nextInt(totalPraias);
     praiasImproprias = totalPraias - praiasProprias;
     _carregarIcones().then((_) => _adicionarMarcadoresSimulados());
   }
 
   Future<void> _carregarIcones() async {
-    // apesar de 'deprecated', o método fromAssetImage ainda é o único aceito pelo Google Maps
-    // ignore: deprecated_member_use
     _iconePropria = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(
-        size: Size(14, 14)
-        ),
+      const ImageConfiguration(size: Size(14, 14)),
       'assets/images/propria.png',
     );
-    // apesar de 'deprecated', o método fromAssetImage ainda é o único aceito pelo Google Maps
-    // ignore: deprecated_member_use
     _iconeImpropria = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(
-        size: Size(14, 14)
-        ),
+      const ImageConfiguration(size: Size(14, 14)),
       'assets/images/impropria.png',
     );
   }
@@ -119,12 +108,12 @@ class _PraiasPageState extends State<PraiasPage> {
 
   void _toggleClassificacao(String item) {
     setState(() {
-      if (item == 'Selecionar tudo') {
-        classificacoesSelecionadas = classificacoesSelecionadas.length < 2 ? ['Próprias', 'Impróprias'] : [];
-      } else {
-        classificacoesSelecionadas.contains(item)
-            ? classificacoesSelecionadas.remove(item)
-            : classificacoesSelecionadas.add(item);
+      if (item == 'Mostrar tudo') {
+        classificacoesSelecionadas = ['Próprias', 'Impróprias'];
+      } else if (item == 'Mostrar apenas próprias') {
+        classificacoesSelecionadas = ['Próprias'];
+      } else if (item == 'Mostrar apenas impróprias') {
+        classificacoesSelecionadas = ['Impróprias'];
       }
       _filtrarMarcadores();
     });
@@ -138,236 +127,111 @@ class _PraiasPageState extends State<PraiasPage> {
   }
 
   String _getClassificacaoLabel() {
-    if (classificacoesSelecionadas.length == 2) return 'Selecionar tudo';
-    if (classificacoesSelecionadas.length == 1) return classificacoesSelecionadas.first;
-    return 'Classificação';
+    if (classificacoesSelecionadas.length == 2) return 'Mostrar tudo';
+    if (classificacoesSelecionadas.contains('Próprias')) return 'Mostrar apenas próprias';
+    if (classificacoesSelecionadas.contains('Impróprias')) return 'Mostrar apenas impróprias';
+    return 'Mostrar tudo';
   }
 
   @override
   Widget build(BuildContext context) {
-    double percentualPropria = praiasProprias / totalPraias * 100;
-    double percentualImpropria = praiasImproprias / totalPraias * 100;
-
-    final Map<String, double> dataMap = {
-      "Própria": percentualPropria,
-      "Imprópria": percentualImpropria,
-    };
-
     return Scaffold(
-      body: Container(
-        color: Colors.grey.shade100,
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Balneabilidade", 
-              style: TextStyle(
-                fontSize: 22, 
-                fontWeight: FontWeight.bold
-                )
-              ),
-            const SizedBox(height: 16),
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildTotalCard(),
-                  const SizedBox(width: 10),
-                  _buildStatusCard(dataMap, percentualPropria, percentualImpropria),
-                ],
-              ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            color: Colors.grey.shade100,
+            child: const Text(
+              "Balneabilidade",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
-            Row(
+          ),
+          Container(
+            color: Colors.grey.shade300,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildFiltroClassificacao(),
-                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Trechos monitorados",
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "$totalPraias",
+                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                Align(
+                  alignment: Alignment.center,
+                  child: SizedBox(
+                    width: 200,
+                    height: 35,
+                    child: PopupMenuButton<String>(
+                      onSelected: _toggleClassificacao,
+                      itemBuilder: (context) => [
+                        _popupItem('Mostrar tudo', classificacoesSelecionadas.length == 2),
+                        _popupItem('Mostrar apenas próprias', classificacoesSelecionadas.contains('Próprias') && classificacoesSelecionadas.length == 1),
+                        _popupItem('Mostrar apenas impróprias', classificacoesSelecionadas.contains('Impróprias') && classificacoesSelecionadas.length == 1),
+                      ],
+                      child: _popupButton(_getClassificacaoLabel()),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
                 _buildFiltroMunicipio(),
                 const SizedBox(width: 8),
                 _buildFiltroPraia(),
               ],
             ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: GoogleMap(
-                  onMapCreated: (GoogleMapController controller) {
-                    mapController = controller;
-                  },
-                  initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 11),
-                  myLocationButtonEnabled: false,
-                  zoomControlsEnabled: false,
-                  markers: _marcadoresVisiveis,
-                ),
+          ),
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: GoogleMap(
+                onMapCreated: (GoogleMapController controller) {
+                  mapController = controller;
+                },
+                initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 11),
+                myLocationButtonEnabled: false,
+                zoomControlsEnabled: false,
+                markers: _marcadoresVisiveis,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
-
-  Widget _buildLinhaStatus(String asset, String label, int valor, double percentual, Color cor, {bool isPng = false}) {
-    return Row(
-      children: [
-        Image.asset(
-          'assets/images/$asset',
-          width: 22,
-          height: 22,
-          fit: BoxFit.contain,
-        ),
-        const SizedBox(width: 6),
-        Text(
-          label, 
-          style: const TextStyle(
-            fontSize: 10, 
-            fontWeight: FontWeight.bold
-            )
-          ),
-        const Spacer(),
-        Text(
-          "$valor", 
-          style: TextStyle(
-            fontSize: 10, 
-            color: cor, 
-            fontWeight: FontWeight.bold
-            )
-          ),
-        const SizedBox(width: 4),
-        Text(
-          "${percentual.toStringAsFixed(1)}%", 
-          style: TextStyle(
-            fontWeight: FontWeight.bold, 
-            fontSize: 10, 
-            color: cor
-            )
-          ),
-      ],
-    );
-  }
-
-  Widget _buildTotalCard() => Expanded(
-        flex: 3,
-        child: Card(
-          elevation: 7,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Praias monitoradas", 
-                  style: TextStyle(
-                    fontSize: 10,
-                     fontWeight: FontWeight.bold
-                     )
-                     ),
-                const SizedBox(height: 6),
-                Text(
-                  "$totalPraias", 
-                  style: const TextStyle(
-                    fontSize: 20, 
-                    fontWeight: FontWeight.bold
-                    )
-                    ),
-              ],
-            ),
-          ),
-        ),
-      );
-
-
-  Widget _buildStatusCard(Map<String, double> dataMap, double percentualPropria, double percentualImpropria) {
-    return Expanded(
-      flex: 6,
-      child: Card(
-        elevation: 7,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(
-                flex: 5,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLinhaStatus('propria.png', 'Própria para banho', praiasProprias, percentualPropria, Colors.green, isPng: true),
-                    const SizedBox(height: 10),
-                    _buildLinhaStatus('impropria.png', 'Imprópria para banho', praiasImproprias, percentualImpropria, Colors.red, isPng: true),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Center(
-                child: SizedBox(
-                  width: 30,
-                  height: 30,
-                  child: PieChart(
-                    dataMap: dataMap,
-                    chartType: ChartType.ring,
-                    baseChartColor: Colors.grey.shade300,
-                    colorList: [Colors.green, Colors.red],
-                    legendOptions: const LegendOptions(showLegends: false),
-                    chartValuesOptions: const ChartValuesOptions(showChartValues: false),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-
-  Widget _buildFiltroClassificacao() => Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Exibir por", 
-              style: TextStyle(
-                fontSize: 12
-                )
-              ),
-            PopupMenuButton<String>(
-              onSelected: _toggleClassificacao,
-              itemBuilder: (context) => [
-                _popupItem('Selecionar tudo', classificacoesSelecionadas.length == 2),
-                _popupItem('Próprias', classificacoesSelecionadas.contains('Próprias')),
-                _popupItem('Impróprias', classificacoesSelecionadas.contains('Impróprias')),
-              ],
-              child: _popupButton(_getClassificacaoLabel()),
-            ),
-          ],
-        ),
-      );
 
   Widget _buildFiltroMunicipio() => Expanded(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Filtrar por", 
-              style: TextStyle(
-                fontSize: 12
-                )
-              ),
+            const Text("Filtrar por", style: TextStyle(fontSize: 12)),
+            const SizedBox(height: 8),
             PopupMenuButton<String>(
               onSelected: (value) {
                 setState(() => municipioSelecionado = value);
-                if (value != 'Todos') _moverMapaParaMunicipio(value);
+                if (value.isNotEmpty && value != 'Todos') {
+                  _moverMapaParaMunicipio(value);
+                }
               },
-              itemBuilder: (context) => municipios.map((m) => PopupMenuItem<String>(value: m, child: Text(m))).toList(),
-              child: 
-                _popupButton(municipioSelecionado),
+              itemBuilder: (context) =>
+                  municipios.map((m) => PopupMenuItem<String>(value: m, child: Text(m))).toList(),
+              child: _popupButton(municipioSelecionado.isEmpty ? 'Municípios' : municipioSelecionado),
             ),
           ],
         ),
@@ -377,13 +241,8 @@ class _PraiasPageState extends State<PraiasPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Praia", 
-              style: TextStyle(
-                fontSize: 12
-                )
-                ),
-            _popupButton("Praia"),
+            const SizedBox(height: 24),
+            _popupButton("Trecho"),
           ],
         ),
       );
@@ -392,9 +251,10 @@ class _PraiasPageState extends State<PraiasPage> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           border: Border.all(
-            color: Colors.grey
-            ),
-          borderRadius: BorderRadius.circular(8),
+            color: Colors.grey.shade500,
+            width: 1.2,
+          ),
+          borderRadius: BorderRadius.circular(6),
           color: Colors.white,
         ),
         child: Row(
@@ -402,11 +262,12 @@ class _PraiasPageState extends State<PraiasPage> {
           children: [
             Flexible(
               child: Text(
-                label, 
-                overflow: TextOverflow.ellipsis
-                )
-                ),
-            const Icon(Icons.arrow_drop_down),
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 11),
+              ),
+            ),
+            const Icon(Icons.keyboard_arrow_down_rounded, size: 20),
           ],
         ),
       );
