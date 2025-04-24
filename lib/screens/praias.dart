@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:sudema_app/data/estacoes_monitoramento.dart';
 
 class PraiasPage extends StatefulWidget {
   const PraiasPage({super.key});
@@ -16,16 +17,15 @@ class _PraiaMarker {
 }
 
 class _PraiasPageState extends State<PraiasPage> {
-  int totalPraias = 62;
-  late int praiasProprias = Random().nextInt(62 + 1);
-  late int praiasImproprias = totalPraias - praiasProprias;
-
   late GoogleMapController mapController;
   final LatLng _initialPosition = const LatLng(-7.1202, -34.8802);
 
-  List<String> classificacoesSelecionadas = [];
-  String municipioSelecionado = ''; // agora começa sem seleção
+  List<String> classificacoesSelecionadas = ['Próprias', 'Impróprias'];
+  String municipioSelecionado = '';
   String praiaSelecionada = '';
+
+  double currentZoom = 11.0;
+  final double minZoomToShowMarkers = 12.5;
 
   final List<String> municipios = [
     'Todos',
@@ -36,19 +36,8 @@ class _PraiasPageState extends State<PraiasPage> {
     'Cabedelo',
     'João Pessoa',
     'Conde',
-    'Pitimbú',
+    'Pitimbú'
   ];
-
-  final Map<String, LatLng> coordenadasMunicipios = {
-    'Mataraca': LatLng(-6.594477, -34.967659),
-    'Baia da Traição': LatLng(-6.697682, -34.935901),
-    'Rio Tinto': LatLng(-6.812848, -34.915088),
-    'Lucena': LatLng(-6.904164, -34.860043),
-    'Cabedelo': LatLng(-7.028684, -34.839712),
-    'João Pessoa': LatLng(-7.111758, -34.823013),
-    'Conde': LatLng(-7.278528, -34.800968),
-    'Pitimbú': LatLng(-7.475120, -34.808107),
-  };
 
   BitmapDescriptor? _iconePropria;
   BitmapDescriptor? _iconeImpropria;
@@ -59,10 +48,7 @@ class _PraiasPageState extends State<PraiasPage> {
   @override
   void initState() {
     super.initState();
-    final random = Random();
-    praiasProprias = random.nextInt(totalPraias);
-    praiasImproprias = totalPraias - praiasProprias;
-    _carregarIcones().then((_) => _adicionarMarcadoresSimulados());
+    _carregarIcones().then((_) => _gerarMarcadoresComSimulacao());
   }
 
   Future<void> _carregarIcones() async {
@@ -76,34 +62,49 @@ class _PraiasPageState extends State<PraiasPage> {
     );
   }
 
-  void _adicionarMarcadoresSimulados() {
-    final random = Random();
+  void _gerarMarcadoresComSimulacao() {
     _todosMarcadores.clear();
-    for (var entry in coordenadasMunicipios.entries) {
-      bool isPropria = random.nextBool();
+    final random = Random();
+
+    for (var estacao in estacoes) {
+      final isPropria = random.nextBool();
+      final classificacao = isPropria ? 'Próprias' : 'Impróprias';
+      final icon = isPropria ? _iconePropria : _iconeImpropria;
+
       _todosMarcadores.add(_PraiaMarker(
         marker: Marker(
-          markerId: MarkerId(entry.key),
-          position: entry.value,
-          icon: isPropria ? _iconePropria! : _iconeImpropria!,
+          markerId: MarkerId(estacao.codigo),
+          position: estacao.coordenadas,
+          icon: icon!,
           infoWindow: InfoWindow(
-            title: entry.key,
-            snippet: isPropria ? 'Própria para banho' : 'Imprópria para banho',
+            title: estacao.nome,
+            snippet: '${estacao.endereco}\n$classificacao',
           ),
         ),
-        classificacao: isPropria ? 'Próprias' : 'Impróprias',
+        classificacao: classificacao,
       ));
     }
-    _filtrarMarcadores();
+
+    setState(() {
+      _filtrarMarcadores();
+    });
   }
 
   void _filtrarMarcadores() {
-    setState(() {
-      _marcadoresVisiveis.clear();
-      _marcadoresVisiveis.addAll(_todosMarcadores
-          .where((m) => classificacoesSelecionadas.contains(m.classificacao))
-          .map((m) => m.marker));
-    });
+    _marcadoresVisiveis.clear();
+
+    if (currentZoom >= minZoomToShowMarkers) {
+      _marcadoresVisiveis.addAll(
+        _todosMarcadores.where((m) {
+          final estacao = estacoes.firstWhere((e) => e.codigo == m.marker.markerId.value);
+          final matchMunicipio = municipioSelecionado.isEmpty ||
+              municipioSelecionado == 'Todos' ||
+              estacao.municipio == municipioSelecionado;
+          final matchClassificacao = classificacoesSelecionadas.contains(m.classificacao);
+          return matchMunicipio && matchClassificacao;
+        }).map((m) => m.marker),
+      );
+    }
   }
 
   void _toggleClassificacao(String item) {
@@ -119,11 +120,19 @@ class _PraiasPageState extends State<PraiasPage> {
     });
   }
 
+  LatLng _calcularCentroMunicipio(List estacoesMunicipio) {
+    final lat = estacoesMunicipio.map((e) => e.coordenadas.latitude).reduce((a, b) => a + b) / estacoesMunicipio.length;
+    final lng = estacoesMunicipio.map((e) => e.coordenadas.longitude).reduce((a, b) => a + b) / estacoesMunicipio.length;
+    return LatLng(lat, lng);
+  }
+
   void _moverMapaParaMunicipio(String municipio) {
-    if (coordenadasMunicipios.containsKey(municipio)) {
-      final destino = coordenadasMunicipios[municipio]!;
-      mapController.animateCamera(CameraUpdate.newLatLngZoom(destino, 13));
+    final estacoesMunicipio = estacoes.where((e) => e.municipio == municipio).toList();
+    if (estacoesMunicipio.isNotEmpty) {
+      final destino = _calcularCentroMunicipio(estacoesMunicipio);
+      mapController.animateCamera(CameraUpdate.newLatLngZoom(destino, 12.5));
     }
+    _filtrarMarcadores();
   }
 
   String _getClassificacaoLabel() {
@@ -141,7 +150,7 @@ class _PraiasPageState extends State<PraiasPage> {
         children: [
           Container(
             padding: const EdgeInsets.all(16),
-            color: Colors.grey.shade100,
+            color: Colors.white,
             child: const Text(
               "Balneabilidade",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
@@ -156,32 +165,23 @@ class _PraiasPageState extends State<PraiasPage> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Trechos monitorados",
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                    ),
+                    const Text("Trechos monitorados", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 4),
-                    Text(
-                      "$totalPraias",
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                    ),
+                    Text("${estacoes.length}", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const Spacer(),
-                Align(
-                  alignment: Alignment.center,
-                  child: SizedBox(
-                    width: 200,
-                    height: 35,
-                    child: PopupMenuButton<String>(
-                      onSelected: _toggleClassificacao,
-                      itemBuilder: (context) => [
-                        _popupItem('Mostrar tudo', classificacoesSelecionadas.length == 2),
-                        _popupItem('Mostrar apenas próprias', classificacoesSelecionadas.contains('Próprias') && classificacoesSelecionadas.length == 1),
-                        _popupItem('Mostrar apenas impróprias', classificacoesSelecionadas.contains('Impróprias') && classificacoesSelecionadas.length == 1),
-                      ],
-                      child: _popupButton(_getClassificacaoLabel()),
-                    ),
+                SizedBox(
+                  width: 200,
+                  height: 35,
+                  child: PopupMenuButton<String>(
+                    onSelected: _toggleClassificacao,
+                    itemBuilder: (context) => [
+                      _popupItem('Mostrar tudo', classificacoesSelecionadas.length == 2),
+                      _popupItem('Mostrar apenas próprias', classificacoesSelecionadas.contains('Próprias') && classificacoesSelecionadas.length == 1),
+                      _popupItem('Mostrar apenas impróprias', classificacoesSelecionadas.contains('Impróprias') && classificacoesSelecionadas.length == 1),
+                    ],
+                    child: _popupButton(_getClassificacaoLabel()),
                   ),
                 ),
               ],
@@ -201,10 +201,21 @@ class _PraiasPageState extends State<PraiasPage> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: GoogleMap(
-                onMapCreated: (GoogleMapController controller) {
+                onMapCreated: (controller) async {
                   mapController = controller;
+                  final zoomLevel = await controller.getZoomLevel();
+                  setState(() {
+                    currentZoom = zoomLevel;
+                    _filtrarMarcadores();
+                  });
                 },
-                initialCameraPosition: CameraPosition(target: _initialPosition, zoom: 11),
+                onCameraMove: (position) {
+                  setState(() {
+                    currentZoom = position.zoom;
+                    _filtrarMarcadores();
+                  });
+                },
+                initialCameraPosition: CameraPosition(target: _initialPosition, zoom: currentZoom),
                 myLocationButtonEnabled: false,
                 zoomControlsEnabled: false,
                 markers: _marcadoresVisiveis,
@@ -227,6 +238,8 @@ class _PraiasPageState extends State<PraiasPage> {
                 setState(() => municipioSelecionado = value);
                 if (value.isNotEmpty && value != 'Todos') {
                   _moverMapaParaMunicipio(value);
+                } else {
+                  _filtrarMarcadores();
                 }
               },
               itemBuilder: (context) =>
@@ -250,23 +263,14 @@ class _PraiasPageState extends State<PraiasPage> {
   Widget _popupButton(String label) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.grey.shade500,
-            width: 1.2,
-          ),
+          border: Border.all(color: Colors.grey.shade500, width: 1.2),
           borderRadius: BorderRadius.circular(6),
           color: Colors.white,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(
-              child: Text(
-                label,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 11),
-              ),
-            ),
+            Flexible(child: Text(label, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11))),
             const Icon(Icons.keyboard_arrow_down_rounded, size: 20),
           ],
         ),
