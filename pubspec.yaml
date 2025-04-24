@@ -27,6 +27,7 @@ dependencies:
   # Utilidades
   http: ^0.13.6
   cupertino_icons: ^1.0.8
+  provider: ^6.1.4
 
 dev_dependencies:
   flutter_test:
