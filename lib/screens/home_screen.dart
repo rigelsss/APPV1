@@ -107,11 +107,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           MaterialPageRoute(builder: (context) => const DenunciaPage()),
                         );
                       },
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(20),
                       child: Stack(
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(20),
                             child: Image.asset(
                               'assets/images/denuncia_bg.png',
                               fit: BoxFit.cover,
@@ -120,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(14.0),
                             child: Row(
                               children: [
                                 Expanded(
@@ -132,16 +132,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                         'Identificou uma infração ambiental?',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 16,
+                                          fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(height: 4),
+                                      SizedBox(height: 10),
                                       Text(
                                         'Faça uma denúncia!',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 16,
+                                          fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -150,8 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 Image.asset(
                                   'assets/images/megafone.png',
-                                  width: screenWidth * 0.18, // Ajuste responsivo
-                                  height: screenWidth * 0.18, // Ajuste responsivo
+                                  width: screenWidth * 0.14, // Ajuste responsivo
+                                  height: screenWidth * 0.14, // Ajuste responsivo
                                   color: Colors.white,
                                 ),
                               ],
