@@ -20,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
   String? _token;
 
+  // Função para realizar o login convencional
   Future<void> realizarLogin() async {
     final email = emailController.text.trim();
     final senha = passwordController.text.trim();
@@ -54,6 +55,10 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'] ?? 'Login realizado com sucesso')),
         );
+
+
+        await obterInformacoesUsuario();
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -68,6 +73,40 @@ class _LoginPageState extends State<LoginPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erro de conexão: $e')),
+      );
+    }
+  }
+
+  Future<void> obterInformacoesUsuario() async {
+    if (_token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Token não encontrado!')),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:9000/auth/me'),
+        headers: {
+          'Authorization': 'Bearer $_token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print('Dados do usuário: $data');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bem-vindo, ${data['name']}!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ao buscar dados do usuário: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao buscar dados do usuário: $e')),
       );
     }
   }
