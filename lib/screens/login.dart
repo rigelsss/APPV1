@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:sudema_app/screens/Recupera%C3%A7%C3%A3oSenha.dart';
+import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/registro.dart';
 import '../screens/widgets_reutilizaveis/appbardenuncia.dart';
-import 'package:sudema_app/screens/home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -59,12 +59,12 @@ class _LoginPageState extends State<LoginPage> {
 
         await obterInformacoesUsuario();
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomePage(noticias: []),
-          ),
-        );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+            builder: (context) => HomeScreen(token: _token),
+            ),
+          );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erro ${response.statusCode}: ${response.body}')),
