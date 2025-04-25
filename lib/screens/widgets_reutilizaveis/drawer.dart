@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key});
+  final String? userName;
+
+  const CustomDrawer({super.key, this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +16,9 @@ class CustomDrawer extends StatelessWidget {
             padding: const EdgeInsets.only(top: 40, bottom: 16),
             child: Center(
               child: Image.asset(
-                'assets/images/logo_sudema.webp',
+                'assets/images/logosimples.png',
                 width: 260,
-                height: 120,
+                height: 100,
                 fit: BoxFit.contain,
               ),
             ),
@@ -27,7 +29,10 @@ class CustomDrawer extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.campaign),
                   title: const Text('Denúncias'),
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/denuncias');
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.beach_access),
@@ -63,13 +68,13 @@ class CustomDrawer extends StatelessWidget {
                     children: [
                       const Icon(Icons.person, color: Colors.black54, size: 26),
                       const SizedBox(width: 12),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Username',
-                          style: TextStyle(fontSize: 18),
+                          userName ?? 'Username',
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ),
-                      const Icon(Icons.arrow_forward_ios, size: 18),
+                      const Icon(Icons.login, size: 18),
                     ],
                   ),
                 ],

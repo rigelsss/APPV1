@@ -1,26 +1,46 @@
 import 'package:flutter/material.dart';
-import 'dart:async'; // Importa a biblioteca para usar o Timer
-import 'home_screen.dart'; // Importa a tela inicial do app
-
+import 'dart:async';
+import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-    State<SplashScreen> createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _mostrarSplash = true;
+
   @override
   void initState() {
     super.initState();
-    // Inicia o temporizador para navegar para a tela inicial após 3 segundos
-    Timer(const Duration(seconds: 5), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+
+    // Controlador da animação
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 6),
+    );
+
+    _animation = Tween<double>(begin: 100.0, end: 0.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    Timer(const Duration(seconds: 3), () {
+      _controller.forward().whenComplete(() {
+        setState(() {
+          _mostrarSplash = false; 
+        });
+      });
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -29,29 +49,39 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            'assets/images/background.jpg', // Caminho da imagem do logo
-            fit: BoxFit.cover, // Faz a imagem ocupar toda a tela
-          ),
-          Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  'assets/images/logo_gov.webp', // Caminho da imagem do logo
-                  width: 160, // Largura da imagem
-                  height: 160, // Altura da imagem
-                ),
-                const SizedBox(width: 20), // Espaço entre as imagens
-                Image.asset(
-                  'assets/images/logo_sudema.webp', // Caminho da imagem do logo
-                  width: 160, // Largura da imagem
-                  height: 160, // Altura da imagem
-                ),
-              ],
-            )
-          ),
-        ], // Faz a imagem ocupar a tela toda
+          const HomeScreen(), // HomeScreen fica no fundo
+          if (_mostrarSplash)
+            FadeTransition(
+              opacity: _animation,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    'assets/images/background.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                  Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          'assets/images/logo_gov.webp',
+                          width: 160,
+                          height: 160,
+                        ),
+                        const SizedBox(width: 20),
+                        Image.asset(
+                          'assets/images/logo_sudema.webp',
+                          width: 160,
+                          height: 160,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
       ),
     );
   }

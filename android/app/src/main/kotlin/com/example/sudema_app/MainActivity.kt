@@ -1,4 +1,4 @@
-package com.example.sudema_app
+package com.sudema_app
 
 import io.flutter.embedding.android.FlutterActivity
 
