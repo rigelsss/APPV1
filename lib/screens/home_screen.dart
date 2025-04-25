@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../services/getnoticia.dart';
 import '../models/noticia.dart';
 import '../screens/widgets_reutilizaveis/appbar.dart';
@@ -9,49 +10,43 @@ import '../screens/widgets_reutilizaveis/navbar.dart';
 import '../screens/widgets_reutilizaveis/drawer.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String? token;
+  const HomeScreen({super.key, this.token});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool userIsLoggedIn = false;
+  late String? token;
   List<Noticia> _noticias = [];
   int _selectedIndex = 0;
+  bool _drawerOpenedRecently = false;
 
 
   @override
   void initState() {
     super.initState();
+    token = widget.token;
     _carregarNoticias();
-
   }
 
   List<Widget> get _pages => [
-  buildHomeBody(),
-  const PraiasPage(),
-  const NoticiasPage(),
-  const DenunciaPage(),
+    buildHomeBody(),
+    const PraiasPage(),
+    const NoticiasPage(),
+    const DenunciaPage(),
   ];
-
 
   void _simulateLogin() {
     setState(() {
-      userIsLoggedIn = true;
+      token = token;
     });
   }
 
   void _carregarNoticias() async {
     try {
       final listaNoticias = await CarregarNoticias().buscarNoticias();
-      print('Notícias carregadas: ${listaNoticias.length}');
-      for (var noticia in listaNoticias) {
-        print('Título: ${noticia.titulo}');
-        print('Imagem: ${noticia.imagemUrl}');
-        print('Link: ${noticia.url}');
-        print('---');
-      }
       setState(() {
         _noticias = listaNoticias;
       });
@@ -63,38 +58,56 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        isLoggedIn: userIsLoggedIn,
-        onLoginTap: () {
-          Navigator.pushNamed(context, '/login').then((_) {
-            _simulateLogin();
-          });
-        },
-        onNotificationTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Você tem novas notificações')),
-          );
-        },
-      ),
-      drawer: const CustomDrawer(),
-      backgroundColor: Colors.white,
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-      ),
-    );
+      onDrawerChanged: (isOpened) {
+      if (isOpened) {
+        setState(() {
+        _drawerOpenedRecently = true;
+        }
+      );
+    }
+  },
+  appBar: CustomAppBar(
+    isLoggedIn: token != null,
+    onLoginTap: () {
+      Navigator.pushNamed(context, '/login').then((_) {
+        _simulateLogin();
+      });
+    },
+    onNotificationTap: () {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Você tem novas notificações')),
+      );
+    },
+  ),
+  drawer: CustomDrawer(
+    token: token,
+    forceRandomLogin: _drawerOpenedRecently,
+    onSortearFinalizado: () {
+      setState(() {
+        _drawerOpenedRecently = false; // reseta
+      });
+    },
+  ),
+  backgroundColor: Colors.white,
+  body: _pages[_selectedIndex],
+  bottomNavigationBar: CustomNavBar(
+    currentIndex: _selectedIndex,
+    onTap: (index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    },
+  ),
+);
+
   }
 
   Widget buildHomeBody() {
+    final screenWidth = MediaQuery.of(context).size.width;
     return SafeArea(
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(1.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -102,42 +115,24 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: 370,
+                  width: screenWidth * 0.9, // Ajuste responsivo
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: const TextField(
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.search),
-                        hintText: 'Pesquisar...',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: 370,
-                  child: Container(
-                    height: 100,
+                    height: screenWidth * 0.25, // Ajuste proporcional à tela
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: InkWell(
                       onTap: () {
-                        print('Banner de denúncia clicado!');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const DenunciaPage()),
+                        );
                       },
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(20),
                       child: Stack(
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(20),
                             child: Image.asset(
                               'assets/images/denuncia_bg.png',
                               fit: BoxFit.cover,
@@ -146,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.all(14.0),
                             child: Row(
                               children: [
                                 Expanded(
@@ -158,16 +153,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                         'Identificou uma infração ambiental?',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 16,
+                                          fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      SizedBox(height: 4),
+                                      SizedBox(height: 10),
                                       Text(
                                         'Faça uma denúncia!',
                                         style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 16,
+                                          fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -176,8 +171,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 Image.asset(
                                   'assets/images/megafone.png',
-                                  width: 64,
-                                  height: 64,
+                                  width: screenWidth * 0.14, // Ajuste responsivo
+                                  height: screenWidth * 0.14, // Ajuste responsivo
                                   color: Colors.white,
                                 ),
                               ],
@@ -193,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: 370,
+                  width: screenWidth * 0.9, // Ajuste responsivo
                   child: Row(
                     children: const [
                       Text(
@@ -215,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: 370,
+                  width: screenWidth * 0.9, // Ajuste responsivo
                   height: 130,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
@@ -248,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: 370,
+                  width: screenWidth * 0.9, // Ajuste responsivo
                   child: Row(
                     children: [
                       const Text(
@@ -268,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           print('Ver todas as notícias clicado!');
                         },
                         child: const Text(
-                          'Ver tudo',
+                          'Ver todas',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -282,17 +277,17 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 20),
               SizedBox(
-                height: 200,
+                height: 340,
                 child: _noticias.isEmpty
                     ? const Center(child: CircularProgressIndicator())
                     : ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _noticias.length,
-                        itemBuilder: (context, index) {
-                          final noticia = _noticias[index];
-                          return _buildCardNoticia(noticia);
-                        },
-                      ),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _noticias.length,
+                  itemBuilder: (context, index) {
+                    final noticia = _noticias[index];
+                    return _buildCardNoticia(noticia);
+                  },
+                ),
               ),
             ],
           ),
@@ -347,17 +342,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCardNoticia(Noticia noticia) {
+    DateTime data = DateTime.tryParse(noticia.dataHoraPublicacao) ?? DateTime.now();
+    String dataFormatada = "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
+    String horaFormatada = "${data.hour.toString().padLeft(2, '0')}h${data.minute.toString().padLeft(2, '0')}";
+
     return Container(
-      width: 250,
+      width: 260,
       margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.grey[100],
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 1,
-            blurRadius: 3,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
@@ -366,10 +365,10 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: Image.network(
               noticia.imagemUrl,
-              height: 120,
+              height: 140,
               width: double.infinity,
               fit: BoxFit.cover,
             ),
@@ -378,12 +377,16 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               noticia.titulo,
+              style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 14),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              "$dataFormatada às $horaFormatada",
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ),
         ],

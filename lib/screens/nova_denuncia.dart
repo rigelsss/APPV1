@@ -10,7 +10,6 @@ class DenunciaPage extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -75,7 +74,6 @@ class DenunciaPage extends StatelessWidget {
               ),
               const SizedBox(height: 12),
 
-              // Botão para abrir o Decreto
               Center(
                 child: InkWell(
                   onTap: () {
@@ -83,7 +81,7 @@ class DenunciaPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => const WebViewScreen(
-                          url: 'https://drive.google.com/file/d/1Bb3IhBcoZLN2FkPm_vzzkhkvhBMT7BQ_/view',
+                          url: 'https://auniao.pb.gov.br/servicos/doe/2024/marco/diario-oficial-26-03-2024-portal.pdf/view',
                         ),
                       ),
                     );
@@ -94,13 +92,13 @@ class DenunciaPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: const Color(0xFFF5F5F5),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: const Color(0xFF2A2F8C)),
+                      border: Border.all(color: Colors.grey.shade300),
                     ),
                     child: const Text(
                       'Decreto Estadual nº 44.889, de 26 de março de 2024',
                       style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF2A2F8C),
+                        fontSize: 16,
+                        color: Colors.black,
                         decoration: TextDecoration.underline,
                       ),
                       textAlign: TextAlign.center,
