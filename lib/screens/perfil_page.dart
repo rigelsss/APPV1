@@ -49,7 +49,6 @@ class PerfilPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Informações com linha lateral
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -84,7 +83,6 @@ class PerfilPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Menu
             Expanded(
               child: ListView(
                 children: [
@@ -127,7 +125,6 @@ class PerfilPage extends StatelessWidget {
               ),
             ),
 
-            // Botões
             Column(
               children: [
                 SizedBox(
