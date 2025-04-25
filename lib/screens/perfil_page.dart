@@ -22,6 +22,7 @@ class PerfilPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Card com nome
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -48,6 +49,7 @@ class PerfilPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
+            // Informações com linha lateral
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -82,6 +84,7 @@ class PerfilPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
+            // Menu
             Expanded(
               child: ListView(
                 children: [
@@ -92,16 +95,16 @@ class PerfilPage extends StatelessWidget {
                     onTap: () => Navigator.pushNamed(context, '/notificacoes'),
                   ),
                   const SizedBox(height: 10),
-                  const Divider(color: Colors.grey, height: 1),
+                  const Divider(color: Colors.grey, height: 1, indent: 16, endIndent: 16),
                   const SizedBox(height: 10),
                   _buildMenuItem(
                     context,
                     icon: Icons.edit,
                     title: 'Editar Perfil',
-                    onTap: () => Navigator.pushNamed(context, '/editar-perfil'),  
+                    onTap: () => Navigator.pushNamed(context, '/editar-perfil'),
                   ),
                   const SizedBox(height: 10),
-                  const Divider(color: Colors.grey, height: 1),
+                  const Divider(color: Colors.grey, height: 1, indent: 16, endIndent: 16),
                   const SizedBox(height: 10),
                   _buildMenuItem(
                     context,
@@ -110,7 +113,7 @@ class PerfilPage extends StatelessWidget {
                     onTap: () => Navigator.pushNamed(context, '/alterar-email'),
                   ),
                   const SizedBox(height: 10),
-                  const Divider(color: Colors.grey, height: 1),
+                  const Divider(color: Colors.grey, height: 1, indent: 16, endIndent: 16),
                   const SizedBox(height: 10),
                   _buildMenuItem(
                     context,
@@ -119,11 +122,12 @@ class PerfilPage extends StatelessWidget {
                     onTap: () => Navigator.pushNamed(context, '/alterar-senha'),
                   ),
                   const SizedBox(height: 10),
-                  const Divider(color: Colors.grey, height: 1),
+                  const Divider(color: Colors.grey, height: 1, indent: 16, endIndent: 16),
                 ],
               ),
             ),
 
+            // Botões
             Column(
               children: [
                 SizedBox(
@@ -132,8 +136,11 @@ class PerfilPage extends StatelessWidget {
                     onPressed: () {
                       // ação de sair
                     },
-                    icon: const Icon(Icons.logout),
-                    label: const Text('Sair'),
+                    icon: const Icon(Icons.logout, color: Colors.white),
+                    label: const Text(
+                      'Sair',
+                      style: TextStyle(color: Colors.white),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2A2F8C),
                       shape: RoundedRectangleBorder(
@@ -175,7 +182,7 @@ class PerfilPage extends StatelessWidget {
   }
 }
 
-// Widget reutilizável para campo rotulado (email, telefone, cpf)
+// Widget reutilizável para info com rótulo
 class _LabeledInfoItem extends StatelessWidget {
   final String label;
   final String value;
