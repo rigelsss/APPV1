@@ -10,20 +10,24 @@ import '../screens/widgets_reutilizaveis/navbar.dart';
 import '../screens/widgets_reutilizaveis/drawer.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final String? token;
+  const HomeScreen({super.key, this.token});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool userIsLoggedIn = false;
+  late String? token;
   List<Noticia> _noticias = [];
   int _selectedIndex = 0;
+  bool _drawerOpenedRecently = false;
+
 
   @override
   void initState() {
     super.initState();
+    token = widget.token;
     _carregarNoticias();
   }
 
@@ -36,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _simulateLogin() {
     setState(() {
-      userIsLoggedIn = true;
+      token = token;
     });
   }
 
@@ -54,31 +58,48 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        isLoggedIn: userIsLoggedIn,
-        onLoginTap: () {
-          Navigator.pushNamed(context, '/login').then((_) {
-            _simulateLogin();
-          });
-        },
-        onNotificationTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Você tem novas notificações')),
-          );
-        },
-      ),
-      drawer: const CustomDrawer(),
-      backgroundColor: Colors.white,
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-      ),
-    );
+      onDrawerChanged: (isOpened) {
+      if (isOpened) {
+        setState(() {
+        _drawerOpenedRecently = true;
+        }
+      );
+    }
+  },
+  appBar: CustomAppBar(
+    isLoggedIn: token != null,
+    onLoginTap: () {
+      Navigator.pushNamed(context, '/login').then((_) {
+        _simulateLogin();
+      });
+    },
+    onNotificationTap: () {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Você tem novas notificações')),
+      );
+    },
+  ),
+  drawer: CustomDrawer(
+    token: token,
+    forceRandomLogin: _drawerOpenedRecently,
+    onSortearFinalizado: () {
+      setState(() {
+        _drawerOpenedRecently = false; // reseta
+      });
+    },
+  ),
+  backgroundColor: Colors.white,
+  body: _pages[_selectedIndex],
+  bottomNavigationBar: CustomNavBar(
+    currentIndex: _selectedIndex,
+    onTap: (index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+    },
+  ),
+);
+
   }
 
   Widget buildHomeBody() {
