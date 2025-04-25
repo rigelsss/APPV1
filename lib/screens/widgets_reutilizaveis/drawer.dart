@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key});
+  final String? userName;
+
+  const CustomDrawer({super.key, this.userName});
 
   @override
   Widget build(BuildContext context) {
@@ -66,10 +68,10 @@ class CustomDrawer extends StatelessWidget {
                     children: [
                       const Icon(Icons.person, color: Colors.black54, size: 26),
                       const SizedBox(width: 12),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Username',
-                          style: TextStyle(fontSize: 18),
+                          userName ?? 'Username',
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ),
                       const Icon(Icons.login, size: 18),

@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Funcionalidades principais
+
   url_launcher: ^6.1.14
   webview_flutter: ^4.2.2
 
@@ -27,6 +27,8 @@ dependencies:
   # Utilidades
   http: ^0.13.6
   cupertino_icons: ^1.0.8
+  provider: ^6.1.4
+  shared_preferences: ^2.5.3
 
 
   #Desconhecidas

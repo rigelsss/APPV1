@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:sudema_app/screens/TermosCondicoes.dart';
 import 'package:sudema_app/screens/widgets_reutilizaveis/appbardenuncia.dart';
 import 'login.dart';
+import 'package:sudema_app/services/ControllerRegister.dart';
 
 class RegistroPage extends StatefulWidget {
   const RegistroPage({super.key});
@@ -12,17 +13,15 @@ class RegistroPage extends StatefulWidget {
 }
 
 class _RegistroPageState extends State<RegistroPage> {
-
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
   final TextEditingController _contatoController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
 
-
+  final _controller = RegistroController();
   bool _obscureText = true;
   bool _isChecked = false;
-
 
   @override
   void dispose() {
@@ -46,19 +45,15 @@ class _RegistroPageState extends State<RegistroPage> {
             Text('Nome', style: TextStyle(fontSize: 18)),
             TextField(
               controller: _nomeController,
-                keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-              ),
+              keyboardType: TextInputType.text,
+              decoration: InputDecoration(border: OutlineInputBorder()),
             ),
             SizedBox(height: 20),
             Text('CPF', style: TextStyle(fontSize: 18)),
             TextField(
               controller: _cpfController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-              ),
+              decoration: InputDecoration(border: OutlineInputBorder()),
             ),
             SizedBox(height: 20),
             Text('Contato', style: TextStyle(fontSize: 18)),
@@ -70,10 +65,10 @@ class _RegistroPageState extends State<RegistroPage> {
             SizedBox(height: 20),
             Text('E-mail', style: TextStyle(fontSize: 18)),
             TextField(
-                controller:_emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder())),
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(border: OutlineInputBorder()),
+            ),
             SizedBox(height: 20),
             Text('Senha', style: TextStyle(fontSize: 18)),
             TextField(
@@ -113,23 +108,61 @@ class _RegistroPageState extends State<RegistroPage> {
               ],
             ),
             SizedBox(height: 20),
-            Center(child: RichText
-              (text:TextSpan
-              (children: [TextSpan(text:'Ao usar este aplicativo você concorda com os',
-              style: TextStyle(
-              color: Colors.black,
-              fontSize: 12,
-            ),),
-            TextSpan(text: ' Termos e Condições',
-                style: TextStyle(color: Colors.blue, fontSize: 14,fontWeight: FontWeight.bold),
-            recognizer: TapGestureRecognizer()
-            ..onTap = (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => Termoscondicoes()));
-            },)])),),
+            Center(
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Ao usar este aplicativo você concorda com os',
+                      style: TextStyle(color: Colors.black, fontSize: 12),
+                    ),
+                    TextSpan(
+                      text: ' Termos e Condições',
+                      style: TextStyle(
+                          color: Colors.blue,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Termoscondicoes(),
+                            ),
+                          );
+                        },
+                    ),
+                  ],
+                ),
+              ),
+            ),
             SizedBox(height: 20),
             Center(
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final resultado = await _controller.validarERegistrar(
+                    nome: _nomeController.text,
+                    cpf: _cpfController.text,
+                    telefone: _contatoController.text,
+                    email: _emailController.text,
+                    senha: _senhaController.text,
+                    aceitouTermos: _isChecked,
+                  );
+
+                  if (resultado == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Cadastro realizado com sucesso!')),
+                    );
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(resultado)),
+                    );
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   padding: EdgeInsets.symmetric(vertical: 15, horizontal: 140),
@@ -150,10 +183,7 @@ class _RegistroPageState extends State<RegistroPage> {
                   children: [
                     TextSpan(
                       text: 'Já possui uma conta? ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                      ),
+                      style: TextStyle(color: Colors.black, fontSize: 18),
                     ),
                     TextSpan(
                       text: 'Faça login',
