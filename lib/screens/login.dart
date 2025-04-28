@@ -19,6 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _checkboxValue = false;
   bool _obscureText = true;
   String? _token;
+  String tokenFake = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmlnZWwgU2FsZXMiLCJlbWFpbCI6InJpZ2VsQGV4YW1wbGUuY29tIiwicGhvbmUiOiIoODMpIDk5OTk5LTk5OTkiLCJjcGYiOiIxMjMuNDU2Ljc4OS0wMCJ9.aoFANumU9ua_Fhire_kFq6do-wNI4rxDW5jlVCZ7c1Q';
+
 
   // Função para realizar o login convencional
   Future<void> realizarLogin() async {
@@ -58,11 +60,10 @@ class _LoginPageState extends State<LoginPage> {
 
 
         await obterInformacoesUsuario();
-
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-            builder: (context) => HomeScreen(token: _token),
+            builder: (context) => HomeScreen(token: _token ?? tokenFake),
             ),
           );
       } else {

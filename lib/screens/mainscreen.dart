@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sudema_app/screens/home_screen.dart';
 import '../screens/widgets_reutilizaveis/navbar.dart';
-import '../screens/home.dart';
 import '../screens/denuncia.dart';
 import '../screens/praias.dart';
 import '../screens/noticias.dart';
@@ -16,7 +16,7 @@ class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = const [
-    HomePage(noticias: [],),
+    HomeScreen(),
     PraiasPage(),
     NoticiasPage(),
     DenunciaPage(),
