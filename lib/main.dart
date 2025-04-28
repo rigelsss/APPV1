@@ -3,6 +3,8 @@ import 'package:sudema_app/screens/denuncia.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
+import 'package:sudema_app/screens/editarperfil.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -21,6 +23,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/login': (context) => const LoginPage(),
         '/denuncias': (context) => const DenunciaPage(),
+        '/editar-perfil': (context) => const editarperfil(),
       },
     );
   }

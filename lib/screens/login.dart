@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:sudema_app/screens/Recupera%C3%A7%C3%A3oSenha.dart';
-import 'package:sudema_app/screens/home.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/registro.dart';
 import '../screens/widgets_reutilizaveis/appbardenuncia.dart';
@@ -24,7 +22,6 @@ class _LoginPageState extends State<LoginPage> {
   String? _token;
   String tokenFake = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmlnZWwgU2FsZXMiLCJlbWFpbCI6InJpZ2VsQGV4YW1wbGUuY29tIiwicGhvbmUiOiIoODMpIDk5OTk5LTk5OTkiLCJjcGYiOiIxMjMuNDU2Ljc4OS0wMCJ9.aoFANumU9ua_Fhire_kFq6do-wNI4rxDW5jlVCZ7c1Q';
 
-
   Future<void> realizarLogin() async {
     final email = emailController.text.trim();
     final senha = passwordController.text.trim();
@@ -36,22 +33,11 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    final data = await LoginController.realizarLogin(email, senha);
+    try {
+      final data = await LoginController.realizarLogin(email, senha);
 
-    if (data != null) {
-      final token = data['token'];
-
-      setState(() {
-        _token = token;
-      });
-
-      print('Token salvo: $_token');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(data['message'] ?? 'Login realizado com sucesso')),
-      );
-
-      await obterInformacoesUsuario();
-
+      if (data != null) {
+        final token = data['token'];
         setState(() {
           _token = token;
         });
@@ -61,26 +47,28 @@ class _LoginPageState extends State<LoginPage> {
           SnackBar(content: Text(data['message'] ?? 'Login realizado com sucesso')),
         );
 
-
         await obterInformacoesUsuario();
+
+        // Redireciona para a HomeScreen
+        if (_token != null) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-            builder: (context) => HomeScreen(token: _token ?? tokenFake),
+              builder: (context) => HomeScreen(token: _token ?? tokenFake),
             ),
           );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ${response.statusCode}: ${response.body}')),
+          SnackBar(content: Text('Erro ao realizar login')),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao realizar login')),
+        SnackBar(content: Text('Erro ao realizar login: $e')),
       );
     }
   }
-
 
   Future<void> obterInformacoesUsuario() async {
     if (_token == null) {
@@ -90,20 +78,25 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    final data = await AuthController.obterInformacoesUsuario(_token!);
+    try {
+      final data = await AuthController.obterInformacoesUsuario(_token!);
 
-    if (data != null) {
-      print('Dados do usuário: $data');
+      if (data != null) {
+        print('Dados do usuário: $data');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Bem-vindo, ${data['name']}!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao buscar dados do usuário')),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Bem-vindo, ${data['name']}!')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao buscar dados do usuário')),
+        SnackBar(content: Text('Erro ao obter informações do usuário: $e')),
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -213,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {}, // Implementar login com Google
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
