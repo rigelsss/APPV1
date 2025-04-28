@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/denuncia.dart';
+import 'package:sudema_app/screens/PageDenuncia.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
 import 'package:sudema_app/screens/splash_screen.dart';

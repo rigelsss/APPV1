@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import '../screens/widgets_reutilizaveis/navbar.dart';
-import '../screens/denuncia.dart';
+import '../screens/PageDenuncia.dart';
 import '../screens/praias.dart';
 import '../screens/noticias.dart';
 
@@ -32,7 +32,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_currentIndex],
-      bottomNavigationBar: CustomNavBar(
+      bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
       ),

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-class PerfilPage extends StatefulWidget {
+class Perfiluser extends StatefulWidget {
   final String? token;
 
-  const PerfilPage({super.key, this.token});
+  const Perfiluser({super.key, this.token});
 
   @override
-  _PerfilPageState createState() => _PerfilPageState();
+  _PerfiluserState createState() => _PerfiluserState();
 }
 
-class _PerfilPageState extends State<PerfilPage> {
+class _PerfiluserState extends State<Perfiluser> {
   Map<String, dynamic> _userData = {};
   bool _isLoading = true;
   bool _errorFetching = false;

@@ -3,14 +3,14 @@ import 'package:sudema_app/services/categoria_service.dart';
 import 'package:sudema_app/screens/aba_localizacao.dart';
 import '../models/denuncia_data.dart';
 
-class NovaDenunciaPage extends StatefulWidget {
-  const NovaDenunciaPage({super.key});
+class NovaDenuncia extends StatefulWidget {
+  const NovaDenuncia({super.key});
 
   @override
-  State<NovaDenunciaPage> createState() => _NovaDenunciaPageState();
+  State<NovaDenuncia> createState() => _NovaDenunciaState();
 }
 
-class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
+class _NovaDenunciaState extends State<NovaDenuncia> {
   final List<String> opcao = ['Categoria', 'Localização', 'Identificação', 'Denúncia'];
 
   int selectedIndex = 0;

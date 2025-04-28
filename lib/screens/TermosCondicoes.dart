@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/registro.dart';
+import 'package:sudema_app/screens/RegistroUser.dart';
 import 'package:sudema_app/screens/widgets_reutilizaveis/appbardenuncia.dart';
 
 class Termoscondicoes extends StatefulWidget {
@@ -104,7 +104,7 @@ class _TermoscondicoesState extends State<Termoscondicoes> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RegistroPage(),
+                      builder: (context) => RegistroUser(),
                     ),
                   );
                 },
