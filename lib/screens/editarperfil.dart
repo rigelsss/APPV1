@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/widgets_reutilizaveis/appbar.dart';
-import 'package:sudema_app/screens/widgets_reutilizaveis/drawer.dart';
 
 class editarperfil extends StatefulWidget {
   const editarperfil({super.key});
@@ -13,9 +11,14 @@ class _editarperfilState extends State<editarperfil> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: HomeAppBar(),
-      drawer: const CustomDrawer(),
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Text('Alterar Perfil'),
+          backgroundColor: Colors.white,
+          leading: BackButton(onPressed: () {
+            Navigator.pop(context);
+          }),
+        ),
       body: Padding(padding: const EdgeInsets.all(16.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,
           children: [Text('Nome completo', style: TextStyle(fontSize: 16),),
