@@ -4,7 +4,7 @@ import '../services/getnoticia.dart';
 import '../models/noticia.dart';
 import '../screens/widgets_reutilizaveis/appbar.dart';
 import '../screens/praias.dart';
-import '../screens/denuncia.dart';
+import '../screens/PageDenuncia.dart';
 import '../screens/noticias.dart';
 import '../screens/widgets_reutilizaveis/navbar.dart';
 import '../screens/widgets_reutilizaveis/drawer.dart';
@@ -66,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
   },
-  appBar: CustomAppBar(
+  appBar: HomeAppBar(
     isLoggedIn: token != null,
     onLoginTap: () {
       Navigator.pushNamed(context, '/login').then((_) {
@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ),
   backgroundColor: Colors.white,
   body: _pages[_selectedIndex],
-  bottomNavigationBar: CustomNavBar(
+  bottomNavigationBar: NavBar(
     currentIndex: _selectedIndex,
     onTap: (index) {
       setState(() {
@@ -188,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: screenWidth * 0.9, // Ajuste responsivo
+                  width: screenWidth * 0.9,
                   child: Row(
                     children: const [
                       Text(

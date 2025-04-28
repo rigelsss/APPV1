@@ -5,14 +5,14 @@ import 'package:sudema_app/screens/widgets_reutilizaveis/appbardenuncia.dart';
 import 'login.dart';
 import 'package:sudema_app/services/ControllerRegister.dart';
 
-class RegistroPage extends StatefulWidget {
-  const RegistroPage({super.key});
+class RegistroUser extends StatefulWidget {
+  const RegistroUser({super.key});
 
   @override
-  State<RegistroPage> createState() => _RegistroPageState();
+  State<RegistroUser> createState() => _RegistroUserState();
 }
 
-class _RegistroPageState extends State<RegistroPage> {
+class _RegistroUserState extends State<RegistroUser> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
   final TextEditingController _contatoController = TextEditingController();

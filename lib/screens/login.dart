@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/Recupera%C3%A7%C3%A3oSenha.dart';
 import 'package:sudema_app/screens/home_screen.dart';
-import 'package:sudema_app/screens/registro.dart';
+import 'package:sudema_app/screens/RegistroUser.dart';
 import '../screens/widgets_reutilizaveis/appbardenuncia.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:sudema_app/services/controllerLogin.dart';
@@ -243,7 +243,7 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const RegistroPage()),
+                          MaterialPageRoute(builder: (context) => const RegistroUser()),
                         );
                       },
                       child: const Text(

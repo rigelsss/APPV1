@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onLoginTap;
   final VoidCallback? onNotificationTap;
   final bool isLoggedIn;
 
-  const CustomAppBar({
+  const HomeAppBar({
     super.key,
     this.onLoginTap,
     this.onNotificationTap,

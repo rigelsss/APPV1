@@ -14,7 +14,7 @@ class _editarperfilState extends State<editarperfil> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(),
+      appBar: HomeAppBar(),
       drawer: const CustomDrawer(),
       body: Padding(padding: const EdgeInsets.all(16.0),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,
