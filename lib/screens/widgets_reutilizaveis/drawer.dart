@@ -105,15 +105,17 @@ class _CustomDrawerState extends State<CustomDrawer> {
           ),
           InkWell(
             onTap: () {
-              if (isLoggedIn) {
+              //if (isLoggedIn && widget.token != null) {
+                if (isLoggedIn) {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const PerfilPage()),
+                context,
+                MaterialPageRoute(builder: (context) => PerfilPage(token: widget.token)),
                 );
               } else {
                 Navigator.pushNamed(context, '/login');
-              }
+              } 
             },
+
             child: Container(
               decoration: const BoxDecoration(
                 color: Colors.white,

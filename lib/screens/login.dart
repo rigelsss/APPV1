@@ -22,6 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _checkboxValue = false;
   bool _obscureText = true;
   String? _token;
+  String tokenFake = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmlnZWwgU2FsZXMiLCJlbWFpbCI6InJpZ2VsQGV4YW1wbGUuY29tIiwicGhvbmUiOiIoODMpIDk5OTk5LTk5OTkiLCJjcGYiOiIxMjMuNDU2Ljc4OS0wMCJ9.aoFANumU9ua_Fhire_kFq6do-wNI4rxDW5jlVCZ7c1Q';
+
 
   Future<void> realizarLogin() async {
     final email = emailController.text.trim();
@@ -50,13 +52,29 @@ class _LoginPageState extends State<LoginPage> {
 
       await obterInformacoesUsuario();
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomePage(noticias: []),
-        ),
-      );
-    } else {
+        setState(() {
+          _token = token;
+        });
+
+        print('Token salvo: $_token');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'] ?? 'Login realizado com sucesso')),
+        );
+
+
+        await obterInformacoesUsuario();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+            builder: (context) => HomeScreen(token: _token ?? tokenFake),
+            ),
+          );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro ${response.statusCode}: ${response.body}')),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Erro ao realizar login')),
       );
