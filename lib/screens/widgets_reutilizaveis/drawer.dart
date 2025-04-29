@@ -13,7 +13,7 @@ class CustomDrawer extends StatefulWidget {
 }
 
 class CustomDrawerState extends State<CustomDrawer> {
-  String username = 'Usuário';
+  String username = 'Acessar';
   bool isLoading = true;
 
   @override
