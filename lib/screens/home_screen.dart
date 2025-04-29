@@ -124,10 +124,9 @@ class _HomeScreenState extends State<HomeScreen> {
         width: screenWidth * 0.9,
         child: InkWell(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const DenunciaPage()),
-            );
+            setState(() {
+              _selectedIndex = 3; 
+            });
           },
           borderRadius: BorderRadius.circular(20),
           child: Stack(
@@ -199,10 +198,9 @@ class _HomeScreenState extends State<HomeScreen> {
           if (verTodas)
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const NoticiasPage()),
-                );
+                setState(() {
+                  _selectedIndex = 2; // muda para aba de notícias
+                });
               },
               child: const Text(
                 'Ver todas',
