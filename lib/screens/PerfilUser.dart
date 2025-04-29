@@ -50,7 +50,7 @@ class _PerfiluserState extends State<Perfiluser> {
     } else {
       // Simulação de token para testes
       _token =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IsafkpXVCJ9.eyJuYW1lIjoiUmlnZWwgU2FsZXMiLCJlbWFpbCI6InJpZ2VsQGV4YW1wbGUuY29tIiwicGhvbmUiOiIoODMpIDk5OTk5LTk5OTkiLCJjcGYiOiIxMjMuNDU2Ljc4OS0wMCJ9.aoFANumU9ua_Fhire_kFq6do-wNI4rxDW5jlVCZ7c1Q';
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmlnZWwgU2FsZXMiLCJlbWFpbCI6InJpZ2VsQGV4YW1wbGUuY29tIiwicGhvbmUiOiIoODMpIDk5OTk5LTk5OTkiLCJjcGYiOiIxMjMuNDU2Ljc4OS0wMCJ9.aoFANumU9ua_Fhire_kFq6do-wNI4rxDW5jlVCZ7c1Q';
     }
 
     _carregarDadosUsuario();
@@ -60,10 +60,10 @@ class _PerfiluserState extends State<Perfiluser> {
     try {
       _userData = JwtDecoder.decode(_token);
 
-      if (!_userData.containsKey('name') ||
-          !_userData.containsKey('email') ||
-          !_userData.containsKey('phone') ||
-          !_userData.containsKey('cpf')) {
+    if (!_userData.containsKey('name') || _userData['name'] == null || _userData['name'].toString().isEmpty ||
+        !_userData.containsKey('email') || _userData['email'] == null || _userData['email'].toString().isEmpty ||
+        !_userData.containsKey('phone') || _userData['phone'] == null || _userData['phone'].toString().isEmpty ||
+        !_userData.containsKey('cpf') || _userData['cpf'] == null || _userData['cpf'].toString().isEmpty) {
         throw FormatException('Campos obrigatórios no token estão ausentes.');
       }
 
@@ -128,7 +128,7 @@ class _PerfiluserState extends State<Perfiluser> {
           if (_isLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (_errorFetching) {
-            return const Center(child: Text('Erro ao carregar perfil.'));
+            return Center(child: Text('Erro ao carregar perfil: $_errorMessage'));
           } else if (_userData.isEmpty) {
             return const Center(child: Text('Nenhuma informação de usuário encontrada'));
           } else {
