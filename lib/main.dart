@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/denuncia.dart';
+import 'package:sudema_app/screens/EditEmail.dart';
+import 'package:sudema_app/screens/EditSenha.dart';
+import 'package:sudema_app/screens/PageDenuncia.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
+import 'package:sudema_app/screens/editarperfil.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -21,6 +25,9 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/login': (context) => const LoginPage(),
         '/denuncias': (context) => const DenunciaPage(),
+        '/editar-perfil': (context) => const editarperfil(),
+        '/EditarEmail': (context) => const EditarEmail(),
+        '/EditarSenha': (context) => const EditarSenha(),
       },
     );
   }

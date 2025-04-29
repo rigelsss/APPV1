@@ -1,27 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:sudema_app/services/categoria_service.dart';
 import 'package:sudema_app/screens/aba_localizacao.dart';
 import '../models/denuncia_data.dart';
 
-class NovaDenunciaPage extends StatefulWidget {
-  const NovaDenunciaPage({super.key});
+class NovaDenuncia extends StatefulWidget {
+  const NovaDenuncia({super.key});
 
   @override
-  State<NovaDenunciaPage> createState() => _NovaDenunciaPageState();
+  State<NovaDenuncia> createState() => _NovaDenunciaState();
 }
 
-class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
-  @override
-  void initState() {
-    super.initState();
-    DenunciaData().limpar();
-  }
-
-  final List<String> opcao = [
-    'Categoria',
-    'Localização',
-    'Identificação',
-    'Denúncia'
-  ];
+class _NovaDenunciaState extends State<NovaDenuncia> {
+  final List<String> opcao = ['Categoria', 'Localização', 'Identificação', 'Denúncia'];
 
   int selectedIndex = 0;
   String? _categoriaSelecionada;
@@ -30,9 +20,33 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
   final TextEditingController _outraController = TextEditingController();
   String? _mensagemErro;
 
+  List<dynamic> categorias = [];
+  bool _isLoadingCategorias = true;
+
+  @override
+  void initState() {
+    super.initState();
+    DenunciaData().limpar();
+    _carregarCategorias();
+  }
+
+  Future<void> _carregarCategorias() async {
+    try {
+      final resultado = await CategoriaService.buscarCategorias();
+      setState(() {
+        categorias = resultado;
+        _isLoadingCategorias = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingCategorias = false;
+      });
+    }
+  }
+
   bool _podeIrParaAba(int index) {
     if (index == 1) {
-      return _categoriaSelecionada != null && _subcategoriaSelecionada != null;
+      return _categoriaSelecionada != null && _subcategoriaSelecionada != null && _subcategoriaSelecionada!.isNotEmpty;
     } else if (index == 2 || index == 3) {
       return DenunciaData().enderecoConfirmado == true;
     }
@@ -151,73 +165,13 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
   }
 
   Widget _buildCategoriaContent() {
-    final categorias = [
-      {
-        'imagem': 'assets/images/fauna.png',
-        'texto': 'Contra a fauna',
-        'subcategorias': [
-          'Caça ilegal de animais silvestres',
-          'Tráfico de animais silvestres',
-          'Maus-tratos a animais',
-          'Comércio ilegal de espécies protegidas',
-          'Introdução de espécies exóticas invasoras'
-        ]
-      },
-      {
-        'imagem': 'assets/images/flora.png',
-        'texto': 'Contra a flora',
-        'subcategorias': [
-          'Desmatamento ilegal',
-          'Queimadas não autorizadas',
-          'Destruição de áreas de preservação permanentes (APPs)',
-          'Uso de agrotóxicos proibidos'
-        ]
-      },
-      {
-        'imagem': 'assets/images/poluicao.png',
-        'texto': 'Poluição e contaminação ambiental',
-        'subcategorias': [
-          'Lançamento irregular de esgoto e resíduos industriais em rios e mares',
-          'Poluição do ar',
-          'Contaminação do solo',
-          'Ruído excessivo'
-        ]
-      },
-      {
-        'imagem': 'assets/images/areas_protegidas.png',
-        'texto': 'Degradação de áreas protegidas',
-        'subcategorias': [
-          'Construlção irregular em áreas de preservação',
-          'Supressão de vegetação em manguezais, restingas e matas ciliares',
-          'Exploração irregular de recursos naturais em unidades de conservação',
-          'Uso indevido de áreas costeiras e dunas'
-        ]
-      },
-      {
-        'imagem': 'assets/images/recursosHidricos.png',
-        'texto': 'Recursos hídricos e balneabilidade',
-        'subcategorias': [
-          'Contaminação de rios, lagos e oceanos por despejo de resíduos',
-          'Uso irregular de recursos hídricos',
-          'Degradação de nascentes e fontes de água potável',
-        ]
-      },
-      {
-        'imagem': 'assets/images/residuos.png',
-        'texto': 'Relacionadas a resíduos sólidos',
-        'subcategorias': [
-          'Lixões irregulares e descarte inadequado de resíduos',
-          'Não cumprimento da logística reversa de resíduos perigosos',
-          'Depósito ilegal de entulho em áreas públicas e naturais',
-          'Falta de tratamento adequado para resíduos hospitalares e industriais'
-        ]
-      },
-      {
-        'imagem': 'assets/images/outra.png',
-        'texto': 'Outra',
-        'subcategorias': []
-      },
-    ];
+    if (_isLoadingCategorias) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (categorias.isEmpty) {
+      return const Center(child: Text('Nenhuma categoria disponível.'));
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,9 +188,12 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
             itemCount: categorias.length,
             itemBuilder: (context, index) {
               final categoria = categorias[index];
+              final String texto = categoria['nome'] ?? 'Sem texto';
+              final String imagem = categoria['imagem'] ?? 'assets/images/image-break.png';
+              final List<dynamic> subcategorias = categoria['subcategorias'] ?? [];
               final isExpanded = _categoriasExpandidas.contains(index);
-              final selecionado = _categoriaSelecionada == categoria['texto'];
-              final isOutraCategoria = categoria['texto'] == 'Outra';
+              final selecionado = _categoriaSelecionada == texto;
+              final isOutraCategoria = texto == 'Outra';
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 4),
@@ -246,8 +203,8 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                     ListTile(
                       onTap: () {
                         setState(() {
-                          _categoriaSelecionada = categoria['texto'] as String;
-                          DenunciaData().categoria = _categoriaSelecionada;
+                          _categoriaSelecionada = texto;
+                          DenunciaData().categoria = texto;
                           _subcategoriaSelecionada = null;
                           _mensagemErro = null;
                         });
@@ -258,13 +215,19 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                         height: 40,
                         child: Center(
                           child: Image.asset(
-                            categoria['imagem'] as String,
+                            imagem,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/images/image-break.png',
+                                fit: BoxFit.cover,
+                              );
+                            },
                           ),
                         ),
                       ),
                       title: Text(
-                        categoria['texto'] as String,
+                        texto,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
@@ -325,15 +288,15 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
                               )
                             : Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: (categoria['subcategorias'] as List<String>).map(
+                                children: subcategorias.map(
                                   (sub) {
                                     final isSelected = _subcategoriaSelecionada == sub;
                                     return GestureDetector(
                                       onTap: () {
                                         setState(() {
                                           _subcategoriaSelecionada = sub;
-                                          _categoriaSelecionada = categoria['texto'] as String;
-                                          DenunciaData().categoria = categoria['texto'] as String;
+                                          _categoriaSelecionada = texto;
+                                          DenunciaData().categoria = texto;
                                           DenunciaData().subCategoria = sub;
                                           _mensagemErro = null;
                                         });
@@ -380,11 +343,11 @@ class _NovaDenunciaPageState extends State<NovaDenunciaPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF2A2F8C),
+              backgroundColor: const Color(0xFF2A2F8C),
               minimumSize: const Size.fromHeight(52.8),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
-            onPressed: (_categoriaSelecionada != null && _subcategoriaSelecionada != null)
+            onPressed: (_categoriaSelecionada != null && _subcategoriaSelecionada != null && _subcategoriaSelecionada!.isNotEmpty)
                 ? () => _aoSelecionarAba(1)
                 : null,
             child: const Center(

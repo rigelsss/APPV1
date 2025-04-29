@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:sudema_app/screens/Recupera%C3%A7%C3%A3oSenha.dart';
+import 'package:sudema_app/screens/RecuperacaoSenha.dart';
 import 'package:sudema_app/screens/home_screen.dart';
-import 'package:sudema_app/screens/registro.dart';
+import 'package:sudema_app/screens/RegistroUser.dart';
 import '../screens/widgets_reutilizaveis/appbardenuncia.dart';
+import 'package:sudema_app/services/AuthMe.dart';
+import 'package:sudema_app/services/controllerLogin.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,8 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _checkboxValue = false;
   bool _obscureText = true;
   String? _token;
+  String tokenFake = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmlnZWwgU2FsZXMiLCJlbWFpbCI6InJpZ2VsQGV4YW1wbGUuY29tIiwicGhvbmUiOiIoODMpIDk5OTk5LTk5OTkiLCJjcGYiOiIxMjMuNDU2Ljc4OS0wMCJ9.aoFANumU9ua_Fhire_kFq6do-wNI4rxDW5jlVCZ7c1Q';
 
-  // Função para realizar o login convencional
   Future<void> realizarLogin() async {
     final email = emailController.text.trim();
     final senha = passwordController.text.trim();
@@ -33,20 +33,10 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     try {
-      final response = await http.post(
-        Uri.parse('http://10.0.2.2:9000/auth/login'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "login": email,
-          "password": senha,
-          "userType": "MOBILE",
-        }),
-      );
+      final data = await LoginController.realizarLogin(email, senha);
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+      if (data != null) {
         final token = data['token'];
-
         setState(() {
           _token = token;
         });
@@ -56,23 +46,25 @@ class _LoginPageState extends State<LoginPage> {
           SnackBar(content: Text(data['message'] ?? 'Login realizado com sucesso')),
         );
 
-
         await obterInformacoesUsuario();
 
+        // Redireciona para a HomeScreen
+        if (_token != null) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-            builder: (context) => HomeScreen(token: _token),
+              builder: (context) => HomeScreen(token: _token ?? tokenFake),
             ),
           );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ${response.statusCode}: ${response.body}')),
+          SnackBar(content: Text('Erro ao realizar login')),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro de conexão: $e')),
+        SnackBar(content: Text('Erro ao realizar login: $e')),
       );
     }
   }
@@ -86,27 +78,21 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     try {
-      final response = await http.get(
-        Uri.parse('http://10.0.2.2:9000/auth/me'),
-        headers: {
-          'Authorization': 'Bearer $_token',
-        },
-      );
+      final data = await AuthController.obterInformacoesUsuario(_token!);
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+      if (data != null) {
         print('Dados do usuário: $data');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Bem-vindo, ${data['name']}!')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao buscar dados do usuário: ${response.statusCode}')),
+          const SnackBar(content: Text('Erro ao buscar dados do usuário')),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao buscar dados do usuário: $e')),
+        SnackBar(content: Text('Erro ao obter informações do usuário: $e')),
       );
     }
   }
@@ -219,7 +205,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {}, // Implementar login com Google
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
@@ -256,7 +242,7 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const RegistroPage()),
+                          MaterialPageRoute(builder: (context) => const RegistroUser()),
                         );
                       },
                       child: const Text(
