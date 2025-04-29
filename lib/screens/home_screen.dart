@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
     forceRandomLogin: _drawerOpenedRecently,
     onSortearFinalizado: () {
       setState(() {
-        _drawerOpenedRecently = false; // reseta
+        _drawerOpenedRecently = false;
       });
     },
   ),
@@ -115,9 +115,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: screenWidth * 0.9, // Ajuste responsivo
+                  width: screenWidth * 0.9,
                   child: Container(
-                    height: screenWidth * 0.25, // Ajuste proporcional à tela
+                    height: screenWidth * 0.25,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -171,8 +171,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 Image.asset(
                                   'assets/images/megafone.png',
-                                  width: screenWidth * 0.14, // Ajuste responsivo
-                                  height: screenWidth * 0.14, // Ajuste responsivo
+                                  width: screenWidth * 0.14,
+                                  height: screenWidth * 0.14,
                                   color: Colors.white,
                                 ),
                               ],
@@ -210,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: screenWidth * 0.9, // Ajuste responsivo
+                  width: screenWidth * 0.9,
                   height: 130,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
@@ -243,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.center,
                 child: SizedBox(
-                  width: screenWidth * 0.9, // Ajuste responsivo
+                  width: screenWidth * 0.9,
                   child: Row(
                     children: [
                       const Text(
