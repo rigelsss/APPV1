@@ -31,11 +31,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<Widget> get _pages => [
-    buildHomeBody(),
-    const PraiasPage(),
-    const NoticiasPage(),
-    const DenunciaPage(),
-  ];
+        buildHomeBody(),
+        const PraiasPage(),
+        const NoticiasPage(),
+        const DenunciaPage(),
+      ];
 
   bool get isLoggedIn {
     if (token == null) return false;
@@ -70,11 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
               });
             }
           });
-        },
-        onNotificationTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Você tem novas notificações')),
-          );
         },
       ),
       drawer: CustomDrawer(token: token),
@@ -125,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: InkWell(
           onTap: () {
             setState(() {
-              _selectedIndex = 3; 
+              _selectedIndex = 3;
             });
           },
           borderRadius: BorderRadius.circular(20),
@@ -152,12 +147,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           SizedBox(height: 10),
                           Text(
                             'Identificou uma infração ambiental?',
-                            style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: 15),
                           Text(
                             'Faça uma denúncia!',
-                            style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
@@ -199,12 +200,15 @@ class _HomeScreenState extends State<HomeScreen> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  _selectedIndex = 2; 
+                  _selectedIndex = 2;
                 });
               },
               child: const Text(
                 'Ver todas',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey),
               ),
             ),
         ],
@@ -221,11 +225,20 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: [
-            _buildServiceCardComImagem(label: 'Balneabilidade', imagePath: 'assets/images/bauneabilidade.jpg'),
-            _buildServiceCardComImagem(label: 'Fiscalização', imagePath: 'assets/images/fiscalizacao.jpg'),
-            _buildServiceCardComImagem(label: 'Denúncias', imagePath: 'assets/images/denuncia.jpg'),
-            _buildServiceCardComImagem(label: 'Educação Ambiental', imagePath: 'assets/images/educacao_ambiental.jpg'),
-            _buildServiceCardComImagem(label: 'Licenciamento', imagePath: 'assets/images/licenciamento.jpg'),
+            _buildServiceCardComImagem(
+                label: 'Balneabilidade',
+                imagePath: 'assets/images/bauneabilidade.jpg'),
+            _buildServiceCardComImagem(
+                label: 'Fiscalização',
+                imagePath: 'assets/images/fiscalizacao.jpg'),
+            _buildServiceCardComImagem(
+                label: 'Denúncias', imagePath: 'assets/images/denuncia.jpg'),
+            _buildServiceCardComImagem(
+                label: 'Educação Ambiental',
+                imagePath: 'assets/images/educacao_ambiental.jpg'),
+            _buildServiceCardComImagem(
+                label: 'Licenciamento',
+                imagePath: 'assets/images/licenciamento.jpg'),
           ],
         ),
       ),
@@ -248,7 +261,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  static Widget _buildServiceCardComImagem({required String label, required String imagePath}) {
+  static Widget _buildServiceCardComImagem({
+    required String label,
+    required String imagePath,
+  }) {
     return InkWell(
       onTap: () {
         print('Serviço $label clicado!');
@@ -294,9 +310,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCardNoticia(Noticia noticia) {
-    DateTime data = DateTime.tryParse(noticia.dataHoraPublicacao) ?? DateTime.now();
-    String dataFormatada = "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
-    String horaFormatada = "${data.hour.toString().padLeft(2, '0')}h${data.minute.toString().padLeft(2, '0')}";
+    DateTime data =
+        DateTime.tryParse(noticia.dataHoraPublicacao) ?? DateTime.now();
+    String dataFormatada =
+        "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
+    String horaFormatada =
+        "${data.hour.toString().padLeft(2, '0')}h${data.minute.toString().padLeft(2, '0')}";
 
     return Container(
       width: 260,
@@ -317,7 +336,8 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(16)),
             child: Image.network(
               noticia.imagemUrl,
               height: 140,
@@ -329,7 +349,8 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               noticia.titulo,
-              style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 14),
+              style:
+                  GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 14),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
