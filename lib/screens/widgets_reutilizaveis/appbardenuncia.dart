@@ -8,6 +8,7 @@ class AppBarDenuncia extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: Colors.white,
       title: Text(title),
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
