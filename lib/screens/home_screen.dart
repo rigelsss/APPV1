@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import '../services/getnoticia.dart';
 import '../models/noticia.dart';
 import '../screens/widgets_reutilizaveis/appbar.dart';
@@ -21,8 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
   late String? token;
   List<Noticia> _noticias = [];
   int _selectedIndex = 0;
-  bool _drawerOpenedRecently = false;
-
 
   @override
   void initState() {
@@ -38,10 +37,13 @@ class _HomeScreenState extends State<HomeScreen> {
     const DenunciaPage(),
   ];
 
-  void _simulateLogin() {
-    setState(() {
-      token = token;
-    });
+  bool get isLoggedIn {
+    if (token == null) return false;
+    try {
+      return !JwtDecoder.isExpired(token!);
+    } catch (e) {
+      return false;
+    }
   }
 
   void _carregarNoticias() async {
@@ -58,42 +60,35 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      onDrawerChanged: (isOpened) {
-      if (isOpened) {
-        setState(() {
-        _drawerOpenedRecently = true;
-        }
-      );
-    }
-  },
-  appBar: HomeAppBar(
-    isLoggedIn: token != null,
-    onLoginTap: () {
-      Navigator.pushNamed(context, '/login').then((_) {
-        _simulateLogin();
-      });
-    },
-    onNotificationTap: () {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Você tem novas notificações')),
-      );
-    },
-  ),
-  drawer: CustomDrawer(
-    token: token,
-  ),
-  backgroundColor: Colors.white,
-  body: _pages[_selectedIndex],
-  bottomNavigationBar: NavBar(
-    currentIndex: _selectedIndex,
-    onTap: (index) {
-      setState(() {
-        _selectedIndex = index;
-      });
-    },
-  ),
-);
-
+      appBar: HomeAppBar(
+        isLoggedIn: isLoggedIn,
+        onLoginTap: () {
+          Navigator.pushNamed(context, '/login').then((value) {
+            if (value != null && value is String) {
+              setState(() {
+                token = value;
+              });
+            }
+          });
+        },
+        onNotificationTap: () {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Você tem novas notificações')),
+          );
+        },
+      ),
+      drawer: CustomDrawer(token: token),
+      backgroundColor: Colors.white,
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: NavBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+      ),
+    );
   }
 
   Widget buildHomeBody() {
@@ -106,187 +101,152 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: screenWidth * 0.9, // Ajuste responsivo
-                  child: Container(
-                    height: screenWidth * 0.25, // Ajuste proporcional à tela
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const DenunciaPage()),
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(20),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image.asset(
-                              'assets/images/denuncia_bg.png',
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
-                            ),
+              _buildBannerDenuncia(screenWidth),
+              const SizedBox(height: 24),
+              _buildTituloComLinha('Nossos serviços'),
+              const SizedBox(height: 20),
+              _buildServicos(screenWidth),
+              const SizedBox(height: 24),
+              _buildTituloComLinha('Últimas notícias', verTodas: true),
+              const SizedBox(height: 20),
+              _buildNoticias(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBannerDenuncia(double screenWidth) {
+    return Align(
+      alignment: Alignment.center,
+      child: SizedBox(
+        width: screenWidth * 0.9,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const DenunciaPage()),
+            );
+          },
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.asset(
+                  'assets/images/denuncia_bg.png',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: screenWidth * 0.25,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(14.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          SizedBox(height: 10),
+                          Text(
+                            'Identificou uma infração ambiental?',
+                            style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(14.0),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text(
-                                        'Identificou uma infração ambiental?',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      SizedBox(height: 10),
-                                      Text(
-                                        'Faça uma denúncia!',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Image.asset(
-                                  'assets/images/megafone.png',
-                                  width: screenWidth * 0.14, // Ajuste responsivo
-                                  height: screenWidth * 0.14, // Ajuste responsivo
-                                  color: Colors.white,
-                                ),
-                              ],
-                            ),
+                          SizedBox(height: 15),
+                          Text(
+                            'Faça uma denúncia!',
+                            style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: screenWidth * 0.9,
-                  child: Row(
-                    children: const [
-                      Text(
-                        'Nossos serviços',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(width: 8),
-                      Expanded(
-                        child: Divider(
-                          color: Colors.grey,
-                          thickness: 2,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: screenWidth * 0.9, // Ajuste responsivo
-                  height: 130,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      _buildServiceCardComImagem(
-                        label: 'Balneabilidade',
-                        imagePath: 'assets/images/bauneabilidade.jpg',
-                      ),
-                      _buildServiceCardComImagem(
-                        label: 'Fiscalização',
-                        imagePath: 'assets/images/fiscalizacao.jpg',
-                      ),
-                      _buildServiceCardComImagem(
-                        label: 'Denúncias',
-                        imagePath: 'assets/images/denuncia.jpg',
-                      ),
-                      _buildServiceCardComImagem(
-                        label: 'Educação Ambiental',
-                        imagePath: 'assets/images/educacao_ambiental.jpg',
-                      ),
-                      _buildServiceCardComImagem(
-                        label: 'Licenciamento',
-                        imagePath: 'assets/images/licenciamento.jpg',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Align(
-                alignment: Alignment.center,
-                child: SizedBox(
-                  width: screenWidth * 0.9, // Ajuste responsivo
-                  child: Row(
-                    children: [
-                      const Text(
-                        'Últimas notícias',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(width: 8),
-                      const Expanded(
-                        child: Divider(
-                          color: Colors.grey,
-                          thickness: 2,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      InkWell(
-                        onTap: () {
-                          print('Ver todas as notícias clicado!');
-                        },
-                        child: const Text(
-                          'Ver todas',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                height: 340,
-                child: _noticias.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
-                    : ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _noticias.length,
-                  itemBuilder: (context, index) {
-                    final noticia = _noticias[index];
-                    return _buildCardNoticia(noticia);
-                  },
+                    Image.asset(
+                      'assets/images/megafone.png',
+                      width: screenWidth * 0.14,
+                      height: screenWidth * 0.14,
+                      color: Colors.white,
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTituloComLinha(String titulo, {bool verTodas = false}) {
+    return Align(
+      alignment: Alignment.center,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            titulo,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(width: 8),
+          const Expanded(
+            child: Divider(
+              color: Colors.grey,
+              thickness: 2,
+            ),
+          ),
+          if (verTodas)
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NoticiasPage()),
+                );
+              },
+              child: const Text(
+                'Ver todas',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildServicos(double screenWidth) {
+    return Align(
+      alignment: Alignment.center,
+      child: SizedBox(
+        width: screenWidth * 0.9,
+        height: 130,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: [
+            _buildServiceCardComImagem(label: 'Balneabilidade', imagePath: 'assets/images/bauneabilidade.jpg'),
+            _buildServiceCardComImagem(label: 'Fiscalização', imagePath: 'assets/images/fiscalizacao.jpg'),
+            _buildServiceCardComImagem(label: 'Denúncias', imagePath: 'assets/images/denuncia.jpg'),
+            _buildServiceCardComImagem(label: 'Educação Ambiental', imagePath: 'assets/images/educacao_ambiental.jpg'),
+            _buildServiceCardComImagem(label: 'Licenciamento', imagePath: 'assets/images/licenciamento.jpg'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoticias() {
+    return SizedBox(
+      height: 340,
+      child: _noticias.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _noticias.length,
+              itemBuilder: (context, index) {
+                final noticia = _noticias[index];
+                return _buildCardNoticia(noticia);
+              },
+            ),
     );
   }
 

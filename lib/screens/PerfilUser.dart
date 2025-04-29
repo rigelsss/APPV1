@@ -1,6 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:sudema_app/services/AuthMe.dart'; // Importa o AuthController correto
+import 'package:sudema_app/services/AuthMe.dart'; 
 
 class Perfiluser extends StatefulWidget {
   final String? token;
