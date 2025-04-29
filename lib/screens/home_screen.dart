@@ -199,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  _selectedIndex = 2; // muda para aba de notícias
+                  _selectedIndex = 2; 
                 });
               },
               child: const Text(
