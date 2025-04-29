@@ -81,12 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
   ),
   drawer: CustomDrawer(
     token: token,
-    forceRandomLogin: _drawerOpenedRecently,
-    onSortearFinalizado: () {
-      setState(() {
-        _drawerOpenedRecently = false; // reseta
-      });
-    },
   ),
   backgroundColor: Colors.white,
   body: _pages[_selectedIndex],

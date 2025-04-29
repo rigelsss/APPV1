@@ -1,57 +1,32 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sudema_app/screens/PerfilUser.dart';
 
-class CustomDrawer extends StatefulWidget {
+class CustomDrawer extends StatelessWidget {
   final String? token;
-  final bool forceRandomLogin;
-  final VoidCallback? onSortearFinalizado;
 
   const CustomDrawer({
-    super.key,
+    Key? key,
     this.token,
-    this.forceRandomLogin = false,
-    this.onSortearFinalizado,
-  });
+  }) : super(key: key);
 
-  @override
-  State<CustomDrawer> createState() => _CustomDrawerState();
-}
-
-class _CustomDrawerState extends State<CustomDrawer> {
-  late bool isLoggedIn;
-
-  @override
-  void initState() {
-    super.initState();
-    _sortearLogin();
-  }
-
-  @override
-  void didUpdateWidget(CustomDrawer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    // Se a flag vier true, sorteia novamente
-    if (widget.forceRandomLogin && !oldWidget.forceRandomLogin) {
-      _sortearLogin();
-      widget.onSortearFinalizado?.call(); // avisa o HomeScreen para resetar
+  bool get isLoggedIn {
+    if (token == null || token!.isEmpty) {
+      return false;
+    }
+    try {
+      return !JwtDecoder.isExpired(token!);
+    } catch (e) {
+      return false;
     }
   }
 
-  void _sortearLogin() {
-    final random = Random();
-    setState(() {
-      isLoggedIn = random.nextBool(); // 50% de chance
-    });
-  }
-
-  String _getUsername() {
-    if (!isLoggedIn || widget.token == null || widget.token!.isEmpty) {
+  String getUsername() {
+    if (!isLoggedIn) {
       return 'Acessar';
     } else {
       try {
-        Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token!);
+        Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
         return decodedToken['name'] ?? 'Usuário';
       } catch (e) {
         return 'Usuário';
@@ -61,7 +36,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final username = _getUsername();
+    final username = getUsername();
 
     return Drawer(
       backgroundColor: Colors.white,
@@ -105,17 +80,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
           ),
           InkWell(
             onTap: () {
-              //if (isLoggedIn && widget.token != null) {
-                if (isLoggedIn) {
+              if (isLoggedIn) {
                 Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Perfiluser(token: widget.token)),
+                  context,
+                  MaterialPageRoute(builder: (context) => Perfiluser(token: token)),
                 );
               } else {
                 Navigator.pushNamed(context, '/login');
-              } 
+              }
             },
-
             child: Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
