@@ -8,10 +8,10 @@ class Perfiluser extends StatefulWidget {
   const Perfiluser({super.key, this.token});
 
   @override
-  _PerfiluserState createState() => _PerfiluserState();
+  PerfiluserState createState() => PerfiluserState();
 }
 
-class _PerfiluserState extends State<Perfiluser> {
+class PerfiluserState extends State<Perfiluser> {
   Map<String, dynamic> _userData = {};
   bool _isLoading = true;
   bool _errorFetching = false;
