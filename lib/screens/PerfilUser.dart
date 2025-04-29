@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
@@ -7,13 +8,14 @@ class Perfiluser extends StatefulWidget {
   const Perfiluser({super.key, this.token});
 
   @override
-  _PerfiluserState createState() => _PerfiluserState();
+  PerfiluserState createState() => PerfiluserState();
 }
 
-class _PerfiluserState extends State<Perfiluser> {
+class PerfiluserState extends State<Perfiluser> {
   Map<String, dynamic> _userData = {};
   bool _isLoading = true;
   bool _errorFetching = false;
+  String _errorMessage = ''; // <- Guarda a mensagem do erro
   late String _token;
 
   @override
@@ -23,9 +25,30 @@ class _PerfiluserState extends State<Perfiluser> {
   }
 
   void _prepararToken() {
-    if (widget.token != null) {
+    if (widget.token != null && widget.token!.isNotEmpty) {
       _token = widget.token!;
+
+      // 🛡️ Nova validação de formato
+      if (!_isValidJwtFormat(_token)) {
+        setState(() {
+          _errorFetching = true;
+          _isLoading = false;
+          _errorMessage = 'Token inválido.';
+        });
+        return;
+      }
+
+      // Validação de expiração
+      if (JwtDecoder.isExpired(_token)) {
+        setState(() {
+          _errorFetching = true;
+          _isLoading = false;
+          _errorMessage = 'Token expirado.';
+        });
+        return;
+      }
     } else {
+      // Simulação de token para testes
       _token =
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmlnZWwgU2FsZXMiLCJlbWFpbCI6InJpZ2VsQGV4YW1wbGUuY29tIiwicGhvbmUiOiIoODMpIDk5OTk5LTk5OTkiLCJjcGYiOiIxMjMuNDU2Ljc4OS0wMCJ9.aoFANumU9ua_Fhire_kFq6do-wNI4rxDW5jlVCZ7c1Q';
     }
@@ -36,19 +59,57 @@ class _PerfiluserState extends State<Perfiluser> {
   void _carregarDadosUsuario() {
     try {
       _userData = JwtDecoder.decode(_token);
+
+    if (!_userData.containsKey('name') || _userData['name'] == null || _userData['name'].toString().isEmpty ||
+        !_userData.containsKey('email') || _userData['email'] == null || _userData['email'].toString().isEmpty ||
+        !_userData.containsKey('phone') || _userData['phone'] == null || _userData['phone'].toString().isEmpty ||
+        !_userData.containsKey('cpf') || _userData['cpf'] == null || _userData['cpf'].toString().isEmpty) {
+        throw FormatException('Campos obrigatórios no token estão ausentes.');
+      }
+
       setState(() {
         _isLoading = false;
       });
+    } on FormatException catch (e) {
+      setState(() {
+        _errorFetching = true;
+        _isLoading = false;
+        _errorMessage = e.message;
+      });
     } catch (e) {
       setState(() {
-        _isLoading = false;
         _errorFetching = true;
+        _isLoading = false;
+        _errorMessage = 'Erro ao decodificar o token.';
       });
     }
   }
 
+  // 🛡️ Função para validar estrutura do token JWT
+  bool _isValidJwtFormat(String token) {
+    final parts = token.split('.');
+    if (parts.length != 3) {
+      return false;
+    }
+    try {
+      final payload = utf8.decode(base64Url.decode(base64Url.normalize(parts[1])));
+      final decodedPayload = json.decode(payload);
+      if (decodedPayload is! Map<String, dynamic>) {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_errorFetching && _errorMessage.isNotEmpty) {
+      // Mostra o AlertDialog assim que detectar erro
+      Future.delayed(Duration.zero, () => _showErrorDialog(context, _errorMessage));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Perfil'),
@@ -67,9 +128,9 @@ class _PerfiluserState extends State<Perfiluser> {
           if (_isLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (_errorFetching) {
-            return const Center(child: Text('Erro ao carregar perfil'));
+            return Center(child: Text('Erro ao carregar perfil: $_errorMessage'));
           } else if (_userData.isEmpty) {
-            return const Center(child: Text('Nenhuma informação encontrada'));
+            return const Center(child: Text('Nenhuma informação de usuário encontrada'));
           } else {
             return _buildPerfil(context);
           }
@@ -83,12 +144,11 @@ class _PerfiluserState extends State<Perfiluser> {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          // Card com nome
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(12),
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               children: [
@@ -111,7 +171,6 @@ class _PerfiluserState extends State<Perfiluser> {
             ),
           ),
           const SizedBox(height: 20),
-
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -145,7 +204,6 @@ class _PerfiluserState extends State<Perfiluser> {
             ],
           ),
           const SizedBox(height: 20),
-
           Expanded(
             child: ListView(
               children: [
@@ -187,7 +245,6 @@ class _PerfiluserState extends State<Perfiluser> {
               ],
             ),
           ),
-
           Column(
             children: [
               SizedBox(
@@ -237,9 +294,27 @@ class _PerfiluserState extends State<Perfiluser> {
       onTap: onTap,
     );
   }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Erro'),
+        content: Text("Token JWT com erro no Payload: $message"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context); // Fecha também a página de perfil
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-// Widget reutilizável para info com rótulo
 class _LabeledInfoItem extends StatelessWidget {
   final String label;
   final String value;

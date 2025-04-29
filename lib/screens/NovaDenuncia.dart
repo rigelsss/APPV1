@@ -188,7 +188,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
             itemCount: categorias.length,
             itemBuilder: (context, index) {
               final categoria = categorias[index];
-              final String texto = categoria['texto'] ?? 'Sem texto';
+              final String texto = categoria['nome'] ?? 'Sem texto';
               final String imagem = categoria['imagem'] ?? 'assets/images/image-break.png';
               final List<dynamic> subcategorias = categoria['subcategorias'] ?? [];
               final isExpanded = _categoriasExpandidas.contains(index);

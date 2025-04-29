@@ -2,7 +2,7 @@
     "categorias": [
       {
         "imagem": "assets/images/fauna.png",
-        "texto": "Contra a fauna",
+        "nome": "Contra a fauna",
         "subcategorias": [
           "Caça ilegal de animais silvestres",
           "Tráfico de animais silvestres",
@@ -13,7 +13,7 @@
       },
       {
         "imagem": "assets/images/flora.png",
-        "texto": "Contra a flora",
+        "nome": "Contra a flora",
         "subcategorias": [
           "Desmatamento ilegal",
           "Queimadas não autorizadas",
@@ -23,7 +23,7 @@
       },
       {
         "imagem": "assets/images/poluicao.png",
-        "texto": "Poluição e contaminação ambiental",
+        "nome": "Poluição e contaminação ambiental",
         "subcategorias": [
           "Lançamento irregular de esgoto e resíduos industriais em rios e mares",
           "Poluição do ar",
@@ -33,7 +33,7 @@
       },
       {
         "imagem": "assets/images/areas_protegidas.png",
-        "texto": "Degradação de áreas protegidas",
+        "nome": "Degradação de áreas protegidas",
         "subcategorias": [
           "Construlção irregular em áreas de preservação",
           "Supressão de vegetação em manguezais, restingas e matas ciliares",
@@ -43,7 +43,7 @@
       },
       {
         "imagem": "assets/images/recursosHidricos.png",
-        "texto": "Recursos hídricos e balneabilidade",
+        "nome": "Recursos hídricos e balneabilidade",
         "subcategorias": [
           "Contaminação de rios, lagos e oceanos por despejo de resíduos",
           "Uso irregular de recursos hídricos",
@@ -52,7 +52,7 @@
       },
       {
         "imagem": "assets/images/residuos.png",
-        "texto": "Relacionadas a resíduos sólidos",
+        "nome": "Relacionadas a resíduos sólidos",
         "subcategorias": [
           "Lixões irregulares e descarte inadequado de resíduos",
           "Não cumprimento da logística reversa de resíduos perigosos",
@@ -62,12 +62,12 @@
       },
       {
         "imagem": "assets/images/outra.png",
-        "texto": "Outra",
+        "nome": "Outra",
         "subcategorias": []
       },
       {
         "imagem": "assets/images/teste.png",
-        "texto": "Teste",
+        "nome": "Teste",
         "subcategorias": ["Consumo de API"]
       }
     ]
