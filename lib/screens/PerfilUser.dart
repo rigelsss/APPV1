@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/notificacoes.dart';
-import 'package:sudema_app/services/AuthMe.dart'; 
+import 'package:sudema_app/services/AuthMe.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Perfiluser extends StatefulWidget {
   final String? token;
@@ -60,6 +61,14 @@ class PerfiluserState extends State<Perfiluser> {
         _errorMessage = 'Erro ao buscar dados: $e';
       });
     }
+  }
+
+  Future<void> _logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token'); // ou prefs.clear() se quiser limpar tudo
+
+    if (!mounted) return;
+    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 
   @override
@@ -172,7 +181,7 @@ class PerfiluserState extends State<Perfiluser> {
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const NotificacoesPage(),
+                      builder: (context) => NotificacoesPage(token: _token),
                     ),
                   ),
                 ),
@@ -213,9 +222,7 @@ class PerfiluserState extends State<Perfiluser> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    // ação de sair
-                  },
+                  onPressed: _logout,
                   icon: const Icon(Icons.logout, color: Colors.white),
                   label: const Text(
                     'Sair',
