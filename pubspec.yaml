@@ -35,6 +35,7 @@ dependencies:
   #Desconhecidas
   flutter_svg: ^2.0.7
   pie_chart: ^5.3.2
+  pin_code_fields: ^8.0.1
 
 dev_dependencies:
   flutter_test:

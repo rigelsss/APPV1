@@ -1,4 +1,6 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:sudema_app/screens/RecuperacaoSenha.dart';
 import 'package:sudema_app/screens/widgets_reutilizaveis/drawer.dart';
 
 class EditarSenha extends StatefulWidget {
@@ -42,6 +44,35 @@ class _EditarSenhaState extends State<EditarSenha> {
               ),),
               SizedBox(height: 20,),
               Center(
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Esqueceu a senha atual? ',
+                        style: TextStyle(color: Colors.black, fontSize: 16),
+                      ),
+                      TextSpan(
+                        text: ' Recuperar',
+                        style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Recuperacaoosenha(),
+                              ),
+                            );
+                          },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 20,),
+              Center(
                 child: ElevatedButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.logout, color: Colors.white),
@@ -58,7 +89,6 @@ class _EditarSenhaState extends State<EditarSenha> {
                   ),
                 ),
               ),
-
             ]),
       ),
     );
