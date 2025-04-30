@@ -17,11 +17,11 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   String? _categoriaSelecionada;
   String? _subcategoriaSelecionada;
   final Set<int> _categoriasExpandidas = {};
-  final TextEditingController _outraController = TextEditingController();
-  String? _mensagemErro;
 
   List<dynamic> categorias = [];
   bool _isLoadingCategorias = true;
+
+  String? _mensagemErro;
 
   @override
   void initState() {
@@ -91,60 +91,60 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
       ),
       body: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(opcao.length, (index) {
-                final isSelected = index == selectedIndex;
-                final isEnabled = _podeIrParaAba(index);
-                return GestureDetector(
-                  onTap: () => _aoSelecionarAba(index),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        opcao[index],
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isSelected
-                              ? Colors.blue[900]
-                              : isEnabled
-                                  ? Colors.grey[700]
-                                  : Colors.grey[400],
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        height: 3,
-                        width: 60,
-                        decoration: BoxDecoration(
-                          color: isSelected ? Colors.blue[900] : Colors.transparent,
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            ),
-          ),
+          _buildTopBar(),
           if (_mensagemErro != null)
             Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Text(
                 _mensagemErro!,
-                style: const TextStyle(
-                  color: Colors.red,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
               ),
             ),
           Expanded(
             child: _buildConteudoSelecionado(),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: List.generate(opcao.length, (index) {
+          final isSelected = index == selectedIndex;
+          final isEnabled = _podeIrParaAba(index);
+          return GestureDetector(
+            onTap: () => _aoSelecionarAba(index),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  opcao[index],
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isSelected
+                        ? Colors.blue[900]
+                        : isEnabled
+                            ? Colors.grey[700]
+                            : Colors.grey[400],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Container(
+                  height: 3,
+                  width: 60,
+                  decoration: BoxDecoration(
+                    color: isSelected ? Colors.blue[900] : Colors.transparent,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }
@@ -178,10 +178,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
       children: [
         const Padding(
           padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Text(
-            'Categoria da infração',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
+          child: Text('Categoria da infração', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
         ),
         Expanded(
           child: ListView.builder(
@@ -193,7 +190,6 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
               final List<dynamic> subcategorias = categoria['subcategorias'] ?? [];
               final isExpanded = _categoriasExpandidas.contains(index);
               final selecionado = _categoriaSelecionada == texto;
-              final isOutraCategoria = texto == 'Outra';
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 4),
@@ -217,22 +213,11 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                           child: Image.asset(
                             imagem,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'assets/images/image-break.png',
-                                fit: BoxFit.cover,
-                              );
-                            },
+                            errorBuilder: (context, error, stackTrace) => Image.asset('assets/images/image-break.png', fit: BoxFit.cover),
                           ),
                         ),
                       ),
-                      title: Text(
-                        texto,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
+                      title: Text(texto, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -255,84 +240,46 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                     if (isExpanded)
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-                        child: isOutraCategoria
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey.shade400),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                                    child: TextField(
-                                      controller: _outraController,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _subcategoriaSelecionada = value;
-                                          _categoriaSelecionada = 'Outra';
-                                          DenunciaData().categoria = 'Outra';
-                                          DenunciaData().subCategoria = value;
-                                        });
-                                      },
-                                      decoration: InputDecoration(
-                                        hintText: 'Especifique',
-                                        hintStyle: TextStyle(color: Colors.grey.shade400),
-                                        border: InputBorder.none,
-                                        isDense: true,
-                                        contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
-                                      ),
-                                    ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: subcategorias.map((sub) {
+                            final isSelected = _subcategoriaSelecionada == sub;
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _subcategoriaSelecionada = sub;
+                                  _categoriaSelecionada = texto;
+                                  DenunciaData().categoria = texto;
+                                  DenunciaData().subCategoria = sub;
+                                  _mensagemErro = null;
+                                });
+                              },
+                              child: Container(
+                                height: 48,
+                                alignment: Alignment.center,
+                                margin: const EdgeInsets.symmetric(vertical: 4),
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? const Color(0xFF1B8C00) : const Color(0xFFB9CD23),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  sub,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: isSelected ? Colors.white : Colors.black87,
+                                    height: 1.3,
                                   ),
-                                ],
-                              )
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: subcategorias.map(
-                                  (sub) {
-                                    final isSelected = _subcategoriaSelecionada == sub;
-                                    return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _subcategoriaSelecionada = sub;
-                                          _categoriaSelecionada = texto;
-                                          DenunciaData().categoria = texto;
-                                          DenunciaData().subCategoria = sub;
-                                          _mensagemErro = null;
-                                        });
-                                      },
-                                      child: Container(
-                                        height: 48,
-                                        alignment: Alignment.center,
-                                        margin: const EdgeInsets.symmetric(vertical: 4),
-                                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                                        decoration: BoxDecoration(
-                                          color: isSelected ? const Color(0xFF1B8C00) : const Color(0xFFB9CD23),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: Text(
-                                          sub,
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: isSelected ? Colors.white : Colors.black87,
-                                            height: 1.3,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ).toList(),
+                                ),
                               ),
+                            );
+                          }).toList(),
+                        ),
                       ),
-                    const Divider(
-                      indent: 20,
-                      endIndent: 20,
-                      height: 6,
-                      color: Color.fromRGBO(195, 182, 182, 1),
-                    ),
+                    const Divider(indent: 20, endIndent: 20, height: 6, color: Color.fromRGBO(195, 182, 182, 1)),
                   ],
                 ),
               );

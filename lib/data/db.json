@@ -63,7 +63,7 @@
       {
         "imagem": "assets/images/outra.png",
         "nome": "Outra",
-        "subcategorias": []
+        "subcategorias": ["Outra Ocorrencia"]
       },
       {
         "imagem": "assets/images/teste.png",

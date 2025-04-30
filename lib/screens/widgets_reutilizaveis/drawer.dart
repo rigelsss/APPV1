@@ -1,68 +1,67 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sudema_app/screens/PerfilUser.dart';
+import 'package:sudema_app/services/AuthMe.dart';
 
 class CustomDrawer extends StatefulWidget {
   final String? token;
-  final bool forceRandomLogin;
-  final VoidCallback? onSortearFinalizado;
 
-  const CustomDrawer({
-    super.key,
-    this.token,
-    this.forceRandomLogin = false,
-    this.onSortearFinalizado,
-  });
+  const CustomDrawer({super.key, this.token});
 
   @override
-  State<CustomDrawer> createState() => _CustomDrawerState();
+  CustomDrawerState createState() => CustomDrawerState();
 }
 
-class _CustomDrawerState extends State<CustomDrawer> {
-  late bool isLoggedIn;
+class CustomDrawerState extends State<CustomDrawer> {
+  String username = 'Acessar';
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _sortearLogin();
+    _carregarNomeUsuario();
   }
 
-  @override
-  void didUpdateWidget(CustomDrawer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    // Se a flag vier true, sorteia novamente
-    if (widget.forceRandomLogin && !oldWidget.forceRandomLogin) {
-      _sortearLogin();
-      widget.onSortearFinalizado?.call(); // avisa o HomeScreen para resetar
+  Future<void> _carregarNomeUsuario() async {
+    if (widget.token != null && widget.token!.isNotEmpty) {
+      try {
+        final data = await AuthController.obterInformacoesUsuario(widget.token!);
+        if (data != null && data['user'] != null) {
+          setState(() {
+            username = data['user']['name'] ?? 'Acessar';
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+        }
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        print('Erro ao carregar nome do usuário: $e');
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
-  void _sortearLogin() {
-    final random = Random();
-    setState(() {
-      isLoggedIn = random.nextBool(); // 50% de chance
-    });
-  }
-
-  String _getUsername() {
-    if (!isLoggedIn || widget.token == null || widget.token!.isEmpty) {
-      return 'Acessar';
-    } else {
-      try {
-        Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token!);
-        return decodedToken['name'] ?? 'Usuário';
-      } catch (e) {
-        return 'Usuário';
-      }
+  bool get isLoggedIn {
+    if (widget.token == null || widget.token!.isEmpty) {
+      return false;
+    }
+    try {
+      return !JwtDecoder.isExpired(widget.token!);
+    } catch (e) {
+      return false;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final username = _getUsername();
-
     return Drawer(
       backgroundColor: Colors.white,
       child: Column(
@@ -105,17 +104,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
           ),
           InkWell(
             onTap: () {
-              //if (isLoggedIn && widget.token != null) {
-                if (isLoggedIn) {
+              if (isLoggedIn) {
                 Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Perfiluser(token: widget.token)),
+                  context,
+                  MaterialPageRoute(builder: (context) => Perfiluser(token: widget.token)),
                 );
               } else {
                 Navigator.pushNamed(context, '/login');
-              } 
+              }
             },
-
             child: Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
@@ -134,7 +131,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          username,
+                          isLoading ? 'Carregando...' : username,
                           style: const TextStyle(fontSize: 18),
                         ),
                       ),
