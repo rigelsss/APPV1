@@ -30,7 +30,6 @@ android {
 
     buildTypes {
         release {
-            // Usando debug keys apenas para facilitar testes iniciais
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -39,3 +38,5 @@ android {
 flutter {
     source = "../.."
 }
+
+apply(plugin = "com.google.gms.google-services")
