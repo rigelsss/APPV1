@@ -10,8 +10,9 @@ import 'package:sudema_app/screens/login.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
 import 'package:sudema_app/screens/editarperfil.dart';
 
+import 'package:sudema_app/services/notification_handler.dart';
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Inicializa Firebase no background também
   await Firebase.initializeApp();
   print('🔔 [Background] Mensagem recebida: ${message.messageId}');
 }
@@ -20,7 +21,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Registra handler para notificações em segundo plano
+  await NotificationHandler.createNotificationChannel();
+  await NotificationHandler.initializeFlutterNotifications();
+  NotificationHandler.listenToForegroundMessages();
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(const MyApp());
