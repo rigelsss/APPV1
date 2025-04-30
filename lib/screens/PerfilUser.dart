@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sudema_app/screens/notificacoes.dart';
 import 'package:sudema_app/services/AuthMe.dart'; 
 
 class Perfiluser extends StatefulWidget {
@@ -168,7 +169,12 @@ class PerfiluserState extends State<Perfiluser> {
                   context,
                   icon: Icons.notifications_none,
                   title: 'Notificações',
-                  onTap: () => Navigator.pushNamed(context, '/notificacoes'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NotificacoesPage(),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 10),
                 const Divider(color: Colors.grey, height: 1, indent: 16, endIndent: 16),
