@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -12,6 +13,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        (this as com.android.build.api.dsl.CompileOptions).isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -19,9 +21,7 @@ android {
     }
 
     defaultConfig {
-
         applicationId = "com.sudema_app"
-
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -29,8 +29,7 @@ android {
     }
 
     buildTypes {
-        release {
-            // Usando debug keys apenas para facilitar testes iniciais
+        getByName("release") {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -39,3 +38,10 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    implementation("com.google.firebase:firebase-messaging:23.4.1") 
+
+}
+
