@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sudema_app/data/estacoes_monitoramento.dart';
+import 'package:sudema_app/services/estacoes_service.dart'; 
 
 class PraiasPage extends StatefulWidget {
   const PraiasPage({super.key});
@@ -20,6 +22,11 @@ class _PraiasPageState extends State<PraiasPage> {
   late GoogleMapController mapController;
   final LatLng _initialPosition = const LatLng(-7.1202, -34.8802);
 
+  // dados carregados do JSON
+  List<EstacaoMonitoramento> _estacoes = [];
+  bool _isLoadingEstacoes = true;
+
+  // filtros e zoom
   List<String> classificacoesSelecionadas = ['Próprias', 'Impróprias'];
   String municipioSelecionado = '';
   String praiaSelecionada = '';
@@ -42,49 +49,96 @@ class _PraiasPageState extends State<PraiasPage> {
   BitmapDescriptor? _iconePropria;
   BitmapDescriptor? _iconeImpropria;
 
+  // marcadores internos
   final List<_PraiaMarker> _todosMarcadores = [];
   final Set<Marker> _marcadoresVisiveis = {};
 
   @override
   void initState() {
     super.initState();
-    _carregarIcones().then((_) => _gerarMarcadoresComSimulacao());
+    print("▶ Iniciando carregamento das estações...");
+    _loadEstacoesFromJson();
+    _carregarIcones();
+  }
+
+  Future<void> _loadEstacoesFromJson() async {
+    try {
+      print("  • Carregando JSON em assets/json/balneabilidade.json");
+      final jsonString = await rootBundle.loadString('assets/json/balneabilidade.json');
+      print("  • JSON carregado (${jsonString.length} caracteres)");
+      final List<dynamic> jsonList = json.decode(jsonString);
+      print("  • ${jsonList.length} registros encontrados no JSON");
+
+      final random = Random();
+      _estacoes = jsonList.map((item) {
+        // extrai latitude/longitude
+        final lat = item['coordenadas']['latitude'];
+        final lng = item['coordenadas']['longitude'];
+        // se o campo condicao vier vazio, sorteia aleatoriamente
+        final cond = (item['condicao'] as String).toLowerCase();
+        final classificacao = cond.isNotEmpty
+            ? (cond.contains('propr') ? 'Próprias' : 'Impróprias')
+            : (random.nextBool() ? 'Próprias' : 'Impróprias');
+        return EstacaoMonitoramento(
+          nome: item['nome'],
+          codigo: item['codigo'],
+          endereco: item['endereco'],
+          municipio: item['municipio'],
+          coordenadas: LatLng(lat, lng),
+          classificacao: classificacao,
+        );
+      }).toList();
+
+      print("  • Objetos EstacaoMonitoramento criados: ${_estacoes.length}");
+      setState(() {
+        _isLoadingEstacoes = false;
+      });
+      // gerar marcadores agora que temos as estações
+      _gerarMarcadoresComSimulacao();
+    } catch (e, st) {
+      print("✖ Erro ao carregar estações: $e");
+      print(st);
+      setState(() {
+        _isLoadingEstacoes = false;
+      });
+    }
   }
 
   Future<void> _carregarIcones() async {
-    _iconePropria = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(14, 14)),
-      'assets/images/propria.png',
-    );
-    _iconeImpropria = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(14, 14)),
-      'assets/images/impropria.png',
-    );
+    try {
+      print("  • Carregando ícones de praia...");
+      _iconePropria = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(14, 14)),
+        'assets/images/propria.png',
+      );
+      _iconeImpropria = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(14, 14)),
+        'assets/images/impropria.png',
+      );
+      print("  • Ícones carregados com sucesso");
+    } catch (e) {
+      print("✖ Erro ao carregar ícones: $e");
+    }
   }
 
   void _gerarMarcadoresComSimulacao() {
+    print("▶ Gerando marcadores a partir de _estacoes...");
     _todosMarcadores.clear();
-    final random = Random();
-
-    for (var estacao in estacoes) {
-      final isPropria = random.nextBool();
-      final classificacao = isPropria ? 'Próprias' : 'Impróprias';
-      final icon = isPropria ? _iconePropria : _iconeImpropria;
-
-      _todosMarcadores.add(_PraiaMarker(
-        marker: Marker(
-          markerId: MarkerId(estacao.codigo),
-          position: estacao.coordenadas,
-          icon: icon!,
-          infoWindow: InfoWindow(
-            title: estacao.nome,
-            snippet: '${estacao.endereco}\n$classificacao',
-          ),
+    for (var est in _estacoes) {
+      final icon = est.classificacao == 'Próprias' ? _iconePropria : _iconeImpropria;
+      final marker = Marker(
+        markerId: MarkerId(est.codigo),
+        position: est.coordenadas,
+        icon: icon ?? BitmapDescriptor.defaultMarker,
+        infoWindow: InfoWindow(
+          title: est.nome,
+          snippet: '${est.endereco}\n${est.classificacao}',
         ),
-        classificacao: classificacao,
-      ));
+      );
+      _todosMarcadores.add(_PraiaMarker(marker: marker, classificacao: est.classificacao));
+      print("  • Marcador criado: ${est.nome} (${est.classificacao})");
     }
-
+    // aplica filtro inicial
     setState(() {
       _filtrarMarcadores();
     });
@@ -92,18 +146,18 @@ class _PraiasPageState extends State<PraiasPage> {
 
   void _filtrarMarcadores() {
     _marcadoresVisiveis.clear();
-
     if (currentZoom >= minZoomToShowMarkers) {
-      _marcadoresVisiveis.addAll(
-        _todosMarcadores.where((m) {
-          final estacao = estacoes.firstWhere((e) => e.codigo == m.marker.markerId.value);
-          final matchMunicipio = municipioSelecionado.isEmpty ||
-              municipioSelecionado == 'Todos' ||
-              estacao.municipio == municipioSelecionado;
-          final matchClassificacao = classificacoesSelecionadas.contains(m.classificacao);
-          return matchMunicipio && matchClassificacao;
-        }).map((m) => m.marker),
-      );
+      for (var pm in _todosMarcadores) {
+        // encontra a estacao pelo markerId
+        final est = _estacoes.firstWhere((e) => e.codigo == pm.marker.markerId.value);
+        final matchMun = municipioSelecionado.isEmpty ||
+            municipioSelecionado == 'Todos' ||
+            est.municipio == municipioSelecionado;
+        final matchClass = classificacoesSelecionadas.contains(pm.classificacao);
+        if (matchMun && matchClass) {
+          _marcadoresVisiveis.add(pm.marker);
+        }
+      }
     }
   }
 
@@ -120,16 +174,16 @@ class _PraiasPageState extends State<PraiasPage> {
     });
   }
 
-  LatLng _calcularCentroMunicipio(List estacoesMunicipio) {
-    final lat = estacoesMunicipio.map((e) => e.coordenadas.latitude).reduce((a, b) => a + b) / estacoesMunicipio.length;
-    final lng = estacoesMunicipio.map((e) => e.coordenadas.longitude).reduce((a, b) => a + b) / estacoesMunicipio.length;
-    return LatLng(lat, lng);
+  LatLng _calcularCentroMunicipio(List<EstacaoMonitoramento> lista) {
+    final latSum = lista.map((e) => e.coordenadas.latitude).reduce((a, b) => a + b);
+    final lngSum = lista.map((e) => e.coordenadas.longitude).reduce((a, b) => a + b);
+    return LatLng(latSum / lista.length, lngSum / lista.length);
   }
 
   void _moverMapaParaMunicipio(String municipio) {
-    final estacoesMunicipio = estacoes.where((e) => e.municipio == municipio).toList();
-    if (estacoesMunicipio.isNotEmpty) {
-      final destino = _calcularCentroMunicipio(estacoesMunicipio);
+    final lista = _estacoes.where((e) => e.municipio == municipio).toList();
+    if (lista.isNotEmpty) {
+      final destino = _calcularCentroMunicipio(lista);
       mapController.animateCamera(CameraUpdate.newLatLngZoom(destino, 12.5));
     }
     _filtrarMarcadores();
@@ -144,6 +198,11 @@ class _PraiasPageState extends State<PraiasPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoadingEstacoes) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,14 +219,15 @@ class _PraiasPageState extends State<PraiasPage> {
             color: Colors.grey.shade300,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Trechos monitorados", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                    const Text("Trechos monitorados",
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 4),
-                    Text("${estacoes.length}", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                    Text("${_estacoes.length}",
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const Spacer(),
@@ -176,10 +236,12 @@ class _PraiasPageState extends State<PraiasPage> {
                   height: 35,
                   child: PopupMenuButton<String>(
                     onSelected: _toggleClassificacao,
-                    itemBuilder: (context) => [
+                    itemBuilder: (_) => [
                       _popupItem('Mostrar tudo', classificacoesSelecionadas.length == 2),
-                      _popupItem('Mostrar apenas próprias', classificacoesSelecionadas.contains('Próprias') && classificacoesSelecionadas.length == 1),
-                      _popupItem('Mostrar apenas impróprias', classificacoesSelecionadas.contains('Impróprias') && classificacoesSelecionadas.length == 1),
+                      _popupItem('Mostrar apenas próprias',
+                          classificacoesSelecionadas.contains('Próprias') && classificacoesSelecionadas.length == 1),
+                      _popupItem('Mostrar apenas impróprias',
+                          classificacoesSelecionadas.contains('Impróprias') && classificacoesSelecionadas.length == 1),
                     ],
                     child: _popupButton(_getClassificacaoLabel()),
                   ),
@@ -209,9 +271,9 @@ class _PraiasPageState extends State<PraiasPage> {
                     _filtrarMarcadores();
                   });
                 },
-                onCameraMove: (position) {
+                onCameraMove: (pos) {
                   setState(() {
-                    currentZoom = position.zoom;
+                    currentZoom = pos.zoom;
                     _filtrarMarcadores();
                   });
                 },
@@ -242,7 +304,7 @@ class _PraiasPageState extends State<PraiasPage> {
                   _filtrarMarcadores();
                 }
               },
-              itemBuilder: (context) =>
+              itemBuilder: (_) =>
                   municipios.map((m) => PopupMenuItem<String>(value: m, child: Text(m))).toList(),
               child: _popupButton(municipioSelecionado.isEmpty ? 'Municípios' : municipioSelecionado),
             ),
