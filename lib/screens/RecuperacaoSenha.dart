@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/CodigoDeSenha.dart';
 import 'package:sudema_app/screens/widgets_reutilizaveis/appbardenuncia.dart';
-import 'package:sudema_app/screens/NovaSenha.dart';
 
 class Recuperacaoosenha extends StatefulWidget {
   const Recuperacaoosenha({super.key});
