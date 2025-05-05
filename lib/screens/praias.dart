@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sudema_app/services/estacoes_service.dart'; 
 
@@ -61,48 +58,23 @@ class _PraiasPageState extends State<PraiasPage> {
     _carregarIcones();
   }
 
-  Future<void> _loadEstacoesFromJson() async {
-    try {
-      print("  • Carregando JSON em assets/json/balneabilidade.json");
-      final jsonString = await rootBundle.loadString('assets/json/balneabilidade.json');
-      print("  • JSON carregado (${jsonString.length} caracteres)");
-      final List<dynamic> jsonList = json.decode(jsonString);
-      print("  • ${jsonList.length} registros encontrados no JSON");
-
-      final random = Random();
-      _estacoes = jsonList.map((item) {
-        // extrai latitude/longitude
-        final lat = item['coordenadas']['latitude'];
-        final lng = item['coordenadas']['longitude'];
-        // se o campo condicao vier vazio, sorteia aleatoriamente
-        final cond = (item['condicao'] as String).toLowerCase();
-        final classificacao = cond.isNotEmpty
-            ? (cond.contains('propr') ? 'Próprias' : 'Impróprias')
-            : (random.nextBool() ? 'Próprias' : 'Impróprias');
-        return EstacaoMonitoramento(
-          nome: item['nome'],
-          codigo: item['codigo'],
-          endereco: item['endereco'],
-          municipio: item['municipio'],
-          coordenadas: LatLng(lat, lng),
-          classificacao: classificacao,
-        );
-      }).toList();
-
-      print("  • Objetos EstacaoMonitoramento criados: ${_estacoes.length}");
-      setState(() {
-        _isLoadingEstacoes = false;
-      });
-      // gerar marcadores agora que temos as estações
-      _gerarMarcadoresComSimulacao();
-    } catch (e, st) {
-      print("✖ Erro ao carregar estações: $e");
-      print(st);
-      setState(() {
-        _isLoadingEstacoes = false;
-      });
-    }
+Future<void> _loadEstacoesFromJson() async {
+  try {
+    print("▶ Carregando estações via EstacoesService...");
+    _estacoes = await EstacoesService.carregarEstacoes();
+    print("  • ${_estacoes.length} estações carregadas");
+    setState(() {
+      _isLoadingEstacoes = false;
+    });
+    _gerarMarcadoresComSimulacao();
+  } catch (e, st) {
+    print("✖ Erro ao carregar estações: $e");
+    print(st);
+    setState(() {
+      _isLoadingEstacoes = false;
+    });
   }
+}
 
   Future<void> _carregarIcones() async {
     try {
