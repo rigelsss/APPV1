@@ -37,6 +37,7 @@ class _RegistroUserState extends State<RegistroUser> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarDenuncia(title: 'Cadastro'),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Column(

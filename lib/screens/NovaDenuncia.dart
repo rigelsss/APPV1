@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sudema_app/screens/Identificacao.dart';
+import 'package:sudema_app/screens/denuncia.dart';
 import 'package:sudema_app/services/categoria_service.dart';
 import 'package:sudema_app/screens/aba_localizacao.dart';
 import '../models/denuncia_data.dart';
@@ -74,6 +76,12 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
     setState(() {
       selectedIndex = 2;
       _mensagemErro = null;
+    });
+  }
+
+  void _irParaDenuncia() {
+    setState(() {
+      selectedIndex = 3;
     });
   }
 
@@ -156,9 +164,9 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
       case 1:
         return AbaLocalizacao(onEnderecoConfirmado: _irParaIdentificacao);
       case 2:
-        return const Center(child: Text("Identificação do Denunciante"));
+        return Identificacao(onProsseguir: _irParaDenuncia);
       case 3:
-        return const Center(child: Text("Denúncia"));
+        return  DenunciaScreen();
       default:
         return const SizedBox();
     }
