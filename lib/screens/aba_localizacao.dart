@@ -146,6 +146,8 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
 
       DenunciaData().localizacao = _posicaoAtual;
       DenunciaData().endereco = _endereco;
+      DenunciaData().enderecoConfirmado = true; 
+
     }
   }
 

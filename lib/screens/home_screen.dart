@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:sudema_app/screens/Identificacao.dart';
 import '../services/getnoticia.dart';
 import '../models/noticia.dart';
 import '../screens/widgets_reutilizaveis/appbar.dart';
