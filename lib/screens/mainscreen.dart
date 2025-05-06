@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sudema_app/screens/home_screen.dart';
 import '../screens/widgets_reutilizaveis/navbar.dart';
-import '../screens/home.dart';
-import '../screens/denuncia.dart';
+import '../screens/PageDenuncia.dart';
 import '../screens/praias.dart';
 import '../screens/noticias.dart';
 
@@ -15,10 +15,10 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = const [
-    HomePage(noticias: [],),
-    PraiasPage(),
-    NoticiasPage(),
+  final List<Widget> _pages = [
+    const HomeScreen(),
+    const PraiasPage(),
+    const NoticiasPage(),
     DenunciaPage(),
   ];
 
@@ -32,7 +32,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages[_currentIndex],
-      bottomNavigationBar: CustomNavBar(
+      bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
         onTap: _onTabTapped,
       ),

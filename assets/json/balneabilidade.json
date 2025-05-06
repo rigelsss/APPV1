@@ -1,0 +1,707 @@
+[
+    {
+      "nome": "Barra do Guajú",
+      "codigo": "01.01",
+      "endereco": "Em frente à desembocadura do Rio Guajú",
+      "municipio": "Mataraca",
+      "coordenadas": {
+        "latitude": -6.487729,
+        "longitude": -34.968220
+      },
+      "condicao": ""
+    },
+    {
+      "nome": "Pavuna",
+      "codigo": "01.00",
+      "endereco": "Em frente à Lagoa da Pavuna",
+      "municipio": "Mataraca",
+      "coordenadas": {
+        "latitude": -6.543575,
+        "longitude": -34.966631
+      },
+      "condicao": ""
+    },
+    {
+      "nome": "Baleia",
+      "codigo": "01.01A",
+      "endereco": "No final do acesso à praia da Rua Valfredo Medeiros",
+      "municipio": "Mataraca",
+      "coordenadas": {
+        "latitude": -6.595602,
+        "longitude": -34.966260
+      },
+      "condicao": ""
+    },
+    {
+      "nome": "Barra do Camaratuba",
+      "codigo": "01.02",
+      "endereco": "Foz do Rio Camaratuba",
+      "municipio": "Mataraca",
+      "coordenadas": {
+        "latitude": -6.601995,
+        "longitude": -34.965790
+      },
+      "condicao": ""
+    },
+    {
+      "nome": "Camaratuba",
+      "codigo": "02.00",
+      "endereco": "Em frente a desembocadura do Rio Camaratuba",
+      "municipio": "Baia da Traição",
+      "coordenadas": {
+        "latitude": -6.603987,
+        "longitude": -34.963635
+      },
+      "condicao": ""
+    },
+    {
+      "nome": "Tambá",
+      "codigo": "02.00A",
+      "endereco": "Final do acesso à praia na Aldeia Galego",
+      "municipio": "Baia da Traição",
+      "coordenadas": {
+        "latitude": -6.663785,
+        "longitude": -34.956177
+      },
+      "condicao": ""
+    },
+    {
+      "nome": "Praia do Forte",
+      "codigo": "02.01",
+      "endereco": "No final da Rua Don Pedro II",
+      "municipio": "Baia da Traição",
+      "coordenadas": {
+        "latitude": -6.687934,
+        "longitude": -34.934072
+      },
+      "condicao": ""
+    },
+    {
+      "nome": "Baia da Traição",
+      "codigo": "02.02",
+      "endereco": "No final da Rua Siqueira Campos",
+      "municipio": "Baia da Traição",
+      "coordenadas": {
+        "latitude": -6.690453,
+        "longitude": -34.930905
+      },
+      "condicao": ""
+    },
+    {
+      "nome": "Trincheiras",
+      "codigo": "02.03",
+      "endereco": "No final da Rua José Edmilson de Medeiros",
+      "municipio": "Baia da Traição",
+      "coordenadas": {
+        "latitude": -6.690261,
+        "longitude": -34.930703
+      },
+      "condicao": ""
+    },
+    {
+      "nome": "Acajutibiró",
+      "codigo": "02.04",
+      "endereco": "No final da Rua Projetada Seis",
+      "municipio": "Baia da Traição",
+      "coordenadas": {
+        "latitude": -6.698000,
+        "longitude": -34.934122
+      },
+      "condicao": ""
+    },
+    {
+      "nome": "Barra do Mamanguape",
+      "codigo": "03.01",
+      "endereco": "Foz do rio Mamanguape",
+      "municipio": "Rio Tinto",
+      "coordenadas": {
+        "latitude": -6.773987,
+        "longitude": -34.915793
+      },
+      "condicao": ""
+    },
+    {
+      "nome": "Praia de Campina",
+      "codigo": "03.02",
+      "endereco": "No final da PB 008",
+      "municipio": "Rio Tinto",
+      "coordenadas": {
+        "latitude": -6.812189,
+        "longitude": -34.913502
+      },
+      "condicao": ""
+    },
+    {
+      "nome": "Praia de Oiteiro",
+      "codigo": "03.03",
+      "endereco": "Trechos próximos a foz do Rio Miriri",
+      "municipio": "Rio Tinto",
+      "coordenadas": {
+        "latitude": -6.867742,
+        "longitude": -34.897127
+      },
+      "condicao": ""
+    },
+      {
+          "nome": "Bomsucesso",
+          "codigo": "04.00",
+          "endereco": "No final da Rua Mariano de Souza Falcão",
+          "municipio": "Lucena",
+          "coordenadas": {
+            "latitude": -6.887270,
+            "longitude": -34.884147
+          },
+          "condicao": ""
+        },
+        {
+          "nome": "Lucena",
+          "codigo": "04.01",
+          "endereco": "Em frente a desembocadura do Riacho Bonsucesso",
+          "municipio": "Lucena",
+          "coordenadas": {
+            "latitude": -6.895764,
+            "longitude": -34.871049
+          },
+          "condicao": ""
+        },
+        {
+          "nome": "Ponta de Lucena",
+          "codigo": "04.01A",
+          "endereco": "Na desembocadura da Camboa em Ponta de Lucena",
+          "municipio": "Lucena",
+          "coordenadas": {
+            "latitude": -6.900010,
+            "longitude": -34.856764
+          },
+          "condicao": ""
+        },
+        {
+          "nome": "Gameleira",
+          "codigo": "04.01B",
+          "endereco": "Em frente a desembocadura do Riacho Araçá",
+          "municipio": "Lucena",
+          "coordenadas": {
+            "latitude": -6.919102,
+            "longitude": -34.862689
+          },
+          "condicao": ""
+        },
+        {
+          "nome": "Fagundes",
+          "codigo": "04.01C",
+          "endereco": "No final da Travessa São José",
+          "municipio": "Lucena",
+          "coordenadas": {
+            "latitude": -6.938403,
+            "longitude": -34.865541
+          },
+          "condicao": ""
+        },
+        {
+          "nome": "Costinha",
+          "codigo": "04.02",
+          "endereco": "No final da Rua Ubiratan Galvão",
+          "municipio": "Lucena",
+          "coordenadas": {
+            "latitude": -6.964537,
+            "longitude": -34.855211
+          },
+          "condicao": ""
+        },
+            {
+              "nome": "Miramar",
+              "codigo": "05.01",
+              "endereco": "No final da Av. Cassiano da Cunha Nóbrega",
+              "municipio": "Cabedelo",
+              "coordenadas": {
+                "latitude": -6.965204,
+                "longitude": -34.843184
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Ponta de Mato",
+              "codigo": "05.02",
+              "endereco": "No final da Rua Nossa senhora dos Navegantes",
+              "municipio": "Cabedelo",
+              "coordenadas": {
+                "latitude": -6.970960,
+                "longitude": -34.828280
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Formosa",
+              "codigo": "05.02A",
+              "endereco": "No final da Rua Monsenhor José Coutinho da silva",
+              "municipio": "Cabedelo",
+              "coordenadas": {
+                "latitude": -6.984694,
+                "longitude": -34.827232
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Areia Dourada",
+              "codigo": "05.02B",
+              "endereco": "No final da Rua Projetada",
+              "municipio": "Cabedelo",
+              "coordenadas": {
+                "latitude": -6.986448,
+                "longitude": -34.827126
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Camboinha",
+              "codigo": "05.03",
+              "endereco": "No final da Rua Benício de Oliveira",
+              "municipio": "Cabedelo",
+              "coordenadas": {
+                "latitude": -7.014296,
+                "longitude": -34.828011
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Poço",
+              "codigo": "05.04",
+              "endereco": "No final da Rua Santa Cavalcante",
+              "municipio": "Cabedelo",
+              "coordenadas": {
+                "latitude": -7.024640,
+                "longitude": -34.829534
+              },
+              "condicao": "popria"
+            },
+            {
+              "nome": "Ponta de Campina",
+              "codigo": "05.04A",
+              "endereco": "Em frente a galeria de águas pluviais",
+              "municipio": "Cabedelo",
+              "coordenadas": {
+                "latitude": -7.030799,
+                "longitude": -34.829588
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Intermares",
+              "codigo": "05.05",
+              "endereco": "Em frente ao Maceió de intermares",
+              "municipio": "Cabedelo",
+              "coordenadas": {
+                "latitude": -7.046902,
+                "longitude": -34.840636
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Bessa I",
+              "codigo": "06.01",
+              "endereco": "Em frente a desembocadura do Maceió do Bessa",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.056049,
+                "longitude": -34.842945
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Bessa",
+              "codigo": "06.01.1",
+              "endereco": "No final da Rua Dr. Abel Beltrão",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.076567,
+                "longitude": -34.829742
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Bessa II",
+              "codigo": "06.01A",
+              "endereco": "Final da Av. Gov. Flávio Ribeiro Coutinho",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.097050,
+                "longitude": -34.832673
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Manaira",
+              "codigo": "06.02B3",
+              "endereco": "Em frente ao N° 1461 da Av. João Maurício",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.099747,
+                "longitude": -34.831722
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Manaira",
+              "codigo": "06.02B",
+              "endereco": "Em frente a quadra de Manaíra",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.105219,
+                "longitude": -34.828211
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Manaira",
+              "codigo": "06.02C1",
+              "endereco": "Em frente ao N° 315 da Av. João Maurício",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.107848,
+                "longitude": -34.825702
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Manaira",
+              "codigo": "06.02C",
+              "endereco": "No final da Av. Ruy Carneiro",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.109671,
+                "longitude": -34.823239
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Tambaú",
+              "codigo": "06.03A",
+              "endereco": "Em frente ao busto de Tamandaré",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.119446,
+                "longitude": -34.822435
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Cabo Branco",
+              "codigo": "06.04A",
+              "endereco": "No final da Av. Monsenhor Odilon Coutinho",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.124616,
+                "longitude": -34.822597
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Cabo Branco",
+              "codigo": "06.04.1A",
+              "endereco": "No final da Rua Gregorio Pessoa de Oliveira",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.136117,
+                "longitude": -34.818450
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Cabo Branco",
+              "codigo": "06.04B",
+              "endereco": "No final da Rua Áurea",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.140778,
+                "longitude": -34.814863
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Cabo Branco",
+              "codigo": "06.04C",
+              "endereco": "Em frente a rotatória do Cabo Branco",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.145308,
+                "longitude": -34.808880
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Farol do Cabo Branco",
+              "codigo": "06.05A",
+              "endereco": "Em frente a galeria de águas pluviais",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.148669,
+                "longitude": -34.795913
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Seixas",
+              "codigo": "06.05",
+              "endereco": "No final da Av. das Falésias",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.153022,
+                "longitude": -34.793428
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Penha",
+              "codigo": "06.06",
+              "endereco": "Em frente a desembocadura do Rio Cabelo",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.162945,
+                "longitude": -34.794986
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Penha",
+              "codigo": "06.06A",
+              "endereco": "Em frente a desembocadura do Rio Aratu",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.174709,
+                "longitude": -34.795712
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Jacarapé",
+              "codigo": "06.07A",
+              "endereco": "Ao final da Rua Manoel Cândido Soares",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.199658,
+                "longitude": -34.797793
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Arraial",
+              "codigo": "06.07",
+              "endereco": "Em frente a desembocadura do Rio Cuiá",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.210162,
+                "longitude": -34.802291
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Sol",
+              "codigo": "06.08",
+              "endereco": "Em frente a desembocadura do Riacho Camurupim",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.216874,
+                "longitude": -34.803998
+              },
+              "condicao": ""
+            },
+            {
+              "nome": "Barra do Gramame",
+              "codigo": "06.09",
+              "endereco": "Em frente a desembocadura do Rio Gramame",
+              "municipio": "João Pessoa",
+              "coordenadas": {
+                "latitude": -7.242874,
+                "longitude": -34.804738
+              },
+              "condicao": ""
+            },
+                {
+                  "nome": "Amor",
+                  "codigo": "07.00A",
+                  "endereco": "Em frente a desembocadura do Rio Gurugi",
+                  "municipio": "Conde",
+                  "coordenadas": {
+                    "latitude": -7.273335,
+                    "longitude": -34.802052
+                  },
+                  "condicao": ""
+                },
+                {
+                  "nome": "Jacumã",
+                  "codigo": "07.01",
+                  "endereco": "Em frente a desembocadura do maceió de Jacumã",
+                  "municipio": "Conde",
+                  "coordenadas": {
+                    "latitude": -7.291427,
+                    "longitude": -34.801195
+                  },
+                  "condicao": ""
+                },
+                {
+                  "nome": "Carapibús",
+                  "codigo": "07.00",
+                  "endereco": "No final da Rua Maria Carmelita Vasconselos",
+                  "municipio": "Conde",
+                  "coordenadas": {
+                    "latitude": -7.297270,
+                    "longitude": -34.801034
+                  },
+                  "condicao": ""
+                },
+                {
+                  "nome": "Tabatinga",
+                  "codigo": "07.01A",
+                  "endereco": "Em frente a desembocadura do Maceió Bucatu",
+                  "municipio": "Conde",
+                  "coordenadas": {
+                    "latitude": -7.310675,
+                    "longitude": -34.801824
+                  },
+                  "condicao": ""
+                },
+                {
+                  "nome": "Coqueirinho",
+                  "codigo": "07.02",
+                  "endereco": "Enseada de Coqueirinho",
+                  "municipio": "Conde",
+                  "coordenadas": {
+                    "latitude": -7.3230,
+                    "longitude": -34.7967
+                  },
+                  "condicao": ""
+                },
+                {
+                  "nome": "Tambaba",
+                  "codigo": "07.03",
+                  "endereco": "",
+                  "municipio": "Conde",
+                  "coordenadas": {
+                    "latitude": -7.365489,
+                    "longitude": -34.797505
+                  },
+                  "condicao": ""
+                },
+                {
+                  "nome": "Barra do Graú",
+                  "codigo": "07.04",
+                  "endereco": "Foz do Rio Graú",
+                  "municipio": "Conde",
+                  "coordenadas": {
+                    "latitude": -7.385446,
+                    "longitude": -34.802276
+                  },
+                  "condicao": ""
+                },
+                    {
+                      "nome": "Bela",
+                      "codigo": "08.00A",
+                      "endereco": "Em frente ao Maceió de Praia Bela",
+                      "municipio": "Pitimbú",
+                      "coordenadas": {
+                        "latitude": -7.400166,
+                        "longitude": -34.804431
+                      },
+                      "condicao": ""
+                    },
+                    {
+                      "nome": "Barra do Abiaí",
+                      "codigo": "08.00B",
+                      "endereco": "Foz do Rio Abiaí",
+                      "municipio": "Pitimbú",
+                      "coordenadas": {
+                        "latitude": -7.438724,
+                        "longitude": -34.807746
+                      },
+                      "condicao": ""
+                    },
+                    {
+                      "nome": "Pitimbú",
+                      "codigo": "08.00",
+                      "endereco": "No final da Rua da Paz",
+                      "municipio": "Pitimbú",
+                      "coordenadas": {
+                        "latitude": -7.470920,
+                        "longitude": -34.803992
+                      },
+                      "condicao": ""
+                    },
+                    {
+                      "nome": "Maceió",
+                      "codigo": "08.01",
+                      "endereco": "Em frente a desembocadura do riacho Engenho Velho",
+                      "municipio": "Pitimbú",
+                      "coordenadas": {
+                        "latitude": -7.476475,
+                        "longitude": -34.808615
+                      },
+                      "condicao": ""
+                    },
+                    {
+                      "nome": "Guarita",
+                      "codigo": "08.02",
+                      "endereco": "Em frente a desembocadura da Lagoa",
+                      "municipio": "Pitimbú",
+                      "coordenadas": {
+                        "latitude": -7.480631,
+                        "longitude": -34.811226
+                      },
+                      "condicao": ""
+                    },
+                    {
+                      "nome": "Azul/Santa Rita",
+                      "codigo": "08.03",
+                      "endereco": "Em frente as galerias de águas pluviais",
+                      "municipio": "Pitimbú",
+                      "coordenadas": {
+                        "latitude": -7.483281,
+                        "longitude": -34.812320
+                      },
+                      "condicao": ""
+                    },
+                    {
+                      "nome": "Coqueiros",
+                      "codigo": "08.04",
+                      "endereco": "No final da Rua Almirante Tamandaré",
+                      "municipio": "Pitimbú",
+                      "coordenadas": {
+                        "latitude": -7.533119,
+                        "longitude": -34.821517
+                      },
+                      "condicao": ""
+                    },
+                    {
+                      "nome": "Ponta dos Coqueiros",
+                      "codigo": "08.04A",
+                      "endereco": "Em frente a desembocadura da Lagoa",
+                      "municipio": "Pitimbú",
+                      "coordenadas": {
+                        "latitude": -7.503151,
+                        "longitude": -34.811427
+                      },
+                      "condicao": ""
+                    },
+                    {
+                      "nome": "Acaú/Pontinha",
+                      "codigo": "08.05",
+                      "endereco": "Em frente a desembocadura do Rio Goiana",
+                      "municipio": "Pitimbú",
+                      "coordenadas": {
+                        "latitude": -7.552176,
+                        "longitude": -34.827788
+                      },
+                      "condicao": ""
+                    }
+              ]
+              
+
+          
+      
+
+
+
+
+
+
+
+  

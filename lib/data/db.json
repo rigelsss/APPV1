@@ -1,0 +1,75 @@
+{
+    "categorias": [
+      {
+        "imagem": "assets/images/fauna.png",
+        "nome": "Contra a fauna",
+        "subcategorias": [
+          "Caça ilegal de animais silvestres",
+          "Tráfico de animais silvestres",
+          "Maus-tratos a animais",
+          "Comércio ilegal de espécies protegidas",
+          "Introdução de espécies exóticas invasoras"
+        ]
+      },
+      {
+        "imagem": "assets/images/flora.png",
+        "nome": "Contra a flora",
+        "subcategorias": [
+          "Desmatamento ilegal",
+          "Queimadas não autorizadas",
+          "Destruição de áreas de preservação permanentes (APPs)",
+          "Uso de agrotóxicos proibidos"
+        ]
+      },
+      {
+        "imagem": "assets/images/poluicao.png",
+        "nome": "Poluição e contaminação ambiental",
+        "subcategorias": [
+          "Lançamento irregular de esgoto e resíduos industriais em rios e mares",
+          "Poluição do ar",
+          "Contaminação do solo",
+          "Ruído excessivo"
+        ]
+      },
+      {
+        "imagem": "assets/images/areas_protegidas.png",
+        "nome": "Degradação de áreas protegidas",
+        "subcategorias": [
+          "Construlção irregular em áreas de preservação",
+          "Supressão de vegetação em manguezais, restingas e matas ciliares",
+          "Exploração irregular de recursos naturais em unidades de conservação",
+          "Uso indevido de áreas costeiras e dunas"
+        ]
+      },
+      {
+        "imagem": "assets/images/recursosHidricos.png",
+        "nome": "Recursos hídricos e balneabilidade",
+        "subcategorias": [
+          "Contaminação de rios, lagos e oceanos por despejo de resíduos",
+          "Uso irregular de recursos hídricos",
+          "Degradação de nascentes e fontes de água potável"
+        ]
+      },
+      {
+        "imagem": "assets/images/residuos.png",
+        "nome": "Relacionadas a resíduos sólidos",
+        "subcategorias": [
+          "Lixões irregulares e descarte inadequado de resíduos",
+          "Não cumprimento da logística reversa de resíduos perigosos",
+          "Depósito ilegal de entulho em áreas públicas e naturais",
+          "Falta de tratamento adequado para resíduos hospitalares e industriais"
+        ]
+      },
+      {
+        "imagem": "assets/images/outra.png",
+        "nome": "Outra",
+        "subcategorias": ["Outra Ocorrencia"]
+      },
+      {
+        "imagem": "assets/images/teste.png",
+        "nome": "Teste",
+        "subcategorias": ["Consumo de API"]
+      }
+    ]
+  }
+  

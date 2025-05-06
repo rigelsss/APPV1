@@ -41,10 +41,14 @@ class RegistroController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return null;
       } else {
+        print('Erro: ${response.statusCode}');
+        print('Resposta: ${response.body}');
         return 'Erro ao cadastrar. Verifique os dados e tente novamente.';
       }
     } catch (e) {
+      print('Erro de conexão: $e');
       return 'Erro de conexão. Tente novamente.';
     }
+
   }
 }

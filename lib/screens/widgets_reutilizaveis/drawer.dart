@@ -1,9 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:sudema_app/screens/PerfilUser.dart';
+import 'package:sudema_app/services/AuthMe.dart';
 
-class CustomDrawer extends StatelessWidget {
-  final String? userName;
+class CustomDrawer extends StatefulWidget {
+  final String? token;
 
-  const CustomDrawer({super.key, this.userName});
+  const CustomDrawer({super.key, this.token});
+
+  @override
+  CustomDrawerState createState() => CustomDrawerState();
+}
+
+class CustomDrawerState extends State<CustomDrawer> {
+  String username = 'Acessar';
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarNomeUsuario();
+  }
+
+  Future<void> _carregarNomeUsuario() async {
+    if (widget.token != null && widget.token!.isNotEmpty) {
+      try {
+        final data = await AuthController.obterInformacoesUsuario(widget.token!);
+        if (data != null && data['user'] != null) {
+          setState(() {
+            username = data['user']['name'] ?? 'Acessar';
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+        }
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        print('Erro ao carregar nome do usuário: $e');
+      }
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  bool get isLoggedIn {
+    if (widget.token == null || widget.token!.isEmpty) {
+      return false;
+    }
+    try {
+      return !JwtDecoder.isExpired(widget.token!);
+    } catch (e) {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +104,14 @@ class CustomDrawer extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              Navigator.pushNamed(context, '/login');
+              if (isLoggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Perfiluser(token: widget.token)),
+                );
+              } else {
+                Navigator.pushNamed(context, '/login');
+              }
             },
             child: Container(
               decoration: const BoxDecoration(
@@ -60,7 +122,6 @@ class CustomDrawer extends StatelessWidget {
               ),
               padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 36),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Divider(height: 1, thickness: 1),
                   const SizedBox(height: 16),
@@ -70,11 +131,14 @@ class CustomDrawer extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          userName ?? 'Username',
+                          isLoading ? 'Carregando...' : username,
                           style: const TextStyle(fontSize: 18),
                         ),
                       ),
-                      const Icon(Icons.login, size: 18),
+                      Icon(
+                        isLoggedIn ? Icons.settings : Icons.login,
+                        size: 18,
+                      ),
                     ],
                   ),
                 ],

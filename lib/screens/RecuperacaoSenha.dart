@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/denuncia.dart';
+import 'package:sudema_app/screens/CodigoDeSenha.dart';
 import 'package:sudema_app/screens/widgets_reutilizaveis/appbardenuncia.dart';
 
 class Recuperacaoosenha extends StatefulWidget {
@@ -44,9 +44,12 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  // Exemplo de ação ao clicar:
                   String email = _emailController.text.trim();
                   print('Email inserido: $email');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Codigodesenha()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF2A2F8C),

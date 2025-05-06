@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:sudema_app/screens/notificacoes.dart'; 
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onLoginTap;
-  final VoidCallback? onNotificationTap;
   final bool isLoggedIn;
 
-  const CustomAppBar({
+  const HomeAppBar({
     super.key,
     this.onLoginTap,
-    this.onNotificationTap,
     this.isLoggedIn = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-       backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       centerTitle: true,
       title: SizedBox(
         height: 40,
@@ -28,7 +27,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
           icon: Icon(isLoggedIn ? Icons.notifications : Icons.login),
-          onPressed: isLoggedIn ? onNotificationTap : onLoginTap,
+          onPressed: isLoggedIn
+              ? () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NotificacoesPage(),
+                    ),
+                  );
+                }
+              : onLoginTap,
         ),
       ],
     );

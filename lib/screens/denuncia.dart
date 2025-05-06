@@ -1,115 +1,161 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'webview_screen.dart';
-import 'page_denuncia.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:sudema_app/screens/DenunciaConcluida.dart';
 
-class DenunciaPage extends StatelessWidget {
-  const DenunciaPage({super.key});
+class DenunciaScreen extends StatefulWidget {
+  @override
+  _DenunciaScreenState createState() => _DenunciaScreenState();
+}
+
+class _DenunciaScreenState extends State<DenunciaScreen> {
+  XFile? _image;
+  bool _confirmacao = false;
+  final _dataController = TextEditingController();
+  final _descricaoController = TextEditingController();
+  final _referenciaController = TextEditingController();
+  final _denunciadoController = TextEditingController();
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      if (pickedFile != null) {
+        _image = pickedFile;
+      }
+    });
+  }
+
+  bool _validateFields() {
+    return _dataController.text.isNotEmpty &&
+        _descricaoController.text.isNotEmpty &&
+        _referenciaController.text.isNotEmpty &&
+        _denunciadoController.text.isNotEmpty &&
+        _confirmacao;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Denúncias',
-                style: TextStyle(fontSize: 32),
+              Text('Data do ocorrido', style: TextStyle(fontSize: 16)),
+              SizedBox(height: 12),
+              TextField(
+                controller: _dataController,
+                decoration: InputDecoration(
+                  labelText: 'Data do ocorrido *',
+                  hintText: 'dd/mm/aaaa',
+                  suffixIcon: Icon(Icons.calendar_today),
+                  border: OutlineInputBorder(),
+                ),
               ),
-              const SizedBox(height: 20),
-              Center(
-                child: SizedBox(
-                  width: screenWidth * 0.9,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const NovaDenunciaPage()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2A2F8C),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                    ),
-                    child: const Text(
-                      'Fazer uma nova denúncia',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+              SizedBox(height: 18),
+              Text('Descrição', style: TextStyle(fontSize: 16)),
+              SizedBox(height: 12),
+              TextField(
+                controller: _descricaoController,
+                decoration: InputDecoration(
+                  labelText: 'Descrição *',
+                  hintText: 'Descreva a infração identificada...',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 4,
+              ),
+              SizedBox(height: 18),
+              Text('Ponto de referência', style: TextStyle(fontSize: 16)),
+              SizedBox(height: 12),
+              TextField(
+                controller: _referenciaController,
+                decoration: InputDecoration(
+                  labelText: 'Ponto de referência *',
+                  hintText: 'Nome, nome da empresa, documento...',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 18),
+              Text('Informações do denunciado', style: TextStyle(fontSize: 16)),
+              SizedBox(height: 12),
+              TextField(
+                controller: _denunciadoController,
+                decoration: InputDecoration(
+                  labelText: 'Informações do denunciado *',
+                  hintText: 'Nome, nome da empresa, documento...',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 12),
+              GestureDetector(
+                onTap: _pickImage,
+                child: Container(
+                  height: 100,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Center(
+                    child: _image == null
+                        ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.upload, color: Colors.grey, size: 30),
+                        SizedBox(height: 8),
+                        Text(
+                          'Clique para enviar',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    )
+                        : Image.file(
+                      File(_image!.path),
+                      fit: BoxFit.cover,
+                      width: double.infinity,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'Por que denunciar?',
-                style: TextStyle(fontSize: 20),
+              SizedBox(height: 20),
+              CheckboxListTile(
+                value: _confirmacao,
+                onChanged: (bool? value) {
+                  setState(() {
+                    _confirmacao = value ?? false;
+                  });
+                },
+                title: Text(
+                  'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
+                ),
               ),
-              const SizedBox(height: 12),
-              const Text(
-                'Denunciar infrações ambientais é um ato de cidadania que contribui para a preservação do meio ambiente e para a redução dos impactos negativos na natureza. As denúncias permitem que os órgãos competentes tomem conhecimento de irregularidades ambientais e que medidas sejam adotadas para minimizar ou reverter os danos causados.',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'O que acontece após a denúncia?',
-                style: TextStyle(fontSize: 20, color: Colors.black87),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'A denúncia é analisada e, caso as infrações sejam confirmadas, um processo é instaurado. Dependendo da gravidade da infração, o caso pode ser encaminhado para julgamento em âmbito estadual ou federal.',
-                style: TextStyle(fontSize: 16, color: Colors.black87),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'O que é considerado infração ambiental?',
-                style: TextStyle(fontSize: 20),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'Foi publicado, em março de 2024, no Diário Oficial do Estado da Paraíba, o Decreto Estadual n° 44.889/2024, que trata das infrações ambientais, do processo administrativo para sua apuração e suas respectivas sanções.',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 12),
-
-              // Botão para abrir o Decreto
+              SizedBox(height: 12),
               Center(
-                child: InkWell(
-                  onTap: () {
+                child: ElevatedButton.icon(
+                  onPressed: _validateFields()
+                      ? () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const WebViewScreen(
-                          url: 'https://drive.google.com/file/d/1Bb3IhBcoZLN2FkPm_vzzkhkvhBMT7BQ_/view',
-                        ),
+                        builder: (context) => conclusao_de_denuncia(),
                       ),
                     );
-                  },
-                  child: Container(
-                    width: screenWidth * 0.9,
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF5F5F5),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: const Color(0xFF2A2F8C)),
+                  }
+                      : null,
+                  label: const Text(
+                    'Concluir denúncia',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1B8C00),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text(
-                      'Decreto Estadual nº 44.889, de 26 de março de 2024',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF2A2F8C),
-                        decoration: TextDecoration.underline,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 64),
                   ),
                 ),
               ),
-
-              const SizedBox(height: 20),
             ],
           ),
         ),
