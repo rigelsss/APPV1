@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/notificacoes.dart';
+import 'package:sudema_app/screens/widgets_reutilizaveis/navbar.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,6 +19,8 @@ class PerfiluserState extends State<Perfiluser> {
   bool _errorFetching = false;
   String _errorMessage = '';
   late String _token;
+
+  int _currentIndex = 3;
 
   @override
   void initState() {
@@ -65,7 +68,7 @@ class PerfiluserState extends State<Perfiluser> {
 
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token'); // ou prefs.clear() se quiser limpar tudo
+    await prefs.remove('token');
 
     if (!mounted) return;
     Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
@@ -85,9 +88,9 @@ class PerfiluserState extends State<Perfiluser> {
         elevation: 1,
         leading: Navigator.canPop(context)
             ? IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.pop(context),
-              )
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        )
             : null,
       ),
       body: Builder(
@@ -100,6 +103,28 @@ class PerfiluserState extends State<Perfiluser> {
             return const Center(child: Text('Nenhuma informação de usuário encontrada'));
           } else {
             return _buildPerfil(context);
+          }
+        },
+      ),
+      bottomNavigationBar: NavBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(context, '/home');
+              break;
+            case 1:
+              Navigator.pushReplacementNamed(context, '/denuncias');
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, '/praias');
+              break;
+            case 3:
+              break;
           }
         },
       ),
@@ -240,7 +265,6 @@ class PerfiluserState extends State<Perfiluser> {
               const SizedBox(height: 8),
               TextButton.icon(
                 onPressed: () {
-                  // ação de deletar conta
                 },
                 icon: const Icon(Icons.delete, color: Colors.red),
                 label: const Text(
@@ -275,7 +299,7 @@ class PerfiluserState extends State<Perfiluser> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pop(context); // Fecha também a página de perfil
+              Navigator.pop(context);
             },
             child: const Text('OK'),
           ),
