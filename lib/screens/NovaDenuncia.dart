@@ -22,8 +22,17 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
 
   List<dynamic> categorias = [];
   bool _isLoadingCategorias = true;
-
   String? _mensagemErro;
+
+  final Map<int, String> iconesPorCategoria = {
+    1: 'assets/images/fauna.png',
+    2: 'assets/images/flora.png',
+    3: 'assets/images/poluicao.png',
+    4: 'assets/images/areas_protegidas.png',
+    5: 'assets/images/residuos.png',
+    6: 'assets/images/recursoshidricos.png',
+    7: 'assets/images/outra.png',
+  };
 
   @override
   void initState() {
@@ -34,7 +43,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
 
   Future<void> _carregarCategorias() async {
     try {
-      final resultado = await CategoriaService.buscarCategorias();
+      final resultado = await CategoriaService.buscarCategoriasComTipos();
       setState(() {
         categorias = resultado;
         _isLoadingCategorias = false;
@@ -166,7 +175,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
       case 2:
         return Identificacao(onProsseguir: _irParaDenuncia);
       case 3:
-        return  DenunciaScreen();
+        return DenunciaScreen();
       default:
         return const SizedBox();
     }
@@ -193,9 +202,10 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
             itemCount: categorias.length,
             itemBuilder: (context, index) {
               final categoria = categorias[index];
-              final String texto = categoria['nome'] ?? 'Sem texto';
-              final String imagem = categoria['imagem'] ?? 'assets/images/image-break.png';
-              final List<dynamic> subcategorias = categoria['subcategorias'] ?? [];
+              final int id = categoria['id'];
+              final String texto = categoria['nome'] ?? 'Sem nome';
+              final String imagem = iconesPorCategoria[id] ?? 'assets/images/image-break.png';
+              final List<dynamic> subcategorias = (categoria['tiposDenuncia'] as List<dynamic>).map((e) => e['nome']).toList();
               final isExpanded = _categoriasExpandidas.contains(index);
               final selecionado = _categoriaSelecionada == texto;
 
@@ -221,7 +231,8 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                           child: Image.asset(
                             imagem,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => Image.asset('assets/images/image-break.png', fit: BoxFit.cover),
+                            errorBuilder: (context, error, stackTrace) =>
+                                Image.asset('assets/images/image-break.png', fit: BoxFit.cover),
                           ),
                         ),
                       ),

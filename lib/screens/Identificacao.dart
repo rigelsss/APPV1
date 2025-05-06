@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sudema_app/screens/denuncia.dart';
 
 class Identificacao extends StatefulWidget {
   final VoidCallback onProsseguir;

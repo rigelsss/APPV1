@@ -1,20 +1,22 @@
-// lib/services/categoria_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class CategoriaService {
-  static Future<List<dynamic>> buscarCategorias() async {
+  static Future<List<dynamic>> buscarCategoriasComTipos() async {
     try {
-      final response = await http.get(Uri.parse('http://10.0.2.2:3000/categorias'));
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:9000/api/v1/denuncias/categorias/tipos'),
+      );
+
       if (response.statusCode == 200) {
-        final List<dynamic> categorias = json.decode(response.body);
-        return categorias;
+        return json.decode(response.body);
       } else {
-        throw Exception('Erro ao carregar categorias: ${response.statusCode}');
+        print('Erro ao carregar categorias: ${response.statusCode}');
+        return [];
       }
     } catch (e) {
-      print('Erro ao buscar categorias: $e');
-      rethrow; // repassa o erro para quem chamou
+      print('Erro na requisição: $e');
+      return [];
     }
   }
 }
