@@ -9,7 +9,8 @@ class CategoriaService {
       );
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        final decodedBody = utf8.decode(response.bodyBytes);
+        return json.decode(decodedBody);
       } else {
         print('Erro ao carregar categorias: ${response.statusCode}');
         return [];
