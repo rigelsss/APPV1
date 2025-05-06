@@ -33,9 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> get _pages => [
         buildHomeBody(),
-        const PraiasPage(),
-        const NoticiasPage(),
-        const DenunciaPage(),
+      const DenunciaPage(),
+      const PraiasPage(),
+      const NoticiasPage(),
 
       ];
 
