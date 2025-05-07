@@ -1,7 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sudema_app/screens/PerfilUser.dart';
 import 'package:sudema_app/screens/RecuperacaoSenha.dart';
 import 'package:sudema_app/screens/widgets_reutilizaveis/navbar.dart';
+
+import '../services/AuthMe.dart';
+import '../services/SenhaController.dart';
 
 class EditarSenha extends StatefulWidget {
   const EditarSenha({super.key});
@@ -37,6 +42,18 @@ class _EditarSenhaState extends State<EditarSenha> {
     }
   }
 
+  final TextEditingController _senhaAtualController = TextEditingController();
+  final TextEditingController _novaSenhaController = TextEditingController();
+  final TextEditingController _confirmarSenhaController = TextEditingController();
+
+  @override
+  void dispose() {
+    _senhaAtualController.dispose();
+    _novaSenhaController.dispose();
+    _confirmarSenhaController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,6 +71,7 @@ class _EditarSenhaState extends State<EditarSenha> {
           const Text('Senha atual', style: TextStyle(fontSize: 16)),
           const SizedBox(height: 8),
           TextField(
+            controller: _senhaAtualController,
             obscureText: _obscureCurrent,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
@@ -74,6 +92,7 @@ class _EditarSenhaState extends State<EditarSenha> {
           const Text('Nova senha', style: TextStyle(fontSize: 16)),
           const SizedBox(height: 8),
           TextField(
+            controller: _novaSenhaController,
             obscureText: _obscureNew,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
@@ -99,6 +118,7 @@ class _EditarSenhaState extends State<EditarSenha> {
           const Text('Confirme a nova senha', style: TextStyle(fontSize: 16)),
           const SizedBox(height: 8),
           TextField(
+            controller: _confirmarSenhaController,
             obscureText: _obscureConfirm,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
@@ -118,7 +138,63 @@ class _EditarSenhaState extends State<EditarSenha> {
           const SizedBox(height: 20),
           Center(
             child: ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () async {
+                final senhaAtual = _senhaAtualController.text.trim();
+                final novaSenha = _novaSenhaController.text.trim();
+                final confirmarSenha = _confirmarSenhaController.text.trim();
+
+                if (novaSenha != confirmarSenha) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('As senhas novas não coincidem')),
+                  );
+                  return;
+                }
+
+                final prefs = await SharedPreferences.getInstance();
+                final token = prefs.getString('token');
+
+                if (token == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Token não encontrado. Faça login novamente.')),
+                  );
+                  return;
+                }
+
+                try {
+                  final userInfo = await AuthController.obterInformacoesUsuario(token);
+                  final userId = userInfo?['user']?['id'];
+
+                  if (userId == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('ID de usuário não encontrado.')),
+                    );
+                    return;
+                  }
+
+                  final sucesso = await UsuarioController.alterarSenha(
+                    userId: userId,
+                    senhaAtual: senhaAtual,
+                    novaSenha: novaSenha,
+                  );
+
+                  if (sucesso == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Senha alterada com sucesso!')),
+                    );
+                    Navigator.pushReplacementNamed(context, '/home');
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(sucesso)),
+                    );
+                  }
+
+                } catch (e) {
+                  print('Erro ao tentar alterar senha: $e');
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Ocorreu um erro ao tentar alterar a senha: $e')),
+                  );
+                }
+              },
               icon: const Icon(Icons.logout, color: Colors.white),
               label: const Text(
                 'Confirmar alteração',

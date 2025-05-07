@@ -11,8 +11,19 @@ class AuthController {
         },
       );
 
+      print('Status da resposta: ${response.statusCode}');
+      print('Corpo da resposta: ${response.body}');
+
       if (response.statusCode == 200) {
-        return jsonDecode(response.body);
+        final data = jsonDecode(response.body);
+
+        if (data is Map<String, dynamic>) {
+          data.forEach((key, value) {
+            print('$key: $value');
+          });
+        }
+
+        return data;
       } else {
         print('Erro ao buscar dados do usuário: ${response.statusCode}');
         return null;
