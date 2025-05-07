@@ -230,10 +230,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: 'Balneabilidade',
                 imagePath: 'assets/images/bauneabilidade.jpg'),
             _buildServiceCardComImagem(
-                label: 'Fiscalização',
+                label: 'Denuncias',
                 imagePath: 'assets/images/fiscalizacao.jpg'),
             _buildServiceCardComImagem(
-                label: 'Denúncias', imagePath: 'assets/images/denuncia.jpg'),
+                label: 'Portal da Transparência', imagePath: 'assets/images/portaltransparencia.jpg'),
             _buildServiceCardComImagem(
                 label: 'Educação Ambiental',
                 imagePath: 'assets/images/educacao_ambiental.jpg'),
@@ -324,7 +324,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(16),
-        color: Colors.white,
+        color: const Color.fromARGB(255, 242, 241, 241),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),

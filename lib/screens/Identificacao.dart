@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,6 +33,7 @@ class _IdentificacaoState extends State<Identificacao> {
     if (savedToken != null && savedToken.isNotEmpty) {
       setState(() {
         token = savedToken;
+        DenunciaData().tokenUsuario = token;
       });
 
       _carregarInformacoesUsuario(savedToken);
@@ -51,6 +53,9 @@ class _IdentificacaoState extends State<Identificacao> {
             username = data['user']['name'] ?? 'Usuário';
             email = data['user']['email'] ?? '';
             isLoading = false;
+
+            final denunciaData = DenunciaData();
+            denunciaData.usuarioId = data['user']['id']; 
           });
         } else {
           setState(() {
@@ -125,7 +130,11 @@ class _IdentificacaoState extends State<Identificacao> {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton.icon(
-                    onPressed: widget.onProsseguir,
+                    onPressed: () {
+                      final denunciaData = DenunciaData();
+                      denunciaData.anonimo = false; 
+                      widget.onProsseguir();
+                    },
                     label: const Text(
                       'Prosseguir com Identificação',
                       style: TextStyle(fontSize: 16, color: Colors.white),
@@ -142,7 +151,11 @@ class _IdentificacaoState extends State<Identificacao> {
 
                   const SizedBox(height: 16),
                   ElevatedButton.icon(
-                    onPressed: widget.onProsseguir,
+                    onPressed: () {
+                      final denunciaData = DenunciaData();
+                      denunciaData.anonimo = false; 
+                      widget.onProsseguir();                    
+                      },
                     label: const Text(
                       'Prosseguir Anônimo',
                       style: TextStyle(fontSize: 16, color: Colors.black),
