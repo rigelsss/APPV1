@@ -238,59 +238,51 @@ class _PraiasPageState extends State<PraiasPage> {
                       borderRadius: BorderRadius.circular(12),
                       child: Container(
                         width: 260,
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: _estacaoSelecionada!.classificacao == 'Próprias'
-                                ? Colors.green.shade400
-                                : Colors.red.shade400,
-                            width: 1.5,
-                          ),
                         ),
-                        child: Stack(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _estacaoSelecionada!.nome,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(_estacaoSelecionada!.endereco),
-                                const SizedBox(height: 4),
-                                Text('Estação: ${_estacaoSelecionada!.codigo}'),
-                                const SizedBox(height: 4),
-                                Text(
-                                  _estacaoSelecionada!.classificacao == 'Próprias'
-                                      ? 'Própria para banho'
-                                      : 'Imprópria para banho',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: _estacaoSelecionada!.classificacao == 'Próprias'
-                                        ? Colors.green
-                                        : Colors.red,
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              '${_estacaoSelecionada!.nome} - ${_estacaoSelecionada!.municipio}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
                             ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _estacaoSelecionada = null;
-                                    _overlayPosition = null;
-                                  });
-                                },
-                                child: const Icon(Icons.close, size: 18),
+                            const SizedBox(height: 8),
+                            Text(
+                              _estacaoSelecionada!.endereco,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Estação: ${_estacaoSelecionada!.codigo}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _estacaoSelecionada!.classificacao == 'Próprias'
+                                  ? 'Própria para banho'
+                                  : 'Imprópria para banho',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: _estacaoSelecionada!.classificacao == 'Próprias'
+                                    ? Colors.green
+                                    : Colors.red,
                               ),
                             ),
                           ],
