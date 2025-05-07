@@ -5,6 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:sudema_app/screens/EditEmail.dart';
 import 'package:sudema_app/screens/EditSenha.dart';
 import 'package:sudema_app/screens/PageDenuncia.dart';
+import 'package:sudema_app/screens/PerfilUser.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         '/editar-perfil': (context) => const editarperfil(),
         '/EditarEmail': (context) => const EditarEmail(),
         '/EditarSenha': (context) => const EditarSenha(),
+        '/perfiluser': (context) => const Perfiluser(),
       },
     );
   }
