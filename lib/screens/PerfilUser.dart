@@ -317,26 +317,34 @@ class _LabeledInfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          '$label: ',
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 14,
-          ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 1.0), 
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 80, 
+            child: Text(
+              '$label:',
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+              ),
             ),
           ),
-        ),
-      ],
+          const SizedBox(width: 8), 
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: Colors.black87,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
