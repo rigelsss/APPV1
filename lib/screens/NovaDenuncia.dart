@@ -57,7 +57,9 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
 
   bool _podeIrParaAba(int index) {
     if (index == 1) {
-      return _categoriaSelecionada != null && _subcategoriaSelecionada != null && _subcategoriaSelecionada!.isNotEmpty;
+      return _categoriaSelecionada != null &&
+          _subcategoriaSelecionada != null &&
+          _subcategoriaSelecionada!.isNotEmpty;
     } else if (index == 2 || index == 3) {
       return DenunciaData().enderecoConfirmado == true;
     }
@@ -205,7 +207,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
               final int id = categoria['id'];
               final String texto = categoria['nome'] ?? 'Sem nome';
               final String imagem = iconesPorCategoria[id] ?? 'assets/images/image-break.png';
-              final List<dynamic> subcategorias = (categoria['tiposDenuncia'] as List<dynamic>).map((e) => e['nome']).toList();
+              final List<dynamic> tiposDenuncia = categoria['tiposDenuncia'] ?? [];
               final isExpanded = _categoriasExpandidas.contains(index);
               final selecionado = _categoriaSelecionada == texto;
 
@@ -218,7 +220,6 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                       onTap: () {
                         setState(() {
                           _categoriaSelecionada = texto;
-                          DenunciaData().categoria = texto;
                           _subcategoriaSelecionada = null;
                           _mensagemErro = null;
                         });
@@ -261,16 +262,21 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: subcategorias.map((sub) {
-                            final isSelected = _subcategoriaSelecionada == sub;
+                          children: tiposDenuncia.map<Widget>((sub) {
+                            final String nomeSub = sub['nome'];
+                            final int idSub = sub['id'];
+                            final bool isSelected = _subcategoriaSelecionada == nomeSub;
+
                             return GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  _subcategoriaSelecionada = sub;
+                                  _subcategoriaSelecionada = nomeSub;
                                   _categoriaSelecionada = texto;
-                                  DenunciaData().categoria = texto;
-                                  DenunciaData().subCategoria = sub;
+                                  DenunciaData().tipoDenunciaId = idSub.toString();
                                   _mensagemErro = null;
+
+                                  // Print para debug
+                                  print('>> tipoDenunciaId salvo em DenunciaData: ${DenunciaData().tipoDenunciaId}');
                                 });
                               },
                               child: Container(
@@ -283,7 +289,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  sub,
+                                  nomeSub,
                                   textAlign: TextAlign.center,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
@@ -313,7 +319,9 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
               minimumSize: const Size.fromHeight(52.8),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
-            onPressed: (_categoriaSelecionada != null && _subcategoriaSelecionada != null && _subcategoriaSelecionada!.isNotEmpty)
+            onPressed: (_categoriaSelecionada != null &&
+                    _subcategoriaSelecionada != null &&
+                    _subcategoriaSelecionada!.isNotEmpty)
                 ? () => _aoSelecionarAba(1)
                 : null,
             child: const Center(
