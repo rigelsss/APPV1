@@ -230,10 +230,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: 'Balneabilidade',
                 imagePath: 'assets/images/bauneabilidade.jpg'),
             _buildServiceCardComImagem(
-                label: 'Fiscalização',
+                label: 'Denuncias',
                 imagePath: 'assets/images/fiscalizacao.jpg'),
             _buildServiceCardComImagem(
-                label: 'Denúncias', imagePath: 'assets/images/denuncia.jpg'),
+                label: 'Portal da Transparência', imagePath: 'assets/images/portaltransparencia.jpg'),
             _buildServiceCardComImagem(
                 label: 'Educação Ambiental',
                 imagePath: 'assets/images/educacao_ambiental.jpg'),
