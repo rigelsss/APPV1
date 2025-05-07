@@ -274,8 +274,6 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                                   _categoriaSelecionada = texto;
                                   DenunciaData().tipoDenunciaId = idSub.toString();
                                   _mensagemErro = null;
-
-                                  // Print para debug
                                   print('>> tipoDenunciaId salvo em DenunciaData: ${DenunciaData().tipoDenunciaId}');
                                 });
                               },
@@ -316,6 +314,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF2A2F8C),
+              disabledBackgroundColor: Colors.grey[500], 
               minimumSize: const Size.fromHeight(52.8),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
