@@ -4,6 +4,7 @@ import 'package:sudema_app/screens/denuncia_screen.dart';
 import 'package:sudema_app/services/categoria_service.dart';
 import 'package:sudema_app/screens/aba_localizacao.dart';
 import '../models/denuncia_data.dart';
+import 'package:sudema_app/screens/widgets/categoria_selector.dart';
 
 class NovaDenuncia extends StatefulWidget {
   const NovaDenuncia({super.key});
@@ -200,112 +201,36 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
           child: Text('Categoria da infração', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
         ),
         Expanded(
-          child: ListView.builder(
-            itemCount: categorias.length,
-            itemBuilder: (context, index) {
-              final categoria = categorias[index];
-              final int id = categoria['id'];
-              final String texto = categoria['nome'] ?? 'Sem nome';
-              final String imagem = iconesPorCategoria[id] ?? 'assets/images/image-break.png';
-              final List<dynamic> tiposDenuncia = categoria['tiposDenuncia'] ?? [];
-              final isExpanded = _categoriasExpandidas.contains(index);
-              final selecionado = _categoriaSelecionada == texto;
-
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      onTap: () {
-                        setState(() {
-                          _categoriaSelecionada = texto;
-                          _subcategoriaSelecionada = null;
-                          _mensagemErro = null;
-                        });
-                      },
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                      leading: SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: Center(
-                          child: Image.asset(
-                            imagem,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                Image.asset('assets/images/image-break.png', fit: BoxFit.cover),
-                          ),
-                        ),
-                      ),
-                      title: Text(texto, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (selecionado) const Icon(Icons.check, color: Colors.green),
-                          IconButton(
-                            icon: Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
-                            onPressed: () {
-                              setState(() {
-                                if (isExpanded) {
-                                  _categoriasExpandidas.remove(index);
-                                } else {
-                                  _categoriasExpandidas.add(index);
-                                }
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (isExpanded)
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: tiposDenuncia.map<Widget>((sub) {
-                            final String nomeSub = sub['nome'];
-                            final int idSub = sub['id'];
-                            final bool isSelected = _subcategoriaSelecionada == nomeSub;
-
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _subcategoriaSelecionada = nomeSub;
-                                  _categoriaSelecionada = texto;
-                                  DenunciaData().tipoDenunciaId = idSub.toString();
-                                  _mensagemErro = null;
-                                  print('>> tipoDenunciaId salvo em DenunciaData: ${DenunciaData().tipoDenunciaId}');
-                                });
-                              },
-                              child: Container(
-                                height: 48,
-                                alignment: Alignment.center,
-                                margin: const EdgeInsets.symmetric(vertical: 4),
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
-                                decoration: BoxDecoration(
-                                  color: isSelected ? const Color(0xFF1B8C00) : const Color(0xFFB9CD23),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  nomeSub,
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: isSelected ? Colors.white : Colors.black87,
-                                    height: 1.3,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    const Divider(indent: 20, endIndent: 20, height: 6, color: Color.fromRGBO(195, 182, 182, 1)),
-                  ],
-                ),
-              );
+          child: CategoriaSelector(
+            categorias: categorias,
+            iconesPorCategoria: iconesPorCategoria,
+            categoriaSelecionada: _categoriaSelecionada,
+            subcategoriaSelecionada: _subcategoriaSelecionada,
+            categoriasExpandidas: _categoriasExpandidas,
+            onCategoriaSelecionada: (texto) {
+              setState(() {
+                _categoriaSelecionada = texto;
+                _subcategoriaSelecionada = null;
+                _mensagemErro = null;
+              });
+            },
+            onSubcategoriaSelecionada: (nome, id) {
+              setState(() {
+                _subcategoriaSelecionada = nome;
+                _categoriaSelecionada = _categoriaSelecionada;
+                DenunciaData().tipoDenunciaId = id.toString();
+                _mensagemErro = null;
+                print('>> tipoDenunciaId salvo em DenunciaData: ${DenunciaData().tipoDenunciaId}');
+              });
+            },
+            onToggleExpand: (index) {
+              setState(() {
+                if (_categoriasExpandidas.contains(index)) {
+                  _categoriasExpandidas.remove(index);
+                } else {
+                  _categoriasExpandidas.add(index);
+                }
+              });
             },
           ),
         ),
@@ -314,7 +239,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF2A2F8C),
-              disabledBackgroundColor: Colors.grey[500], 
+              disabledBackgroundColor: Colors.grey[500],
               minimumSize: const Size.fromHeight(52.8),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),

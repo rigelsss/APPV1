@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/NovaDenuncia.dart';
+import 'package:sudema_app/screens/nova_denuncia.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
 
 class DenunciaWrapperScreen extends StatefulWidget {
