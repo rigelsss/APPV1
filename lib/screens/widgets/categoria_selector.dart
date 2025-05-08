@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../models/denuncia_data.dart';
 
 class CategoriaSelector extends StatelessWidget {
   final List<dynamic> categorias;
@@ -7,7 +6,7 @@ class CategoriaSelector extends StatelessWidget {
   final String? categoriaSelecionada;
   final String? subcategoriaSelecionada;
   final Set<int> categoriasExpandidas;
-  final Function(String, int) onSubcategoriaSelecionada;
+  final Function(String, int, String) onSubcategoriaSelecionada;
   final Function(String) onCategoriaSelecionada;
   final Function(int) onToggleExpand;
 
@@ -83,7 +82,7 @@ class CategoriaSelector extends StatelessWidget {
                       final bool isSelected = subcategoriaSelecionada == nomeSub;
 
                       return GestureDetector(
-                        onTap: () => onSubcategoriaSelecionada(nomeSub, idSub),
+                        onTap: () => onSubcategoriaSelecionada(nomeSub, idSub, texto),
                         child: Container(
                           height: 48,
                           alignment: Alignment.center,

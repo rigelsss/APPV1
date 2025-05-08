@@ -1,3 +1,4 @@
+// ... imports ...
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/identificacao_screen.dart';
 import 'package:sudema_app/screens/denuncia_screen.dart';
@@ -70,11 +71,9 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   void _aoSelecionarAba(int index) {
     if (!_podeIrParaAba(index)) {
       setState(() {
-        if (index == 1) {
-          _mensagemErro = 'Selecione uma categoria e subcategoria antes de continuar.';
-        } else {
-          _mensagemErro = 'Confirme o endereço antes de continuar.';
-        }
+        _mensagemErro = (index == 1)
+            ? 'Selecione uma categoria e subcategoria antes de continuar.'
+            : 'Confirme o endereço antes de continuar.';
       });
       return;
     }
@@ -214,13 +213,16 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                 _mensagemErro = null;
               });
             },
-            onSubcategoriaSelecionada: (nome, id) {
+            onSubcategoriaSelecionada: (nome, id, categoriaNome) {
               setState(() {
-                _subcategoriaSelecionada = nome;
-                _categoriaSelecionada = _categoriaSelecionada;
+                _subcategoriaSelecionada = nome.trim();
+                _categoriaSelecionada = categoriaNome;
                 DenunciaData().tipoDenunciaId = id.toString();
                 _mensagemErro = null;
-                print('>> tipoDenunciaId salvo em DenunciaData: ${DenunciaData().tipoDenunciaId}');
+
+                print('✅ Subcategoria selecionada: $_subcategoriaSelecionada');
+                print('✅ Categoria atual: $_categoriaSelecionada');
+                print('✅ tipoDenunciaId salvo: ${DenunciaData().tipoDenunciaId}');
               });
             },
             onToggleExpand: (index) {
@@ -245,8 +247,11 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
             ),
             onPressed: (_categoriaSelecionada != null &&
                     _subcategoriaSelecionada != null &&
-                    _subcategoriaSelecionada!.isNotEmpty)
-                ? () => _aoSelecionarAba(1)
+                    _subcategoriaSelecionada!.trim().isNotEmpty)
+                ? () {
+                    print('🚀 Botão pressionado: avançando para aba Localização');
+                    _aoSelecionarAba(1);
+                  }
                 : null,
             child: const Center(
               child: Text(
