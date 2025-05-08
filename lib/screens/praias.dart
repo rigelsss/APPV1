@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sudema_app/services/estacoes_service.dart';
+import 'package:sudema_app/models/praia_marker.dart';
+import 'package:sudema_app/screens/widgets/praias_widgets.dart'; // <- NOVO
 
 class PraiasPage extends StatefulWidget {
   const PraiasPage({super.key});
 
   @override
   State<PraiasPage> createState() => _PraiasPageState();
-}
-
-class _PraiaMarker {
-  final Marker marker;
-  final String classificacao;
-  _PraiaMarker({required this.marker, required this.classificacao});
 }
 
 class _PraiasPageState extends State<PraiasPage> {
@@ -33,7 +29,7 @@ class _PraiasPageState extends State<PraiasPage> {
   BitmapDescriptor? _iconePropria;
   BitmapDescriptor? _iconeImpropria;
 
-  final List<_PraiaMarker> _todosMarcadores = [];
+  final List<PraiaMarker> _todosMarcadores = [];
   final Set<Marker> _marcadoresVisiveis = {};
 
   EstacaoMonitoramento? _estacaoSelecionada;
@@ -91,7 +87,7 @@ class _PraiasPageState extends State<PraiasPage> {
           });
         },
       );
-      _todosMarcadores.add(_PraiaMarker(marker: marker, classificacao: est.classificacao));
+      _todosMarcadores.add(PraiaMarker(marker: marker, classificacao: est.classificacao));
     }
     setState(() => _filtrarMarcadores());
   }
@@ -179,11 +175,11 @@ class _PraiasPageState extends State<PraiasPage> {
                   child: PopupMenuButton<String>(
                     onSelected: _toggleClassificacao,
                     itemBuilder: (_) => [
-                      _popupItem('Mostrar tudo', classificacoesSelecionadas.length == 2),
-                      _popupItem('Mostrar apenas próprias', classificacoesSelecionadas.contains('Próprias') && classificacoesSelecionadas.length == 1),
-                      _popupItem('Mostrar apenas impróprias', classificacoesSelecionadas.contains('Impróprias') && classificacoesSelecionadas.length == 1),
+                      popupItem(context, 'Mostrar tudo', classificacoesSelecionadas.length == 2),
+                      popupItem(context, 'Mostrar apenas próprias', classificacoesSelecionadas.contains('Próprias') && classificacoesSelecionadas.length == 1),
+                      popupItem(context, 'Mostrar apenas impróprias', classificacoesSelecionadas.contains('Impróprias') && classificacoesSelecionadas.length == 1),
                     ],
-                    child: _popupButton(_getClassificacaoLabel()),
+                    child: popupButton(_getClassificacaoLabel()),
                   ),
                 ),
               ],
@@ -193,9 +189,19 @@ class _PraiasPageState extends State<PraiasPage> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                _buildFiltroMunicipio(),
+                buildFiltroMunicipio(
+                  municipioSelecionado: municipioSelecionado,
+                  onSelected: (value) {
+                    setState(() => municipioSelecionado = value);
+                    if (value.isNotEmpty && value != 'Todos') {
+                      _moverMapaParaMunicipio(value);
+                    } else {
+                      _filtrarMarcadores();
+                    }
+                  },
+                ),
                 const SizedBox(width: 8),
-                _buildFiltroPraia(),
+                buildFiltroPraia(),
               ],
             ),
           ),
@@ -297,72 +303,4 @@ class _PraiasPageState extends State<PraiasPage> {
       ),
     );
   }
-
-  Widget _buildFiltroMunicipio() => Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Filtrar por", style: TextStyle(fontSize: 12)),
-            const SizedBox(height: 8),
-            PopupMenuButton<String>(
-              onSelected: (value) {
-                setState(() => municipioSelecionado = value);
-                if (value.isNotEmpty && value != 'Todos') {
-                  _moverMapaParaMunicipio(value);
-                } else {
-                  _filtrarMarcadores();
-                }
-              },
-              itemBuilder: (_) => [
-                'Todos',
-                'Mataraca',
-                'Baia da Traição',
-                'Rio Tinto',
-                'Lucena',
-                'Cabedelo',
-                'João Pessoa',
-                'Conde',
-                'Pitimbú'
-              ].map((m) => PopupMenuItem<String>(value: m, child: Text(m))).toList(),
-              child: _popupButton(municipioSelecionado.isEmpty ? 'Municípios' : municipioSelecionado),
-            ),
-          ],
-        ),
-      );
-
-  Widget _buildFiltroPraia() => Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 24),
-            _popupButton("Trecho"),
-          ],
-        ),
-      );
-
-  Widget _popupButton(String label) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade500, width: 1.2),
-          borderRadius: BorderRadius.circular(6),
-          color: Colors.white,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(child: Text(label, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11))),
-            const Icon(Icons.keyboard_arrow_down_rounded, size: 20),
-          ],
-        ),
-      );
-
-  PopupMenuItem<String> _popupItem(String label, bool isChecked) => PopupMenuItem<String>(
-        value: label,
-        child: Row(
-          children: [
-            Checkbox(value: isChecked, onChanged: (_) => Navigator.pop(context, label)),
-            Flexible(child: Text(label)),
-          ],
-        ),
-      );
 }
