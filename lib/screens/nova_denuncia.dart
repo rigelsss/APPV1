@@ -1,11 +1,11 @@
-// ... imports ...
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/identificacao_screen.dart';
 import 'package:sudema_app/screens/denuncia_screen.dart';
 import 'package:sudema_app/services/categoria_service.dart';
 import 'package:sudema_app/screens/aba_localizacao.dart';
-import '../models/denuncia_data.dart';
 import 'package:sudema_app/screens/widgets/categoria_selector.dart';
+import 'package:sudema_app/screens/widgets/denuncia_top_bar.dart';
+import '../models/denuncia_data.dart';
 
 class NovaDenuncia extends StatefulWidget {
   const NovaDenuncia({super.key});
@@ -59,9 +59,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
 
   bool _podeIrParaAba(int index) {
     if (index == 1) {
-      return _categoriaSelecionada != null &&
-          _subcategoriaSelecionada != null &&
-          _subcategoriaSelecionada!.isNotEmpty;
+      return _categoriaSelecionada != null && _subcategoriaSelecionada?.isNotEmpty == true;
     } else if (index == 2 || index == 3) {
       return DenunciaData().enderecoConfirmado == true;
     }
@@ -71,9 +69,11 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   void _aoSelecionarAba(int index) {
     if (!_podeIrParaAba(index)) {
       setState(() {
-        _mensagemErro = (index == 1)
-            ? 'Selecione uma categoria e subcategoria antes de continuar.'
-            : 'Confirme o endereço antes de continuar.';
+        if (index == 1) {
+          _mensagemErro = 'Selecione uma categoria e subcategoria antes de continuar.';
+        } else {
+          _mensagemErro = 'Confirme o endereço antes de continuar.';
+        }
       });
       return;
     }
@@ -110,7 +110,12 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
       ),
       body: Column(
         children: [
-          _buildTopBar(),
+          DenunciaTopBar(
+            opcoes: opcao,
+            selectedIndex: selectedIndex,
+            podeIrParaAba: _podeIrParaAba,
+            onSelecionar: _aoSelecionarAba,
+          ),
           if (_mensagemErro != null)
             Padding(
               padding: const EdgeInsets.only(top: 4),
@@ -119,51 +124,8 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                 style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
               ),
             ),
-          Expanded(
-            child: _buildConteudoSelecionado(),
-          ),
+          Expanded(child: _buildConteudoSelecionado()),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTopBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: List.generate(opcao.length, (index) {
-          final isSelected = index == selectedIndex;
-          final isEnabled = _podeIrParaAba(index);
-          return GestureDetector(
-            onTap: () => _aoSelecionarAba(index),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  opcao[index],
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: isSelected
-                        ? Colors.blue[900]
-                        : isEnabled
-                            ? Colors.grey[700]
-                            : Colors.grey[400],
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Container(
-                  height: 3,
-                  width: 60,
-                  decoration: BoxDecoration(
-                    color: isSelected ? Colors.blue[900] : Colors.transparent,
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }),
       ),
     );
   }
@@ -188,10 +150,6 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (categorias.isEmpty) {
-      return const Center(child: Text('Nenhuma categoria disponível.'));
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -213,16 +171,13 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                 _mensagemErro = null;
               });
             },
-            onSubcategoriaSelecionada: (nome, id, categoriaNome) {
+            onSubcategoriaSelecionada: (nome, id, texto) {
               setState(() {
-                _subcategoriaSelecionada = nome.trim();
-                _categoriaSelecionada = categoriaNome;
+                _subcategoriaSelecionada = nome;
+                _categoriaSelecionada = texto; // Corrigido aqui
                 DenunciaData().tipoDenunciaId = id.toString();
                 _mensagemErro = null;
-
-                print('✅ Subcategoria selecionada: $_subcategoriaSelecionada');
-                print('✅ Categoria atual: $_categoriaSelecionada');
-                print('✅ tipoDenunciaId salvo: ${DenunciaData().tipoDenunciaId}');
+                print('>> tipoDenunciaId salvo em DenunciaData: \${DenunciaData().tipoDenunciaId}');
               });
             },
             onToggleExpand: (index) {
@@ -247,11 +202,8 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
             ),
             onPressed: (_categoriaSelecionada != null &&
                     _subcategoriaSelecionada != null &&
-                    _subcategoriaSelecionada!.trim().isNotEmpty)
-                ? () {
-                    print('🚀 Botão pressionado: avançando para aba Localização');
-                    _aoSelecionarAba(1);
-                  }
+                    _subcategoriaSelecionada!.isNotEmpty)
+                ? () => _aoSelecionarAba(1)
                 : null,
             child: const Center(
               child: Text(
