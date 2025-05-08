@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sudema_app/services/estacoes_service.dart';
 import 'package:sudema_app/models/praia_marker.dart';
-import 'package:sudema_app/screens/widgets/praias_widgets.dart'; // <- NOVO
+import 'package:sudema_app/screens/widgets/praias_widgets.dart';
+import 'package:sudema_app/screens/widgets/estacao_info_card.dart';
+import 'package:sudema_app/services/mapa_service.dart';
+import 'package:sudema_app/services/marcadores_service.dart';
 
 class PraiasPage extends StatefulWidget {
   const PraiasPage({super.key});
@@ -38,14 +41,23 @@ class _PraiasPageState extends State<PraiasPage> {
   @override
   void initState() {
     super.initState();
-    _carregarIcones().then((_) => _loadEstacoesFromJson());
+    _inicializarTudo();
+  }
+
+  Future<void> _inicializarTudo() async {
+    try {
+      await _carregarIcones();
+      await _loadEstacoesFromJson();
+    } catch (e) {
+      print("Erro na inicialização: $e");
+      setState(() => _isLoadingEstacoes = false);
+    }
   }
 
   Future<void> _loadEstacoesFromJson() async {
     try {
       _estacoes = await EstacoesService.carregarEstacoes();
       setState(() => _isLoadingEstacoes = false);
-      _gerarMarcadoresComSimulacao();
     } catch (e) {
       print("Erro: $e");
       setState(() => _isLoadingEstacoes = false);
@@ -53,43 +65,43 @@ class _PraiasPageState extends State<PraiasPage> {
   }
 
   Future<void> _carregarIcones() async {
-    _iconePropria = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(14, 14)),
-      'assets/images/propria.png',
-    );
-    _iconeImpropria = await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(14, 14)),
-      'assets/images/impropria.png',
-    );
+    try {
+      _iconePropria = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(14, 14)),
+        'assets/images/propria.png',
+      );
+      _iconeImpropria = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(size: Size(14, 14)),
+        'assets/images/impropria.png',
+      );
+      print('✅ Ícones carregados com sucesso.');
+    } catch (e) {
+      print('❌ Erro ao carregar ícones: $e');
+    }
   }
 
   void _gerarMarcadoresComSimulacao() {
     _todosMarcadores.clear();
-    for (var est in _estacoes) {
-      final icon = est.classificacao == 'Próprias' ? _iconePropria : _iconeImpropria;
-      final marker = Marker(
-        markerId: MarkerId(est.codigo),
-        position: est.coordenadas,
-        icon: icon ?? BitmapDescriptor.defaultMarker,
-        onTap: () async {
-          final screenCoord = await mapController.getScreenCoordinate(est.coordenadas);
-          final RenderBox box = _mapKey.currentContext!.findRenderObject() as RenderBox;
-          final mapPosition = box.localToGlobal(Offset.zero);
 
-          final offset = Offset(
-            screenCoord.x.toDouble() - mapPosition.dx,
-            screenCoord.y.toDouble() - mapPosition.dy,
-          );
+    final novosMarcadores = MarcadoresService.gerarMarcadores(
+      estacoes: _estacoes,
+      iconePropria: _iconePropria ?? BitmapDescriptor.defaultMarker,
+      iconeImpropria: _iconeImpropria ?? BitmapDescriptor.defaultMarker,
+      getScreenCoordinate: mapController.getScreenCoordinate,
+      getMapOffset: () {
+        final RenderBox box = _mapKey.currentContext!.findRenderObject() as RenderBox;
+        return box.localToGlobal(Offset.zero);
+      },
+      onTapEstacao: (est, offset) {
+        setState(() {
+          _estacaoSelecionada = est;
+          _overlayPosition = offset;
+        });
+      },
+    );
 
-          setState(() {
-            _estacaoSelecionada = est;
-            _overlayPosition = offset;
-          });
-        },
-      );
-      _todosMarcadores.add(PraiaMarker(marker: marker, classificacao: est.classificacao));
-    }
-    setState(() => _filtrarMarcadores());
+    _todosMarcadores.addAll(novosMarcadores);
+    _filtrarMarcadores();
   }
 
   void _filtrarMarcadores() {
@@ -104,6 +116,7 @@ class _PraiasPageState extends State<PraiasPage> {
         }
       }
     }
+    setState(() {});
   }
 
   void _toggleClassificacao(String item) {
@@ -119,21 +132,6 @@ class _PraiasPageState extends State<PraiasPage> {
     });
   }
 
-  LatLng _calcularCentroMunicipio(List<EstacaoMonitoramento> lista) {
-    final latSum = lista.map((e) => e.coordenadas.latitude).reduce((a, b) => a + b);
-    final lngSum = lista.map((e) => e.coordenadas.longitude).reduce((a, b) => a + b);
-    return LatLng(latSum / lista.length, lngSum / lista.length);
-  }
-
-  void _moverMapaParaMunicipio(String municipio) {
-    final lista = _estacoes.where((e) => e.municipio == municipio).toList();
-    if (lista.isNotEmpty) {
-      final destino = _calcularCentroMunicipio(lista);
-      mapController.animateCamera(CameraUpdate.newLatLngZoom(destino, 12.5));
-    }
-    _filtrarMarcadores();
-  }
-
   String _getClassificacaoLabel() {
     if (classificacoesSelecionadas.length == 2) return 'Mostrar tudo';
     if (classificacoesSelecionadas.contains('Próprias')) return 'Mostrar apenas próprias';
@@ -147,6 +145,7 @@ class _PraiasPageState extends State<PraiasPage> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
+
     return Scaffold(
       body: Column(
         children: [
@@ -194,7 +193,12 @@ class _PraiasPageState extends State<PraiasPage> {
                   onSelected: (value) {
                     setState(() => municipioSelecionado = value);
                     if (value.isNotEmpty && value != 'Todos') {
-                      _moverMapaParaMunicipio(value);
+                      MapaService.moverMapaParaMunicipio(
+                        controller: mapController,
+                        estacoes: _estacoes,
+                        municipio: value,
+                        onComplete: _filtrarMarcadores,
+                      );
                     } else {
                       _filtrarMarcadores();
                     }
@@ -215,8 +219,11 @@ class _PraiasPageState extends State<PraiasPage> {
                     final zoomLevel = await controller.getZoomLevel();
                     setState(() {
                       currentZoom = zoomLevel;
-                      _filtrarMarcadores();
                     });
+
+                    if (_estacoes.isNotEmpty && _todosMarcadores.isEmpty) {
+                      _gerarMarcadoresComSimulacao();
+                    }
                   },
                   onTap: (_) {
                     setState(() {
@@ -236,65 +243,9 @@ class _PraiasPageState extends State<PraiasPage> {
                   markers: _marcadoresVisiveis,
                 ),
                 if (_estacaoSelecionada != null && _overlayPosition != null)
-                  Positioned(
-                    left: (_overlayPosition!.dx - 130).clamp(16, MediaQuery.of(context).size.width - 276),
-                    top: (_overlayPosition!.dy - 200).clamp(16, MediaQuery.of(context).size.height - 180),
-                    child: Material(
-                      elevation: 6,
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
-                        width: 260,
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${_estacaoSelecionada!.nome} - ${_estacaoSelecionada!.municipio}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              _estacaoSelecionada!.endereco,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Estação: ${_estacaoSelecionada!.codigo}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              _estacaoSelecionada!.classificacao == 'Próprias'
-                                  ? 'Própria para banho'
-                                  : 'Imprópria para banho',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                                color: _estacaoSelecionada!.classificacao == 'Próprias'
-                                    ? Colors.green
-                                    : Colors.red,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  EstacaoInfoCard(
+                    estacao: _estacaoSelecionada!,
+                    position: _overlayPosition!,
                   ),
               ],
             ),
