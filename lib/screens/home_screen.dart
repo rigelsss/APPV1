@@ -3,12 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import '../services/getnoticia.dart';
 import '../models/noticia.dart';
-import '../screens/widgets_reutilizaveis/appbar.dart';
+import 'widgets/appbar.dart';
 import '../screens/praias.dart';
 import '../screens/PageDenuncia.dart';
 import '../screens/noticias.dart';
-import '../screens/widgets_reutilizaveis/navbar.dart';
-import '../screens/widgets_reutilizaveis/drawer.dart';
+import 'widgets/navbar.dart';
+import 'widgets/drawer.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? token;
