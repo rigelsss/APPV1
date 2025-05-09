@@ -65,7 +65,6 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   }
 
   bool _validarData(String input) {
-    // Verifica se o formato é exatamente dd/MM/yyyy
     final regex = RegExp(r'^\d{2}/\d{2}/\d{4}$');
     if (!regex.hasMatch(input)) return false;
 
@@ -79,20 +78,36 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   }
 
   Future<void> _enviar() async {
-    final data = DenunciaData()
-      ..dataOcorrencia = _dataController.text
-      ..descricao = _descricaoController.text
-      ..referencia = _referenciaController.text
-      ..informacaoDenunciado = _denunciadoController.text
-      ..imagemPath = _image?.path;
+    try {
+      final data = DenunciaData()
+        ..dataOcorrencia = _dataController.text
+        ..descricao = _descricaoController.text
+        ..referencia = _referenciaController.text
+        ..informacaoDenunciado = _denunciadoController.text
+        ..imagemPath = _image?.path;
 
-    final resultado = await DenunciaService.enviar(context, data);
-    if (resultado) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const conclusao_de_denuncia()),
-      );
+      final resultado = await DenunciaService.enviar(context, data);
+
+      if (resultado) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const conclusao_de_denuncia()),
+        );
+      } else {
+        _mostrarErro('Não foi possível enviar a denúncia. Tente novamente.');
+      }
+    } catch (e) {
+      _mostrarErro('Erro inesperado: ${e.toString()}');
     }
+  }
+
+  void _mostrarErro(String mensagem) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(mensagem),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   @override
