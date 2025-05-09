@@ -209,47 +209,69 @@ class _PraiasPageState extends State<PraiasPage> {
               ],
             ),
           ),
-          Expanded(
-            child: Stack(
-              children: [
-                GoogleMap(
-                  key: _mapKey,
-                  onMapCreated: (controller) async {
-                    mapController = controller;
-                    final zoomLevel = await controller.getZoomLevel();
-                    setState(() {
-                      currentZoom = zoomLevel;
-                    });
+Expanded(
+  child: Stack(
+    children: [
+      GoogleMap(
+        key: _mapKey,
+        onMapCreated: (controller) async {
+          mapController = controller;
+          final zoomLevel = await controller.getZoomLevel();
+          setState(() {
+            currentZoom = zoomLevel;
+          });
 
-                    if (_estacoes.isNotEmpty && _todosMarcadores.isEmpty) {
-                      _gerarMarcadoresComSimulacao();
-                    }
-                  },
-                  onTap: (_) {
-                    setState(() {
-                      _estacaoSelecionada = null;
-                      _overlayPosition = null;
-                    });
-                  },
-                  onCameraMove: (pos) {
-                    setState(() {
-                      currentZoom = pos.zoom;
-                      _filtrarMarcadores();
-                    });
-                  },
-                  initialCameraPosition: CameraPosition(target: _initialPosition, zoom: currentZoom),
-                  myLocationButtonEnabled: false,
-                  zoomControlsEnabled: false,
-                  markers: _marcadoresVisiveis,
-                ),
-                if (_estacaoSelecionada != null && _overlayPosition != null)
-                  EstacaoInfoCard(
-                    estacao: _estacaoSelecionada!,
-                    position: _overlayPosition!,
-                  ),
-              ],
-            ),
-          ),
+          if (_estacoes.isNotEmpty && _todosMarcadores.isEmpty) {
+            _gerarMarcadoresComSimulacao();
+          }
+        },
+        onTap: (_) {
+          setState(() {
+            _estacaoSelecionada = null;
+            _overlayPosition = null;
+          });
+        },
+        onCameraMove: (pos) {
+          setState(() {
+            currentZoom = pos.zoom;
+            _filtrarMarcadores();
+          });
+        },
+        initialCameraPosition: CameraPosition(target: _initialPosition, zoom: currentZoom),
+        myLocationButtonEnabled: false,
+        zoomControlsEnabled: false,
+        markers: _marcadoresVisiveis,
+      ),
+      if (_estacaoSelecionada != null && _overlayPosition != null)
+        Builder(
+          builder: (context) {
+            final screenSize = MediaQuery.of(context).size;
+            const cardWidth = 260.0;
+            const cardHeight = 160.0;
+            const spacing = 12.0;
+
+            // Calcula posição preferencial à direita do marcador
+            double left = _overlayPosition!.dx + spacing;
+            if (left + cardWidth > screenSize.width) {
+              // Se ultrapassar a borda direita, posiciona à esquerda do marcador
+              left = _overlayPosition!.dx - cardWidth - spacing;
+            }
+            left = left.clamp(8.0, screenSize.width - cardWidth - 8.0);
+
+            // Centraliza verticalmente ao lado do marcador
+            double top = (_overlayPosition!.dy - cardHeight / 2).clamp(8.0, screenSize.height - cardHeight - 8.0);
+
+            return Positioned(
+              left: left,
+              top: top,
+              child: EstacaoInfoCard(estacao: _estacaoSelecionada!),
+            );
+          },
+        ),
+    ],
+  ),
+)
+
         ],
       ),
     );
