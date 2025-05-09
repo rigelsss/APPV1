@@ -1,31 +1,44 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 
 class AuthController {
+  static const String _tokenKey = 'token';
+
+  static Future<bool> isLoggedIn() async {
+    final token = await getToken();
+    if (token == null) return false;
+    return !JwtDecoder.isExpired(token);
+  }
+
+  static Future<void> saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_tokenKey, token);
+  }
+
+  static Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_tokenKey);
+  }
+
+  static Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_tokenKey);
+  }
+
   static Future<Map<String, dynamic>?> obterInformacoesUsuario(String token) async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:9000/auth/me'),
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
+        Uri.parse('${dotenv.env['URL_API']}/auth/me'),
+        headers: {'Authorization': 'Bearer $token'},
       );
-
-      print('Status da resposta: ${response.statusCode}');
-      print('Corpo da resposta: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
-        if (data is Map<String, dynamic>) {
-          data.forEach((key, value) {
-            print('$key: $value');
-          });
-        }
-
         return data;
       } else {
-        print('Erro ao buscar dados do usuário: ${response.statusCode}');
         return null;
       }
     } catch (e) {
