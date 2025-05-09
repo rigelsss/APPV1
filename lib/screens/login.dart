@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/RecuperacaoSenha.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/RegistroUser.dart';
-import '../screens/widgets_reutilizaveis/appbardenuncia.dart';
+import 'widgets/appbardenuncia.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:sudema_app/services/controllerLogin.dart';
 

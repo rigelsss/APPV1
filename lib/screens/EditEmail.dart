@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/widgets_reutilizaveis/drawer.dart';
-import 'package:sudema_app/screens/widgets_reutilizaveis/navbar.dart';
+import 'package:sudema_app/screens/widgets/drawer.dart';
+import 'package:sudema_app/screens/widgets/navbar.dart';
 
 class EditarEmail extends StatefulWidget {
   const EditarEmail({super.key});

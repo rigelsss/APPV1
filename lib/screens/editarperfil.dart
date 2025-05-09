@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/widgets_reutilizaveis/navbar.dart';
+import 'package:sudema_app/screens/widgets/navbar.dart';
 
 class editarperfil extends StatefulWidget {
   const editarperfil({super.key});

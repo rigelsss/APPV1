@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/login.dart';
-import 'package:sudema_app/screens/widgets_reutilizaveis/appbardenuncia.dart';
+import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
 
 class Novasenha extends StatefulWidget {
   const Novasenha({super.key});

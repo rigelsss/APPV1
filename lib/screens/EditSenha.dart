@@ -1,9 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sudema_app/screens/PerfilUser.dart';
 import 'package:sudema_app/screens/RecuperacaoSenha.dart';
-import 'package:sudema_app/screens/widgets_reutilizaveis/navbar.dart';
+import 'package:sudema_app/screens/widgets/navbar.dart';
 
 import '../services/AuthMe.dart';
 import '../services/SenhaController.dart';

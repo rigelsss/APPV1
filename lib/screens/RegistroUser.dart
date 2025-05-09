@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:sudema_app/screens/TermosCondicoes.dart';
-import 'package:sudema_app/screens/widgets_reutilizaveis/appbardenuncia.dart';
+import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
 import 'login.dart';
 import 'package:sudema_app/services/ControllerRegister.dart';
 

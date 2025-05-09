@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/widgets_reutilizaveis/appbar.dart';
+import 'package:sudema_app/screens/widgets/appbar.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 
 class conclusao_de_denuncia extends StatefulWidget {

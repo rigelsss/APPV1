@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sudema_app/screens/widgets_reutilizaveis/navbar.dart';
+import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:sudema_app/services/notification_service.dart';
 
 class NotificacoesPage extends StatefulWidget {
