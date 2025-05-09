@@ -14,12 +14,39 @@ class DenunciaScreen extends StatefulWidget {
 class _DenunciaScreenState extends State<DenunciaScreen> {
   XFile? _image;
   bool _confirmacao = false;
+
   final _dataController = TextEditingController();
   final _descricaoController = TextEditingController();
   final _referenciaController = TextEditingController();
   final _denunciadoController = TextEditingController();
 
+  final _dataFocus = FocusNode();
+
   bool _dataValida = true;
+  bool _exibirErroData = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _dataFocus.addListener(() {
+      if (!_dataFocus.hasFocus) {
+        setState(() {
+          _exibirErroData = true;
+          _dataValida = _validarData(_dataController.text);
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _dataController.dispose();
+    _descricaoController.dispose();
+    _referenciaController.dispose();
+    _denunciadoController.dispose();
+    _dataFocus.dispose();
+    super.dispose();
+  }
 
   bool _validateFields() {
     final camposPreenchidos = [
@@ -38,6 +65,10 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   }
 
   bool _validarData(String input) {
+    // Verifica se o formato é exatamente dd/MM/yyyy
+    final regex = RegExp(r'^\d{2}/\d{2}/\d{4}$');
+    if (!regex.hasMatch(input)) return false;
+
     try {
       final data = DateFormat('dd/MM/yyyy').parseStrict(input);
       final agora = DateTime.now();
@@ -77,8 +108,9 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 'Data do ocorrido *',
                 'dd/mm/aaaa',
                 _dataController,
+                focusNode: _dataFocus,
                 icon: Icons.calendar_today,
-                erro: !_dataValida,
+                erro: _exibirErroData && !_dataValida,
               ),
               const SizedBox(height: 18),
               _buildTextField(
@@ -107,7 +139,8 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
               const SizedBox(height: 20),
               CheckboxListTile(
                 value: _confirmacao,
-                onChanged: (value) => setState(() => _confirmacao = value ?? false),
+                onChanged: (value) =>
+                    setState(() => _confirmacao = value ?? false),
                 title: const Text(
                   'Declaro que as informações acima prestadas são verdadeiras.',
                 ),
@@ -147,9 +180,8 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     int maxLines = 1,
     IconData? icon,
     bool erro = false,
+    FocusNode? focusNode,
   }) {
-    final isDataField = controller == _dataController;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -157,22 +189,13 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
         const SizedBox(height: 12),
         TextField(
           controller: controller,
-          onChanged: isDataField
-              ? (value) {
-                  setState(() {
-                    _dataValida =
-                        value.trim().isEmpty || _validarData(value);
-                  });
-                }
-              : null,
+          focusNode: focusNode,
           decoration: InputDecoration(
             labelText: label,
             hintText: hint,
             suffixIcon: icon != null ? Icon(icon) : null,
             border: const OutlineInputBorder(),
-            errorText: isDataField &&
-                    controller.text.trim().isNotEmpty &&
-                    !_dataValida
+            errorText: erro
                 ? 'Data inválida ou no futuro (formato: dd/mm/aaaa)'
                 : null,
           ),
