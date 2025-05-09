@@ -7,6 +7,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
 import 'package:sudema_app/models/denuncia_data.dart';
 import '../screens/widgets/custom_snackbar.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 
 class DenunciaService {
   static Future<bool> enviar(BuildContext context, DenunciaData data) async {
@@ -34,8 +35,10 @@ class DenunciaService {
       return false;
     }
 
-    // Criação da requisição
-    final url = Uri.parse('http://10.0.2.2:9000/api/v1/denuncias');
+    // Carrega URL base do .env
+    final baseUrl = dotenv.env['URL_API'];
+    final url = Uri.parse('$baseUrl/denuncias');
+
     final request = http.MultipartRequest('POST', url);
 
     if (data.tokenUsuario != null) {
@@ -84,7 +87,6 @@ class DenunciaService {
       );
     }
 
-    // Envio
     try {
       final response = await request.send();
       final body = await response.stream.bytesToString();

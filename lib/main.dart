@@ -13,19 +13,23 @@ import 'package:sudema_app/screens/editarperfil.dart';
 
 import 'package:sudema_app/services/notification_handler.dart';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print('🔔 [Background] Mensagem recebida: ${message.messageId}');
 }
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await dotenv.load(fileName: "assets/env/.env");
+
   await Firebase.initializeApp();
 
   await NotificationHandler.createNotificationChannel();
   await NotificationHandler.initializeFlutterNotifications();
   NotificationHandler.listenToForegroundMessages();
-
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(const MyApp());

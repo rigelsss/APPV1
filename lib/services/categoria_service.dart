@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 
 class CategoriaService {
   static Future<List<dynamic>> buscarCategoriasComTipos() async {
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:9000/api/v1/denuncias/categorias/tipos'),
+        Uri.parse('${dotenv.env['URL_API']}/denuncias/categorias/tipos'),
       );
 
       if (response.statusCode == 200) {
