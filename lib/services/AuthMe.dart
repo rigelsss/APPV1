@@ -29,21 +29,28 @@ class AuthController {
   }
 
   static Future<Map<String, dynamic>?> obterInformacoesUsuario(String token) async {
-    try {
-      final response = await http.get(
-        Uri.parse('${dotenv.env['URL_API']}/auth/me'),
-        headers: {'Authorization': 'Bearer $token'},
-      );
+  try {
+    final response = await http.get(
+    Uri.parse('${dotenv.env['URL_API']}/auth/me'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data;
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['user'] != null) {
+        print('✅ Dados recebidos do /auth/me: ${data['user']}');
+        return data['user'];
       } else {
+        print('❗Campo "user" não encontrado na resposta.');
         return null;
       }
-    } catch (e) {
-      print('Erro ao buscar dados do usuário: $e');
+    } else {
+      print('❌ Erro ${response.statusCode} ao buscar /auth/me: ${response.body}');
       return null;
     }
+  } catch (e) {
+    print('❌ Exceção ao buscar dados do usuário: $e');
+    return null;
   }
+}
 }

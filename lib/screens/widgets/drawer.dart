@@ -26,9 +26,9 @@ class CustomDrawerState extends State<CustomDrawer> {
     if (widget.token != null && widget.token!.isNotEmpty) {
       try {
         final data = await AuthController.obterInformacoesUsuario(widget.token!);
-        if (data != null && data['user'] != null) {
+        if (data != null) {
           setState(() {
-            username = data['user']['name'] ?? 'Acessar';
+            username = data['name'] ?? 'Acessar';
             isLoading = false;
           });
         } else {
