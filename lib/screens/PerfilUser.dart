@@ -45,9 +45,9 @@ class PerfiluserState extends State<Perfiluser> {
     try {
       final data = await AuthController.obterInformacoesUsuario(_token);
 
-      if (data != null && data['user'] != null) {
+      if (data != null) {
         setState(() {
-          _userData = data['user'];
+          _userData = data;
           _isLoading = false;
         });
       } else {
