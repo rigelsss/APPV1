@@ -5,7 +5,6 @@ import 'package:sudema_app/screens/widgets/image_picker.dart';
 import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:sudema_app/screens/denunciaconcluida.dart';
 import 'package:intl/intl.dart';
-import 'package:sudema_app/services/AuthMe.dart';
 
 class DenunciaScreen extends StatefulWidget {
   @override
@@ -25,6 +24,12 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
 
   bool _dataValida = true;
   bool _exibirErroData = false;
+
+  String? _erroData;
+  String? _erroDescricao;
+  String? _erroReferencia;
+  String? _erroDenunciado;
+
 
   @override
   void initState() {
@@ -60,6 +65,9 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     final dataValida = _validarData(_dataController.text);
     setState(() {
       _dataValida = dataValida;
+      _erroDescricao = _descricaoController.text.trim().isEmpty ? 'Descrição é obrigatória' : null;
+      _erroReferencia = _referenciaController.text.trim().isEmpty ? 'Referência é obrigatória' : null;
+      _erroDenunciado = _denunciadoController.text.trim().isEmpty ? 'Denunciado é obrigatório' : null;
     });
 
     return camposPreenchidos && _confirmacao && dataValida;
@@ -120,12 +128,16 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Data do ocorrido', style: const TextStyle(fontSize: 16)),
+              Text(
+                'Data do ocorrido *',
+                style: const TextStyle(fontSize: 16),
+              ),
               const SizedBox(height: 12),
               TextField(
                 controller: _dataController,
                 focusNode: _dataFocus,
                 decoration: InputDecoration(
+                  labelText: 'Data do ocorrido *',
                   hintText: 'dd/mm/aaaa',
                   suffixIcon: const Icon(Icons.calendar_today),
                   border: const OutlineInputBorder(),
@@ -134,54 +146,62 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                       : null,
                 ),
               ),
-              const SizedBox(height: 20),
-              Text('Descrição', style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 24),
+              Text(
+                'Descrição',
+                style: const TextStyle(fontSize: 16),
+              ),
               const SizedBox(height: 12),
               TextField(
                 controller: _descricaoController,
                 maxLines: 4,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Descreva a infração...',
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
+                  errorText: _erroDescricao,
                 ),
               ),
-              const SizedBox(height: 20),
-              Text('Ponto de referencia', style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 24),
+              Text(
+                'Ponto de referência *',
+                style: const TextStyle(fontSize: 16),
+              ),
               const SizedBox(height: 12),
               TextField(
                 controller: _referenciaController,
-                decoration: const InputDecoration(
-                  hintText: 'Nome, nome da empresa, documento...',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  hintText: 'Nome, nome da empresa, documento',
+                  border: const OutlineInputBorder(),
+                  errorText: _erroReferencia,
                 ),
               ),
-              const SizedBox(height: 20),
-              Text('Informações do denunciado*', style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 24),
+              Text(
+                'Informações do denunciado',
+                style: const TextStyle(fontSize: 16),
+              ),
               const SizedBox(height: 12),
               TextField(
                 controller: _denunciadoController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Nome, nome da empresa, documento...',
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
+                  errorText: _erroDenunciado,
                 ),
               ),
-              const SizedBox(height: 20),
-              Text('Adicionar arquivos', style: const TextStyle(fontSize: 16)),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
               ImagePickerWidget(
                 onImagePicked: (file) => setState(() => _image = file),
                 image: _image,
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 24,),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Checkbox(
                     value: _confirmacao,
-                    shape: const CircleBorder(),
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _confirmacao = value ?? false;
-                      });
+                    onChanged: (value) {
+                      setState(() => _confirmacao = value ?? false);
                     },
                   ),
                   Expanded(
@@ -192,6 +212,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                   ),
                 ],
               ),
+
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton.icon(
@@ -207,7 +228,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                     ),
                     padding: const EdgeInsets.symmetric(
                       vertical: 22,
-                      horizontal: 120,
+                      horizontal: 100,
                     ),
                   ),
                 ),
