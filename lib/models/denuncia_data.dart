@@ -1,70 +1,77 @@
 class DenunciaData {
+  // Singleton
   static final DenunciaData _instance = DenunciaData._internal();
-
-  factory DenunciaData() {
-    return _instance;
-  }
-
+  factory DenunciaData() => _instance;
   DenunciaData._internal();
 
+  // Dados da denúncia
   String? tipoDenunciaId;
   String? descricao;
+  String? informacaoDenunciado;
+  String? dataOcorrencia;
+  String? referencia;
+  String? imagemPath;
+  bool? anonimo = false;
+
+  // Identificação do usuário
   String? usuarioId;
+  String? tokenUsuario;
+
+  // Endereço e localização
   double? latitude;
   double? longitude;
-  String? endereco;
-  bool enderecoConfirmado = false;
-  String? tokenUsuario; 
   String? estado;
   String? bairro;
   String? municipio;
   String? logradouro;
-  String? dataOcorrencia;
-  String? referencia;
-  String? informacaoDenunciado;
-  String? imagemPath; 
-  bool? anonimo = false;
-  String? localizacao;
-  String? posicao;
+  String? endereco;
+  bool enderecoConfirmado = false;
+  String? localizacao; 
+  String? posicao;     
 
   Map<String, dynamic> toJson() {
-  return {
-    'categoria': tipoDenunciaId,
-    'latitude': latitude,
-    'longitude': longitude,
-    'endereco': endereco,
-    'enderecoConfirmado': enderecoConfirmado,
-    'tokenUsuario': tokenUsuario,
-    'dataOcorrencia': dataOcorrencia,
-    'descricao': descricao,
-    'referencia': referencia,
-    'denunciado': informacaoDenunciado,
-    'imagemPath': imagemPath,
-    'anonimo': false,
-    'localizacao': localizacao,
-    'posicao': posicao,
+    return {
+      'categoria': tipoDenunciaId,
+      'descricao': descricao,
+      'dataOcorrencia': dataOcorrencia,
+      'referencia': referencia,
+      'denunciado': informacaoDenunciado,
+      'imagemPath': imagemPath,
+      'anonimo': anonimo ?? false,
+      'usuarioId': usuarioId,
+      'tokenUsuario': tokenUsuario,
+      'latitude': latitude,
+      'longitude': longitude,
+      'estado': estado,
+      'bairro': bairro,
+      'municipio': municipio,
+      'logradouro': logradouro,
+      'endereco': endereco,
+      'enderecoConfirmado': enderecoConfirmado,
+      'localizacao': localizacao,
+      'posicao': posicao,
     };
   }
-
-
 
   void limpar() {
     tipoDenunciaId = null;
     descricao = null;
+    informacaoDenunciado = null;
+    dataOcorrencia = null;
+    referencia = null;
+    imagemPath = null;
+    anonimo = false;
+
     latitude = null;
     longitude = null;
+    estado = null;
+    bairro = null;
+    municipio = null;
+    logradouro = null;
     endereco = null;
     enderecoConfirmado = false;
 
-    tokenUsuario = null;
-
-    dataOcorrencia = null;
-    descricao = null;
-    referencia = null;
-    informacaoDenunciado = null;
-    imagemPath = null;
-
-    anonimo = null;
+    localizacao = null;
     posicao = null;
   }
 }
