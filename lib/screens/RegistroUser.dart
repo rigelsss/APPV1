@@ -18,6 +18,7 @@ class _RegistroUserState extends State<RegistroUser> {
   final TextEditingController _contatoController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
+  final TextEditingController _confirmarSenhaController = TextEditingController();
 
   final _controller = RegistroController();
   bool _obscureText = true;
@@ -30,6 +31,7 @@ class _RegistroUserState extends State<RegistroUser> {
     _contatoController.dispose();
     _emailController.dispose();
     _senhaController.dispose();
+    _confirmarSenhaController.dispose();
     super.dispose();
   }
 
@@ -47,33 +49,70 @@ class _RegistroUserState extends State<RegistroUser> {
             TextField(
               controller: _nomeController,
               keyboardType: TextInputType.text,
-              decoration: InputDecoration(border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Nome de usúario',
+              ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 24),
             Text('CPF', style: TextStyle(fontSize: 18)),
             TextField(
               controller: _cpfController,
               keyboardType: TextInputType.number,
-              decoration: InputDecoration(border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: '000.000.000-00',
+              ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 24),
             Text('Contato', style: TextStyle(fontSize: 18)),
             TextField(
               controller: _contatoController,
               keyboardType: TextInputType.phone,
-              decoration: InputDecoration(border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: '(00)00000-0000',
+              ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 24),
             Text('E-mail', style: TextStyle(fontSize: 18)),
             TextField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'exemplo@exemplo.com',
+              ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 24),
             Text('Senha', style: TextStyle(fontSize: 18)),
             TextField(
               controller: _senhaController,
+              obscureText: _obscureText,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureText ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'A senha deve ter no mínimo 8 caracteres e deve conter letras, números e caracteres especiais',
+              style: TextStyle(fontSize: 14, color: Color(0xFF747474)),
+            ),
+            SizedBox(height: 24),
+            Text('Confirme sua senha', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 24),
+            TextField(
+              controller: _confirmarSenhaController,
               obscureText: _obscureText,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -94,6 +133,7 @@ class _RegistroUserState extends State<RegistroUser> {
               children: [
                 Checkbox(
                   value: _isChecked,
+                  shape: const CircleBorder(),
                   onChanged: (bool? value) {
                     setState(() {
                       _isChecked = value ?? false;
@@ -120,9 +160,10 @@ class _RegistroUserState extends State<RegistroUser> {
                     TextSpan(
                       text: ' Termos e Condições',
                       style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold),
+                        color: Colors.blue,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                       recognizer: TapGestureRecognizer()
                         ..onTap = () {
                           Navigator.push(
@@ -141,6 +182,13 @@ class _RegistroUserState extends State<RegistroUser> {
             Center(
               child: ElevatedButton(
                 onPressed: () async {
+                  if (_senhaController.text != _confirmarSenhaController.text) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('As senhas não coincidem.')),
+                    );
+                    return;
+                  }
+
                   final resultado = await _controller.validarERegistrar(
                     nome: _nomeController.text,
                     cpf: _cpfController.text,

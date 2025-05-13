@@ -5,6 +5,7 @@ import 'package:sudema_app/screens/widgets/image_picker.dart';
 import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:sudema_app/screens/denunciaconcluida.dart';
 import 'package:intl/intl.dart';
+import 'package:sudema_app/services/AuthMe.dart';
 
 class DenunciaScreen extends StatefulWidget {
   @override
@@ -119,55 +120,85 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTextField(
-                'Data do ocorrido *',
-                'dd/mm/aaaa',
-                _dataController,
+              Text('Data do ocorrido', style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _dataController,
                 focusNode: _dataFocus,
-                icon: Icons.calendar_today,
-                erro: _exibirErroData && !_dataValida,
+                decoration: InputDecoration(
+                  hintText: 'dd/mm/aaaa',
+                  suffixIcon: const Icon(Icons.calendar_today),
+                  border: const OutlineInputBorder(),
+                  errorText: _exibirErroData && !_dataValida
+                      ? 'Data inválida ou no futuro (formato: dd/mm/aaaa)'
+                      : null,
+                ),
               ),
-              const SizedBox(height: 18),
-              _buildTextField(
-                'Descrição *',
-                'Descreva a infração...',
-                _descricaoController,
+              const SizedBox(height: 20),
+              Text('Descrição', style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _descricaoController,
                 maxLines: 4,
+                decoration: const InputDecoration(
+                  hintText: 'Descreva a infração...',
+                  border: OutlineInputBorder(),
+                ),
               ),
-              const SizedBox(height: 18),
-              _buildTextField(
-                'Ponto de referência *',
-                'Ex: Empresa XYZ',
-                _referenciaController,
+              const SizedBox(height: 20),
+              Text('Ponto de referencia', style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _referenciaController,
+                decoration: const InputDecoration(
+                  hintText: 'Nome, nome da empresa, documento...',
+                  border: OutlineInputBorder(),
+                ),
               ),
-              const SizedBox(height: 18),
-              _buildTextField(
-                'Informações do denunciado *',
-                'Nome, CPF...',
-                _denunciadoController,
+              const SizedBox(height: 20),
+              Text('Informações do denunciado*', style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _denunciadoController,
+                decoration: const InputDecoration(
+                  hintText: 'Nome, nome da empresa, documento...',
+                  border: OutlineInputBorder(),
+                ),
               ),
+              const SizedBox(height: 20),
+              Text('Adicionar arquivos', style: const TextStyle(fontSize: 16)),
               const SizedBox(height: 12),
               ImagePickerWidget(
                 onImagePicked: (file) => setState(() => _image = file),
                 image: _image,
               ),
               const SizedBox(height: 20),
-              CheckboxListTile(
-                value: _confirmacao,
-                onChanged: (value) =>
-                    setState(() => _confirmacao = value ?? false),
-                title: const Text(
-                  'Declaro que as informações acima prestadas são verdadeiras.',
-                ),
+              Row(
+                children: [
+                  Checkbox(
+                    value: _confirmacao,
+                    shape: const CircleBorder(),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        _confirmacao = value ?? false;
+                      });
+                    },
+                  ),
+                  Expanded(
+                    child: Text(
+                      'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
+                      style: TextStyle(fontSize: 16, color: Colors.black),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
               Center(
                 child: ElevatedButton.icon(
                   onPressed: _validateFields() ? _enviar : null,
-                  icon: const Icon(Icons.send, color: Colors.white),
                   label: const Text(
                     'Concluir denúncia',
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1B8C00),
@@ -176,7 +207,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                     ),
                     padding: const EdgeInsets.symmetric(
                       vertical: 22,
-                      horizontal: 64,
+                      horizontal: 120,
                     ),
                   ),
                 ),
@@ -185,38 +216,6 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTextField(
-    String label,
-    String hint,
-    TextEditingController controller, {
-    int maxLines = 1,
-    IconData? icon,
-    bool erro = false,
-    FocusNode? focusNode,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 16)),
-        const SizedBox(height: 12),
-        TextField(
-          controller: controller,
-          focusNode: focusNode,
-          decoration: InputDecoration(
-            labelText: label,
-            hintText: hint,
-            suffixIcon: icon != null ? Icon(icon) : null,
-            border: const OutlineInputBorder(),
-            errorText: erro
-                ? 'Data inválida ou no futuro (formato: dd/mm/aaaa)'
-                : null,
-          ),
-          maxLines: maxLines,
-        ),
-      ],
     );
   }
 }

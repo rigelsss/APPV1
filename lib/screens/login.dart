@@ -48,7 +48,6 @@ class _LoginPageState extends State<LoginPage> {
 
         await obterInformacoesUsuario();
 
-        // Redireciona para a HomeScreen
         if (_token != null) {
           Navigator.pushReplacement(
             context,
