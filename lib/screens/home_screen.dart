@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: InkWell(
           onTap: () {
             setState(() {
-              _selectedIndex = 3;
+              _selectedIndex = 1;
             });
           },
           borderRadius: BorderRadius.circular(20),
@@ -201,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  _selectedIndex = 2;
+                  _selectedIndex = 3;
                 });
               },
               child: const Text(
@@ -233,7 +233,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: 'Denuncias',
                 imagePath: 'assets/images/fiscalizacao.jpg'),
             _buildServiceCardComImagem(
-                label: 'Portal da Transparência', imagePath: 'assets/images/portaltransparencia.jpg'),
+                label: 'Portal da Transparência', 
+                imagePath: 'assets/images/portaltransparencia.jpg'),
             _buildServiceCardComImagem(
                 label: 'Educação Ambiental',
                 imagePath: 'assets/images/educacao_ambiental.jpg'),

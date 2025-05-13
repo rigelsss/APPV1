@@ -1,34 +1,38 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/noticia.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CarregarNoticias {
-  final String apiKey = 'bd1bc4b15ed94607b34979adec47fd77';
-
   Future<List<Noticia>> buscarNoticias() async {
-    final url = Uri.parse(
-      'https://newsapi.org/v2/top-headlines?country=us&apiKey=$apiKey',
-    );
+    final baseUrl = dotenv.env['URL_API'];
+    if (baseUrl == null || baseUrl.isEmpty) {
+      throw Exception('URL da API não configurada.');
+    }
+
+    final url = Uri.parse('$baseUrl/noticias/top5');
 
     final resposta = await http.get(url);
 
     if (resposta.statusCode == 200) {
-      final dados = json.decode(resposta.body);
-      final List listaArtigos = dados['articles'];
+      final decodedBody = utf8.decode(resposta.bodyBytes);
+      final List<dynamic> listaNoticias = json.decode(decodedBody);
 
-      // Debug: Exibir as 3 primeiras matérias
-      for (var i = 0; i < listaArtigos.length && i < 3; i++) {
-        print('--- Notícia $i ---');
-        print('Título: ${listaArtigos[i]['title']}');
-        print('Descrição: ${listaArtigos[i]['description']}');
-        print('Imagem: ${listaArtigos[i]['urlToImage']}');
-        print('Publicado em: ${listaArtigos[i]['publishedAt']}');
-        print('URL: ${listaArtigos[i]['url']}');
-      }
-
-      return listaArtigos.map((json) => Noticia.fromJson(json)).toList();
+      return listaNoticias.map((json) {
+        return Noticia(
+          id: json['id'].toString(),
+          titulo: _extrairTextoHtml(json['titulo']),
+          resumo: _extrairTextoHtml(json['resumo']),
+          imagemUrl: json['imagem_url'],
+          dataHoraPublicacao: json['data_publicacao'],
+        );
+      }).toList();
     } else {
-      throw Exception('Erro ao carregar notícias');
+      throw Exception('Erro ao carregar notícias: ${resposta.statusCode}');
     }
+  }
+
+  String _extrairTextoHtml(String html) {
+    return html.replaceAll(RegExp(r'<[^>]*>'), '').trim();
   }
 }
