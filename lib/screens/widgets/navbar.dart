@@ -32,7 +32,7 @@ class NavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.beach_access),
-          label: 'Praias',
+          label: 'Balneabilidade',
           backgroundColor: Color(0xFF747474),
         ),
         BottomNavigationBarItem(
