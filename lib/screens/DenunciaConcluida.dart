@@ -26,20 +26,27 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
             Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 64),
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
                 decoration: BoxDecoration(
                   color: Color(0xFFD2FDE6),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(
-                  'Denúncia realizada com sucesso',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFF1B8C00),
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.check_circle_outline, color: Color(0xFF1B8C00),size: 32,),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Denúncia realizada com sucesso!',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Color(0xFF1B8C00),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -50,14 +57,16 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const HomeScreen(),),
-                  );},
+                      builder: (context) => const HomeScreen(),
+                    ),
+                  );
+                },
                 child: const Text(
-                  'Voltar a pagina inicial!',
+                  'Voltar à página inicial!',
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 64),
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 100),
                   backgroundColor: Color(0xFF2A2F8C),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),

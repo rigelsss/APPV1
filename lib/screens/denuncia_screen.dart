@@ -40,7 +40,6 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   bool _erroReferencia = false;
   bool _erroDenunciado = false;
 
-
   @override
   void initState() {
     super.initState();
@@ -78,25 +77,31 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   }
 
   bool _validateFields() {
-    final camposPreenchidos = [
-      _dataController.text,
-      _descricaoController.text,
-      _referenciaController.text,
-      _denunciadoController.text,
-    ].every((campo) => campo.trim().isNotEmpty);
-
+    final descricaoValida = _descricaoController.text.trim().isNotEmpty;
+    final referenciaValida = _referenciaController.text.trim().isNotEmpty;
+    final denunciadoValido = _denunciadoController.text.trim().isNotEmpty;
     final dataValida = _validarData(_dataController.text);
-    setState(() {
 
+    setState(() {
+      _erroDescricao = !descricaoValida;
+      _erroReferencia = !referenciaValida;
+      _erroDenunciado = !denunciadoValido;
+      _dataValida = dataValida;
+      _exibirErroData = true;
     });
 
-    return camposPreenchidos && _confirmacao && dataValida;
+    return descricaoValida &&
+        referenciaValida &&
+        denunciadoValido &&
+        dataValida &&
+        _confirmacao;
   }
 
   Future<void> _enviar() async {
     if (!_validateFields()) {
       Flushbar(
-        message: 'Preencha todos os campos obrigatórios corretamente e confirme a declaração.',
+        message:
+        'Preencha todos os campos obrigatórios corretamente e confirme a declaração.',
         backgroundColor: Colors.redAccent,
         duration: const Duration(seconds: 5),
         margin: const EdgeInsets.all(8),
@@ -122,11 +127,11 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const conclusao_de_denuncia()),
+          MaterialPageRoute(
+              builder: (context) => const conclusao_de_denuncia()),
         );
       } else {
-        _mostrarErro(
-            '❌ Erro inesperado: o envio falhou, mas sem detalhes do servidor.');
+        _mostrarErro('❌ Erro inesperado: o envio falhou, mas sem detalhes do servidor.');
       }
     } catch (e, stack) {
       debugPrint('Erro ao enviar denúncia: $e');
@@ -141,26 +146,6 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     }
   }
 
-  Future<bool> _confirmarEnvioSemImagem() async {
-    return await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Enviar sem imagem?'),
-            content: const Text(
-                'Você não selecionou uma imagem. Deseja continuar mesmo assim?'),
-            actions: [
-              TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Cancelar')),
-              TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text('Continuar')),
-            ],
-          ),
-        ) ??
-        false;
-  }
-
   void _mostrarErro(String mensagem) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -172,106 +157,118 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Data do ocorrido *', style: const TextStyle(fontSize: 16)),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _dataController,
-                focusNode: _dataFocus,
-                decoration: InputDecoration(
-                  labelText: 'Data do ocorrido *',
-                  hintText: 'dd/mm/aaaa',
-                  suffixIcon: const Icon(Icons.calendar_today),
-                  border: const OutlineInputBorder(),
-                  errorText: _exibirErroData && !_dataValida
-                      ? 'Data inválida ou no futuro (formato: dd/mm/aaaa)'
-                      : null,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text('Descrição *', style: const TextStyle(fontSize: 16)),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _descricaoController,
-                maxLines: 4,
-                decoration: InputDecoration(
-                  hintText: 'Descreva a infração...',
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text('Ponto de referência *', style: const TextStyle(fontSize: 16)),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _referenciaController,
-                decoration: InputDecoration(
-                  hintText: 'Nome, nome da empresa, documento',
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text('Informações do denunciado *', style: const TextStyle(fontSize: 16)),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _denunciadoController,
-                decoration: InputDecoration(
-                  hintText: 'Nome, nome da empresa, documento...',
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 24),
-              ImagePickerWidget(
-                onImagePicked: (file) => setState(() => _image = file),
-                image: _image,
-              ),
-              const SizedBox(height: 24),
-              Row(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth > 600;
+          final padding = isWide ? screenWidth * 0.2 : 16.0;
+
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding, vertical: 24),
+            child: SingleChildScrollView(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Checkbox(
-                    value: _confirmacao,
-                    shape: const CircleBorder(),
-                    onChanged: (value) {
-                      setState(() => _confirmacao = value ?? false);
-                    },
+                  const Text('Data do ocorrido *', style: TextStyle(fontSize: 16)),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _dataController,
+                    focusNode: _dataFocus,
+                    decoration: InputDecoration(
+                      labelText: 'Data do ocorrido *',
+                      hintText: 'dd/mm/aaaa',
+                      suffixIcon: const Icon(Icons.calendar_today),
+                      border: const OutlineInputBorder(),
+                      errorText: _exibirErroData && !_dataValida
+                          ? 'Data inválida ou no futuro (formato: dd/mm/aaaa)'
+                          : null,
+                    ),
                   ),
-                  const Expanded(
-                    child: Text(
-                      'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
-                      style: TextStyle(fontSize: 16),
+                  const SizedBox(height: 24),
+                  const Text('Descrição *', style: TextStyle(fontSize: 16)),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _descricaoController,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      hintText: 'Descreva a infração...',
+                      border: const OutlineInputBorder(),
+                      errorText: _erroDescricao ? 'Descrição obrigatória.' : null,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text('Ponto de referência *', style: TextStyle(fontSize: 16)),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _referenciaController,
+                    decoration: InputDecoration(
+                      hintText: 'Nome, nome da empresa, documento',
+                      border: const OutlineInputBorder(),
+                      errorText: _erroReferencia ? 'Campo obrigatório.' : null,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  const Text('Informações do denunciado *', style: TextStyle(fontSize: 16)),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _denunciadoController,
+                    decoration: InputDecoration(
+                      hintText: 'Nome, nome da empresa, documento...',
+                      border: const OutlineInputBorder(),
+                      errorText: _erroDenunciado ? 'Campo obrigatório.' : null,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  ImagePickerWidget(
+                    onImagePicked: (file) => setState(() => _image = file),
+                    image: _image,
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Checkbox(
+                        value: _confirmacao,
+                        shape: const CircleBorder(),
+                        onChanged: (value) {
+                          setState(() => _confirmacao = value ?? false);
+                        },
+                      ),
+                      const Expanded(
+                        child: Text(
+                          'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: ElevatedButton.icon(
+                      onPressed: _enviar,
+                      label: const Text(
+                        'Concluir denúncia',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                      icon: const Icon(Icons.check, color: Colors.white),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1B8C00),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 22,
+                          horizontal: 100,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              Center(
-                child: ElevatedButton.icon(
-                  onPressed: _enviar,
-                  label: const Text(
-                    'Concluir denúncia',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                  icon: const Icon(Icons.check, color: Colors.white),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1B8C00),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 22,
-                      horizontal: 100,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
