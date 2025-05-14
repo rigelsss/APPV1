@@ -5,6 +5,7 @@ import 'package:sudema_app/screens/widgets/image_picker.dart';
 import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:sudema_app/screens/denunciaconcluida.dart';
 import 'package:intl/intl.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 class DenunciaScreen extends StatefulWidget {
   @override
@@ -25,11 +26,9 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   bool _dataValida = true;
   bool _exibirErroData = false;
 
-  String? _erroData;
   String? _erroDescricao;
   String? _erroReferencia;
   String? _erroDenunciado;
-
 
   @override
   void initState() {
@@ -54,6 +53,19 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     super.dispose();
   }
 
+  bool _validarData(String input) {
+    final regex = RegExp(r'^\d{2}/\d{2}/\d{4}$');
+    if (!regex.hasMatch(input)) return false;
+
+    try {
+      final data = DateFormat('dd/MM/yyyy').parseStrict(input);
+      final agora = DateTime.now();
+      return !data.isAfter(agora);
+    } catch (_) {
+      return false;
+    }
+  }
+
   bool _validateFields() {
     final camposPreenchidos = [
       _dataController.text,
@@ -73,20 +85,20 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     return camposPreenchidos && _confirmacao && dataValida;
   }
 
-  bool _validarData(String input) {
-    final regex = RegExp(r'^\d{2}/\d{2}/\d{4}$');
-    if (!regex.hasMatch(input)) return false;
-
-    try {
-      final data = DateFormat('dd/MM/yyyy').parseStrict(input);
-      final agora = DateTime.now();
-      return !data.isAfter(agora);
-    } catch (_) {
-      return false;
-    }
-  }
-
   Future<void> _enviar() async {
+    if (!_validateFields()) {
+      Flushbar(
+        message: 'Preencha todos os campos obrigatórios corretamente e confirme a declaração.',
+        backgroundColor: Colors.redAccent,
+        duration: const Duration(seconds: 5),
+        margin: const EdgeInsets.all(8),
+        borderRadius: BorderRadius.circular(8),
+        icon: const Icon(Icons.cancel_outlined, color: Colors.white),
+        flushbarPosition: FlushbarPosition.TOP,
+      ).show(context);
+      return;
+    }
+
     try {
       final data = DenunciaData()
         ..dataOcorrencia = _dataController.text
@@ -128,10 +140,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Data do ocorrido *',
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text('Data do ocorrido *', style: const TextStyle(fontSize: 16)),
               const SizedBox(height: 12),
               TextField(
                 controller: _dataController,
@@ -147,10 +156,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              Text(
-                'Descrição',
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text('Descrição *', style: const TextStyle(fontSize: 16)),
               const SizedBox(height: 12),
               TextField(
                 controller: _descricaoController,
@@ -162,10 +168,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              Text(
-                'Ponto de referência *',
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text('Ponto de referência *', style: const TextStyle(fontSize: 16)),
               const SizedBox(height: 12),
               TextField(
                 controller: _referenciaController,
@@ -176,10 +179,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              Text(
-                'Informações do denunciado',
-                style: const TextStyle(fontSize: 16),
-              ),
+              Text('Informações do denunciado *', style: const TextStyle(fontSize: 16)),
               const SizedBox(height: 12),
               TextField(
                 controller: _denunciadoController,
@@ -194,34 +194,34 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 onImagePicked: (file) => setState(() => _image = file),
                 image: _image,
               ),
-              SizedBox(height: 24,),
+              const SizedBox(height: 24),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Checkbox(
                     value: _confirmacao,
-                    shape: CircleBorder(),
+                    shape: const CircleBorder(),
                     onChanged: (value) {
                       setState(() => _confirmacao = value ?? false);
                     },
                   ),
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
-                      style: TextStyle(fontSize: 16, color: Colors.black),
+                      style: TextStyle(fontSize: 16),
                     ),
                   ),
                 ],
               ),
-
               const SizedBox(height: 20),
               Center(
                 child: ElevatedButton.icon(
-                  onPressed: _validateFields() ? _enviar : null,
+                  onPressed: _enviar,
                   label: const Text(
                     'Concluir denúncia',
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
+                  icon: const Icon(Icons.check, color: Colors.white),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1B8C00),
                     shape: RoundedRectangleBorder(
