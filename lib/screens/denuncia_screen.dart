@@ -200,6 +200,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 children: [
                   Checkbox(
                     value: _confirmacao,
+                    shape: CircleBorder(),
                     onChanged: (value) {
                       setState(() => _confirmacao = value ?? false);
                     },
