@@ -99,6 +99,14 @@ class CustomDrawerState extends State<CustomDrawer> {
                   title: const Text('Notícias'),
                   onTap: () => Navigator.pop(context),
                 ),
+                ListTile(
+                  leading: Icon(Icons.phone_in_talk_outlined),
+                  title: Text('Contato'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/contatos');
+                  },
+                )
               ],
             ),
           ),
