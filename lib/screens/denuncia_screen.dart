@@ -1,4 +1,3 @@
-// denuncia_screen.dart
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sudema_app/services/denuncia_service.dart';
@@ -41,9 +40,6 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   bool _erroReferencia = false;
   bool _erroDenunciado = false;
 
-  String? _erroDescricao;
-  String? _erroReferencia;
-  String? _erroDenunciado;
 
   @override
   void initState() {
@@ -91,10 +87,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
 
     final dataValida = _validarData(_dataController.text);
     setState(() {
-      _dataValida = dataValida;
-      _erroDescricao = _descricaoController.text.trim().isEmpty ? 'Descrição é obrigatória' : null;
-      _erroReferencia = _referenciaController.text.trim().isEmpty ? 'Referência é obrigatória' : null;
-      _erroDenunciado = _denunciadoController.text.trim().isEmpty ? 'Denunciado é obrigatório' : null;
+
     });
 
     return camposPreenchidos && _confirmacao && dataValida;
@@ -115,7 +108,15 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     }
 
     try {
+      final dados = DenunciaData()
+        ..dataOcorrencia = _dataController.text
+        ..descricao = _descricaoController.text
+        ..referencia = _referenciaController.text
+        ..informacaoDenunciado = _denunciadoController.text
+        ..imagemPath = _image?.path;
+
       final resultado = await DenunciaService.enviar(context, dados);
+
       if (resultado) {
         DenunciaData().limpar();
         if (!mounted) return;
@@ -202,7 +203,6 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 decoration: InputDecoration(
                   hintText: 'Descreva a infração...',
                   border: const OutlineInputBorder(),
-                  errorText: _erroDescricao,
                 ),
               ),
               const SizedBox(height: 24),
@@ -213,7 +213,6 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 decoration: InputDecoration(
                   hintText: 'Nome, nome da empresa, documento',
                   border: const OutlineInputBorder(),
-                  errorText: _erroReferencia,
                 ),
               ),
               const SizedBox(height: 24),
@@ -224,7 +223,6 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 decoration: InputDecoration(
                   hintText: 'Nome, nome da empresa, documento...',
                   border: const OutlineInputBorder(),
-                  errorText: _erroDenunciado,
                 ),
               ),
               const SizedBox(height: 24),
