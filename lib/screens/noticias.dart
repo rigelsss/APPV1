@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../screens/noticiaCompleta_screen.dart';
 
 class NoticiasPage extends StatefulWidget {
   const NoticiasPage({super.key});
@@ -43,7 +45,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
       debugPrint('🔁 Status: ${resposta.statusCode}');
 
       if (resposta.statusCode == 200) {
-        final decoded = const Latin1Decoder().convert(resposta.bodyBytes);
+        final decoded = utf8.decode(resposta.bodyBytes);
         final List<dynamic> dados = json.decode(decoded);
 
         final tags = <String>{};
@@ -89,6 +91,25 @@ class _NoticiasPageState extends State<NoticiasPage> {
     return html.replaceAll(RegExp(r'<[^>]*>'), '').trim();
   }
 
+void abrirNoticiaCompleta(dynamic id) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => NoticiaCompletaPage(id: id),
+    ),
+  );
+}
+
+
+  void abrirMaisNoticias() async {
+    const url = 'https://sudema.pb.gov.br/noticias';
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint('❌ Não foi possível abrir $url');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (carregando) {
@@ -111,7 +132,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Notícias',
+            'Última notícias',
             style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
@@ -123,10 +144,10 @@ class _NoticiasPageState extends State<NoticiasPage> {
             decoration: InputDecoration(
               hintText: 'Pesquisar',
               filled: true,
-              fillColor: Colors.grey[400],
+              fillColor: Colors.grey[100],
               suffixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide.none,
               ),
             ),
@@ -142,66 +163,151 @@ class _NoticiasPageState extends State<NoticiasPage> {
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                ...['Tudo', ...todasTags]
-                    .map((tag) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: ChoiceChip(
-                            label: Text(tag),
-                            selected: filtroTag == tag,
-                            onSelected: (_) {
-                              filtroTag = tag;
-                              aplicarFiltro();
-                            },
+                ...['Tudo', ...todasTags].map((tag) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: ChoiceChip(
+                        label: Text(
+                          tag,
+                          style: TextStyle(
+                            color: filtroTag == tag ? Colors.white : Colors.black,
                           ),
-                        ))
-                    .toList(),
+                        ),
+                        selected: filtroTag == tag,
+                        selectedColor: const Color(0xFF2A2F8C),
+                        shape: StadiumBorder(
+                          side: BorderSide(
+                            color: filtroTag == tag
+                                ? const Color(0xFF2A2F8C)
+                                : Colors.grey,
+                          ),
+                        ),
+                        showCheckmark: false,
+                        onSelected: (_) {
+                          filtroTag = tag;
+                          aplicarFiltro();
+                        },
+                      ),
+                    ))
               ],
             ),
           ),
           const SizedBox(height: 16),
           Expanded(
             child: ListView.builder(
-              itemCount: filtradas.length,
+              itemCount: filtradas.length + 1,
               itemBuilder: (context, index) {
-                final noticia = filtradas[index];
-                return Card(
-                  color: Colors.grey[200],
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: Column(
+                if (index < filtradas.length) {
+                  final noticia = filtradas[index];
+                  final List<dynamic> tags = noticia['tags'] ?? [];
+
+                  return Card(
+                    color: Colors.grey[200],
+                    margin: const EdgeInsets.only(bottom: 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.network(
+                          noticia['imagem_url'],
+                          width: double.infinity,
+                          height: 300,
+                          fit: BoxFit.cover,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                noticia['data_publicacao_formatada'],
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () => abrirNoticiaCompleta(noticia['id']),
+                                child: Text(
+                                  _removerHtml(noticia['titulo']),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              GestureDetector(
+                                onTap: () => abrirNoticiaCompleta(noticia['id']),
+                                child: Text(
+                                  _removerHtml(noticia['resumo']),
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 4,
+                                children: tags.map<Widget>((tag) {
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFB9CD23),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      tag,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                    ),
+                  );
+                } else {
+                  // Último item extra: botão para acessar notícias antigas
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.network(
-                        noticia['imagem_url'],
-                        width: double.infinity,
-                        height: 180,
-                        fit: BoxFit.cover,
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Deseja visualizar notícias mais antigas?',
+                        style: TextStyle(fontSize: 16),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _removerHtml(noticia['titulo']),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              noticia['data_publicacao_formatada'],
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
+                      const SizedBox(height: 12),
+                      ElevatedButton(
+                        onPressed: abrirMaisNoticias,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2A2F8C),
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text(
+                          'Acesse aqui',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ),
+                      const SizedBox(height: 32),
                     ],
-                  ),
-                );
+                  );
+                }
               },
             ),
           ),

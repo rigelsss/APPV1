@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import '../services/getnoticia.dart';
+import '../services/noticiasTop5_service.dart';
 import '../models/noticia.dart';
 import 'widgets/appbar.dart';
 import '../screens/praias.dart';
