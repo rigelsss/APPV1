@@ -5,6 +5,7 @@ import 'package:sudema_app/screens/RegistroUser.dart';
 import 'widgets/appbardenuncia.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:sudema_app/services/controllerLogin.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,16 +20,17 @@ class _LoginPageState extends State<LoginPage> {
   bool _checkboxValue = false;
   bool _obscureText = true;
   String? _token;
-  String tokenFake = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmlnZWwgU2FsZXMiLCJlbWFpbCI6InJpZ2VsQGV4YW1wbGUuY29tIiwicGhvbmUiOiIoODMpIDk5OTk5LTk5OTkiLCJjcGYiOiIxMjMuNDU2Ljc4OS0wMCJ9.aoFANumU9ua_Fhire_kFq6do-wNI4rxDW5jlVCZ7c1Q';
+  String tokenFake =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmlnZWwgU2FsZXMiLCJlbWFpbCI6InJpZ2VsQGV4YW1wbGUuY29tIiwicGhvbmUiOiIoODMpIDk5OTk5LTk5OTkiLCJjcGYiOiIxMjMuNDU2Ljc4OS0wMCJ9.aoFANumU9ua_Fhire_kFq6do-wNI4rxDW5jlVCZ7c1Q';
 
   Future<void> realizarLogin() async {
     final email = emailController.text.trim();
     final senha = passwordController.text.trim();
 
     if (email.isEmpty || senha.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Preencha todos os campos')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Preencha todos os campos')));
       return;
     }
 
@@ -43,12 +45,13 @@ class _LoginPageState extends State<LoginPage> {
 
         print('Token salvo: $_token');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(data['message'] ?? 'Login realizado com sucesso')),
+          SnackBar(
+            content: Text(data['message'] ?? 'Login realizado com sucesso'),
+          ),
         );
 
         await obterInformacoesUsuario();
 
-        // Redireciona para a HomeScreen
         if (_token != null) {
           Navigator.pushReplacement(
             context,
@@ -58,22 +61,29 @@ class _LoginPageState extends State<LoginPage> {
           );
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao realizar login')),
-        );
+        Flushbar(
+          title: 'Erro',
+          message: 'E-mail ou senha inválidos. Verifique suas credenciais.',
+          duration: const Duration(seconds: 5),
+          backgroundColor: Colors.red.shade600,
+          icon: const Icon(Icons.error_outline, color: Colors.white),
+          flushbarPosition: FlushbarPosition.TOP,
+          borderRadius: BorderRadius.circular(10),
+          margin: const EdgeInsets.all(8),
+        ).show(context);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao realizar login: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao realizar login: $e')));
     }
   }
 
   Future<void> obterInformacoesUsuario() async {
     if (_token == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Token não encontrado!')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Token não encontrado!')));
       return;
     }
 
@@ -82,9 +92,9 @@ class _LoginPageState extends State<LoginPage> {
 
       if (data != null) {
         print('Dados do usuário: $data');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Bem-vindo, ${data['name']}!')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Bem-vindo, ${data['name']}!')));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Erro ao buscar dados do usuário')),
@@ -107,13 +117,17 @@ class _LoginPageState extends State<LoginPage> {
         padding: const EdgeInsets.all(24),
         child: Center(
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: screenWidth > 600 ? 500 : screenWidth * 0.9),
+            constraints: BoxConstraints(
+              maxWidth: screenWidth > 600 ? 500 : screenWidth * 0.9,
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 40),
                 Container(
-                  constraints: BoxConstraints(maxWidth: screenWidth > 600 ? 280 : 180),
+                  constraints: BoxConstraints(
+                    maxWidth: screenWidth > 600 ? 280 : 180,
+                  ),
                   child: Image.asset('assets/images/logosimples.png'),
                 ),
                 const SizedBox(height: 24),
@@ -165,7 +179,9 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const Recuperacaoosenha()),
+                          MaterialPageRoute(
+                            builder: (context) => const Recuperacaoosenha(),
+                          ),
                         );
                       },
                       child: const Text('Esqueceu a senha?'),
@@ -195,11 +211,19 @@ class _LoginPageState extends State<LoginPage> {
                 const Row(
                   children: [
                     Expanded(
-                      child: Divider(thickness: 1, endIndent: 10, color: Colors.black87),
+                      child: Divider(
+                        thickness: 1,
+                        endIndent: 10,
+                        color: Colors.black87,
+                      ),
                     ),
                     Text('ou', style: TextStyle(color: Colors.black87)),
                     Expanded(
-                      child: Divider(thickness: 1, indent: 10, color: Colors.black87),
+                      child: Divider(
+                        thickness: 1,
+                        indent: 10,
+                        color: Colors.black87,
+                      ),
                     ),
                   ],
                 ),
@@ -208,7 +232,10 @@ class _LoginPageState extends State<LoginPage> {
                   onPressed: () {}, // Implementar login com Google
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 24,
+                    ),
                     side: const BorderSide(color: Colors.white),
                   ),
                   child: Row(
@@ -216,7 +243,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/images/OIP.jpg',
+                        'assets/images/img.png',
                         width: 32,
                         height: 24,
                         fit: BoxFit.contain,
@@ -236,18 +263,26 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Ainda não possui uma conta?', style: TextStyle(fontSize: 16)),
+                    const Text(
+                      'Ainda não possui uma conta?',
+                      style: TextStyle(fontSize: 16),
+                    ),
                     const SizedBox(width: 8),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const RegistroUser()),
+                          MaterialPageRoute(
+                            builder: (context) => const RegistroUser(),
+                          ),
                         );
                       },
                       child: const Text(
                         'Cadastre-se',
-                        style: TextStyle(color: Color(0xFF2A2F8C), fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Color(0xFF2A2F8C),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],

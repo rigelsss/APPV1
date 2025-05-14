@@ -23,7 +23,7 @@ class IdentificacaoButtons extends StatelessWidget {
             TextSpan(
               children: [
                 const TextSpan(
-                  text: 'Você acessou o sistema como ',
+                  text: 'Você acessou o sistema como: ',
                   style: TextStyle(fontSize: 16),
                 ),
                 TextSpan(

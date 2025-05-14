@@ -20,7 +20,7 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Denúncia',
+              'Denúncias',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -53,7 +53,7 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
                       builder: (context) => const HomeScreen(),),
                   );},
                 child: const Text(
-                  'Voltar para a tela inicial',
+                  'Voltar a pagina inicial!',
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(

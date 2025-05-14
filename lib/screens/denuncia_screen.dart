@@ -6,7 +6,7 @@ import 'package:sudema_app/screens/widgets/image_picker.dart';
 import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:sudema_app/screens/denunciaconcluida.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
+import 'package:another_flushbar/flushbar.dart';
 
 class DenunciaScreen extends StatefulWidget {
   @override
@@ -40,6 +40,10 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   bool _erroDescricao = false;
   bool _erroReferencia = false;
   bool _erroDenunciado = false;
+
+  String? _erroDescricao;
+  String? _erroReferencia;
+  String? _erroDenunciado;
 
   @override
   void initState() {
@@ -78,56 +82,37 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   }
 
   bool _validateFields() {
+    final camposPreenchidos = [
+      _dataController.text,
+      _descricaoController.text,
+      _referenciaController.text,
+      _denunciadoController.text,
+    ].every((campo) => campo.trim().isNotEmpty);
+
+    final dataValida = _validarData(_dataController.text);
     setState(() {
-      _dataValida = _validarData(_dataController.text);
-      _erroDescricao = _descricaoController.text.trim().isEmpty;
-      _erroReferencia = _referenciaController.text.trim().isEmpty;
-      _erroDenunciado = _denunciadoController.text.trim().isEmpty;
+      _dataValida = dataValida;
+      _erroDescricao = _descricaoController.text.trim().isEmpty ? 'Descrição é obrigatória' : null;
+      _erroReferencia = _referenciaController.text.trim().isEmpty ? 'Referência é obrigatória' : null;
+      _erroDenunciado = _denunciadoController.text.trim().isEmpty ? 'Denunciado é obrigatório' : null;
     });
 
-    return !_erroDescricao &&
-        !_erroReferencia &&
-        !_erroDenunciado &&
-        _dataValida &&
-        _confirmacao;
+    return camposPreenchidos && _confirmacao && dataValida;
   }
 
   Future<void> _enviar() async {
     if (!_validateFields()) {
-      _mostrarErro('Preencha todos os campos obrigatórios.');
+      Flushbar(
+        message: 'Preencha todos os campos obrigatórios corretamente e confirme a declaração.',
+        backgroundColor: Colors.redAccent,
+        duration: const Duration(seconds: 5),
+        margin: const EdgeInsets.all(8),
+        borderRadius: BorderRadius.circular(8),
+        icon: const Icon(Icons.cancel_outlined, color: Colors.white),
+        flushbarPosition: FlushbarPosition.TOP,
+      ).show(context);
       return;
     }
-
-    final dados = DenunciaData()
-      ..dataOcorrencia = _dataController.text
-      ..descricao = _descricaoController.text
-      ..referencia = _referenciaController.text
-      ..informacaoDenunciado = _denunciadoController.text
-      ..imagemPath = _image?.path;
-
-    if (dados.usuarioId == null || dados.tokenUsuario == null) {
-      _mostrarErro('Usuário não identificado. Faça login novamente.');
-      return;
-    }
-
-    if (dados.tipoDenunciaId == null) {
-      _mostrarErro('Categoria da denúncia não selecionada.');
-      return;
-    }
-
-    if ([dados.estado, dados.bairro, dados.municipio, dados.logradouro]
-        .any((e) => e == null || e.isEmpty)) {
-      _mostrarErro(
-          'Endereço incompleto. Retorne à aba de localização e confirme o endereço.');
-      return;
-    }
-
-    if (dados.imagemPath == null || !File(dados.imagemPath!).existsSync()) {
-      final continuar = await _confirmarEnvioSemImagem();
-      if (!continuar) return;
-    }
-
-    setState(() => _enviando = true);
 
     try {
       final resultado = await DenunciaService.enviar(context, dados);
@@ -193,73 +178,96 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTextField(
-                'Data do ocorrido *',
-                'dd/mm/aaaa',
-                _dataController,
-                focusNode: _dataFocus,
-                icon: Icons.calendar_today,
-                erro: _exibirErroData && !_dataValida,
-                erroMsg: 'Data inválida ou no futuro (formato: dd/mm/aaaa)',
-              ),
-              const SizedBox(height: 18),
-              _buildTextField(
-                'Descrição *',
-                'Descreva a infração...',
-                _descricaoController,
-                maxLines: 4,
-                erro: _erroDescricao,
-                erroMsg: 'O campo "Descrição" é obrigatório',
-              ),
-              const SizedBox(height: 18),
-              _buildTextField(
-                'Ponto de referência *',
-                'Ex: Empresa XYZ',
-                _referenciaController,
-                erro: _erroReferencia,
-                erroMsg: 'O campo "Ponto de Referencia" é obrigatório',
-              ),
-              const SizedBox(height: 18),
-              _buildTextField(
-                'Informações do denunciado *',
-                'Nome, CPF...',
-                _denunciadoController,
-                erro: _erroDenunciado,
-                erroMsg: 'Este campo é obrigatório',
-              ),
+              Text('Data do ocorrido *', style: const TextStyle(fontSize: 16)),
               const SizedBox(height: 12),
+              TextField(
+                controller: _dataController,
+                focusNode: _dataFocus,
+                decoration: InputDecoration(
+                  labelText: 'Data do ocorrido *',
+                  hintText: 'dd/mm/aaaa',
+                  suffixIcon: const Icon(Icons.calendar_today),
+                  border: const OutlineInputBorder(),
+                  errorText: _exibirErroData && !_dataValida
+                      ? 'Data inválida ou no futuro (formato: dd/mm/aaaa)'
+                      : null,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text('Descrição *', style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _descricaoController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  hintText: 'Descreva a infração...',
+                  border: const OutlineInputBorder(),
+                  errorText: _erroDescricao,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text('Ponto de referência *', style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _referenciaController,
+                decoration: InputDecoration(
+                  hintText: 'Nome, nome da empresa, documento',
+                  border: const OutlineInputBorder(),
+                  errorText: _erroReferencia,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text('Informações do denunciado *', style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _denunciadoController,
+                decoration: InputDecoration(
+                  hintText: 'Nome, nome da empresa, documento...',
+                  border: const OutlineInputBorder(),
+                  errorText: _erroDenunciado,
+                ),
+              ),
+              const SizedBox(height: 24),
               ImagePickerWidget(
                 onImagePicked: (file) => setState(() => _image = file),
                 image: _image,
               ),
-              const SizedBox(height: 20),
-              CheckboxListTile(
-                value: _confirmacao,
-                onChanged: (value) =>
-                    setState(() => _confirmacao = value ?? false),
-                title: const Text(
-                    'Declaro que as informações acima prestadas são verdadeiras.'),
+              const SizedBox(height: 24),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Checkbox(
+                    value: _confirmacao,
+                    shape: const CircleBorder(),
+                    onChanged: (value) {
+                      setState(() => _confirmacao = value ?? false);
+                    },
+                  ),
+                  const Expanded(
+                    child: Text(
+                      'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
               Center(
                 child: ElevatedButton.icon(
-                  onPressed: _enviando ? null : _enviar,
-                  icon: const Icon(Icons.send, color: Colors.white),
-                  label: _enviando
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                              color: Colors.white, strokeWidth: 2),
-                        )
-                      : const Text('Concluir denúncia',
-                          style: TextStyle(color: Colors.white)),
+                  onPressed: _enviar,
+                  label: const Text(
+                    'Concluir denúncia',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1B8C00),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20)),
                     padding: const EdgeInsets.symmetric(
-                        vertical: 22, horizontal: 64),
+                      vertical: 22,
+                      horizontal: 100,
+                    ),
                   ),
                 ),
               ),
@@ -267,37 +275,6 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTextField(
-    String label,
-    String hint,
-    TextEditingController controller, {
-    int maxLines = 1,
-    IconData? icon,
-    bool erro = false,
-    String? erroMsg,
-    FocusNode? focusNode,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 16)),
-        const SizedBox(height: 12),
-        TextField(
-          controller: controller,
-          focusNode: focusNode,
-          decoration: InputDecoration(
-            labelText: label,
-            hintText: hint,
-            suffixIcon: icon != null ? Icon(icon) : null,
-            border: const OutlineInputBorder(),
-            errorText: erro ? erroMsg : null,
-          ),
-          maxLines: maxLines,
-        ),
-      ],
     );
   }
 }

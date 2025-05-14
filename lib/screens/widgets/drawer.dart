@@ -95,7 +95,7 @@ class CustomDrawerState extends State<CustomDrawer> {
                   onTap: () => Navigator.pop(context),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.feed),
+                  leading: const Icon(Icons.newspaper),
                   title: const Text('Notícias'),
                   onTap: () => Navigator.pop(context),
                 ),
@@ -127,7 +127,7 @@ class CustomDrawerState extends State<CustomDrawer> {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      const Icon(Icons.person, color: Colors.black54, size: 26),
+                      const Icon(Icons.account_circle_outlined, color: Colors.black54, size: 26),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -136,7 +136,7 @@ class CustomDrawerState extends State<CustomDrawer> {
                         ),
                       ),
                       Icon(
-                        isLoggedIn ? Icons.settings : Icons.login,
+                        isLoggedIn ? Icons.logout : Icons.login,
                         size: 18,
                       ),
                     ],

@@ -82,7 +82,12 @@ class PerfiluserState extends State<Perfiluser> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Perfil'),
+        title: Text(
+          _userData.isNotEmpty ? 'Olá, ${_userData['name']}' : 'Olá',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
         elevation: 1,
@@ -215,7 +220,7 @@ class PerfiluserState extends State<Perfiluser> {
                 const SizedBox(height: 10),
                 _buildMenuItem(
                   context,
-                  icon: Icons.edit,
+                  icon: Icons.manage_accounts,
                   title: 'Editar Perfil',
                   onTap: () => Navigator.pushNamed(context, '/editar-perfil'),
                 ),
@@ -224,7 +229,7 @@ class PerfiluserState extends State<Perfiluser> {
                 const SizedBox(height: 10),
                 _buildMenuItem(
                   context,
-                  icon: Icons.email_outlined,
+                  icon: Icons.alternate_email,
                   title: 'Alterar E-mail',
                   onTap: () => Navigator.pushNamed(context, '/EditarEmail'),
                 ),
