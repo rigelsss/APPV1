@@ -24,11 +24,10 @@ class IdentificacaoController {
       try {
         final data = await AuthController.obterInformacoesUsuario(token!);
 
-        if (data != null && data['user'] != null) {
-          final user = data['user'];
-          username = user['name'] ?? 'Usuário';
-          email = user['email'] ?? '';
-          DenunciaData().usuarioId = user['id'];
+        if (data != null) {
+          username = data['name'] ?? 'Usuário';
+          email = data['email'] ?? 'email';
+          DenunciaData().usuarioId = data['id'];
         }
       } catch (e) {
         print('Erro ao carregar informações do usuário: $e');

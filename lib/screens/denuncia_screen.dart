@@ -1,3 +1,4 @@
+// denuncia_screen.dart
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sudema_app/services/denuncia_service.dart';
@@ -12,9 +13,20 @@ class DenunciaScreen extends StatefulWidget {
   _DenunciaScreenState createState() => _DenunciaScreenState();
 }
 
+class HttpExceptionWithStatus implements Exception {
+  final int statusCode;
+  final String message;
+
+  HttpExceptionWithStatus(this.statusCode, this.message);
+
+  @override
+  String toString() => 'HttpExceptionWithStatus($statusCode): $message';
+}
+
 class _DenunciaScreenState extends State<DenunciaScreen> {
   XFile? _image;
   bool _confirmacao = false;
+  bool _enviando = false;
 
   final _dataController = TextEditingController();
   final _descricaoController = TextEditingController();
@@ -25,6 +37,9 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
 
   bool _dataValida = true;
   bool _exibirErroData = false;
+  bool _erroDescricao = false;
+  bool _erroReferencia = false;
+  bool _erroDenunciado = false;
 
   String? _erroDescricao;
   String? _erroReferencia;
@@ -100,26 +115,49 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     }
 
     try {
-      final data = DenunciaData()
-        ..dataOcorrencia = _dataController.text
-        ..descricao = _descricaoController.text
-        ..referencia = _referenciaController.text
-        ..informacaoDenunciado = _denunciadoController.text
-        ..imagemPath = _image?.path;
-
-      final resultado = await DenunciaService.enviar(context, data);
-
+      final resultado = await DenunciaService.enviar(context, dados);
       if (resultado) {
-        Navigator.push(
+        DenunciaData().limpar();
+        if (!mounted) return;
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const conclusao_de_denuncia()),
         );
       } else {
-        _mostrarErro('Não foi possível enviar a denúncia. Tente novamente.');
+        _mostrarErro(
+            '❌ Erro inesperado: o envio falhou, mas sem detalhes do servidor.');
       }
-    } catch (e) {
-      _mostrarErro('Erro inesperado: ${e.toString()}');
+    } catch (e, stack) {
+      debugPrint('Erro ao enviar denúncia: $e');
+      debugPrint('StackTrace: $stack');
+      if (e is HttpExceptionWithStatus) {
+        _mostrarErro('Erro ${e.statusCode}: ${e.message}');
+      } else {
+        _mostrarErro('Erro ao enviar denúncia: ${e.toString()}');
+      }
+    } finally {
+      if (mounted) setState(() => _enviando = false);
     }
+  }
+
+  Future<bool> _confirmarEnvioSemImagem() async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Enviar sem imagem?'),
+            content: const Text(
+                'Você não selecionou uma imagem. Deseja continuar mesmo assim?'),
+            actions: [
+              TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Cancelar')),
+              TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Continuar')),
+            ],
+          ),
+        ) ??
+        false;
   }
 
   void _mostrarErro(String mensagem) {
@@ -225,8 +263,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF1B8C00),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
+                        borderRadius: BorderRadius.circular(20)),
                     padding: const EdgeInsets.symmetric(
                       vertical: 22,
                       horizontal: 100,
