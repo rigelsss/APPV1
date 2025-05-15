@@ -9,6 +9,7 @@ import '../screens/PageDenuncia.dart';
 import '../screens/noticias.dart';
 import 'widgets/navbar.dart';
 import 'widgets/drawer.dart';
+import '../screens/fullNoticia_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? token;
@@ -311,15 +312,24 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCardNoticia(Noticia noticia) {
-    DateTime data =
-        DateTime.tryParse(noticia.dataHoraPublicacao) ?? DateTime.now();
-    String dataFormatada =
-        "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
-    String horaFormatada =
-        "${data.hour.toString().padLeft(2, '0')}h${data.minute.toString().padLeft(2, '0')}";
+Widget _buildCardNoticia(Noticia noticia) {
+  DateTime data =
+      DateTime.tryParse(noticia.dataHoraPublicacao) ?? DateTime.now();
+  String dataFormatada =
+      "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
+  String horaFormatada =
+      "${data.hour.toString().padLeft(2, '0')}h${data.minute.toString().padLeft(2, '0')}";
 
-    return Container(
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NoticiaCompletaPage(id: noticia.id),
+        ),
+      );
+    },
+    child: Container(
       width: 260,
       margin: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
@@ -349,22 +359,36 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(
-              noticia.titulo,
-              style:
-                  GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 14),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  noticia.titulo,
+                  style: GoogleFonts.roboto(
+                      fontWeight: FontWeight.bold, fontSize: 14),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "$dataFormatada às $horaFormatada",
+                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  noticia.resumo,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Color.fromARGB(255, 120, 120, 120),
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              "$dataFormatada às $horaFormatada",
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
