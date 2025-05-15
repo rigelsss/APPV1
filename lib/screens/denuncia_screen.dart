@@ -25,6 +25,7 @@ class HttpExceptionWithStatus implements Exception {
 class _DenunciaScreenState extends State<DenunciaScreen> {
   XFile? _image;
   bool _confirmacao = false;
+  // ignore: unused_field
   bool _enviando = false;
 
   final _dataController = TextEditingController();
