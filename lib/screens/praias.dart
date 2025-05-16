@@ -152,6 +152,7 @@ class _PraiasPageState extends State<PraiasPage> {
           Container(
             padding: const EdgeInsets.all(16),
             color: Colors.white,
+            alignment:Alignment.centerLeft,
             child: const Text("Balneabilidade", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
           ),
           Container(

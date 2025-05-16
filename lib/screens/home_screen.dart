@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? token;
   List<Noticia> _noticias = [];
   int _selectedIndex = 0;
+  bool isLoggedIn = false;
 
   @override
   void initState() {
@@ -37,19 +38,16 @@ class _HomeScreenState extends State<HomeScreen> {
     final prefs = await SharedPreferences.getInstance();
     final savedToken = prefs.getString('token');
 
-    if (savedToken != null && savedToken.isNotEmpty) {
+    if (savedToken != null && savedToken.isNotEmpty && !JwtDecoder.isExpired(savedToken)) {
       setState(() {
         token = savedToken;
+        isLoggedIn = true;
       });
-    }
-  }
-
-  bool get isLoggedIn {
-    if (token == null) return false;
-    try {
-      return !JwtDecoder.isExpired(token!);
-    } catch (_) {
-      return false;
+    } else {
+      setState(() {
+        token = null;
+        isLoggedIn = false;
+      });
     }
   }
 
@@ -76,8 +74,11 @@ class _HomeScreenState extends State<HomeScreen> {
           );
 
           if (result != null && result is String) {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString('token', result);
             setState(() {
               token = result;
+              isLoggedIn = !JwtDecoder.isExpired(result);
             });
           }
         },
