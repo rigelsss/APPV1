@@ -210,7 +210,7 @@ class PerfiluserState extends State<Perfiluser> {
                 const SizedBox(height: 10),
                 _buildMenuItem(
                   context,
-                  icon: Icons.email_outlined,
+                  icon: Icons.alternate_email,
                   title: 'Alterar E-mail',
                   onTap: () => Navigator.pushNamed(context, '/EditarEmail'),
                 ),

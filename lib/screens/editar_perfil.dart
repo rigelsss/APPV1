@@ -7,7 +7,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
-import  'perfil_page.dart';
+import 'perfil_page.dart';
 
 class EditarPerfil extends StatefulWidget {
   const EditarPerfil({super.key});
@@ -17,7 +17,7 @@ class EditarPerfil extends StatefulWidget {
 }
 
 class _EditarPerfilState extends State<EditarPerfil> {
-  int _currentIndex = 0;
+  int _currentIndex = -1;
 
   String? token;
   String? id;
@@ -43,34 +43,13 @@ class _EditarPerfilState extends State<EditarPerfil> {
     if (token != null && JwtDecoder.isExpired(token) == false) {
       final decodedToken = JwtDecoder.decode(token);
       setState(() {
-        id = decodedToken['id']; 
+        id = decodedToken['id'];
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('❌ Sessão expirada. Faça login novamente.')),
       );
       Navigator.pushReplacementNamed(context, '/login');
-    }
-  }
-
-  void _onNavBarTap(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        Navigator.pushNamed(context, '/home');
-        break;
-      case 1:
-        Navigator.pushNamed(context, '/denuncias');
-        break;
-      case 2:
-        Navigator.pushNamed(context, '/praias');
-        break;
-      case 3:
-        Navigator.pushNamed(context, '/noticias');
-        break;
     }
   }
 
@@ -103,7 +82,6 @@ class _EditarPerfilState extends State<EditarPerfil> {
           inputFormatters: inputFormatters,
           keyboardType: keyboardType,
           decoration: InputDecoration(
-            hintText: '',
             isDense: true,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -141,70 +119,68 @@ class _EditarPerfilState extends State<EditarPerfil> {
     return true;
   }
 
-Future<void> _salvarDados() async {
-  if (!_formKey.currentState!.validate()) return;
+  Future<void> _salvarDados() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  final baseUrl = dotenv.env['URL_API'];
-  if (baseUrl == null || baseUrl.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('❌ URL da API não configurada')),
-    );
-    return;
+    final baseUrl = dotenv.env['URL_API'];
+    if (baseUrl == null || baseUrl.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('❌ URL da API não configurada')),
+      );
+      return;
+    }
+
+    final String id = this.id!;
+    final String nome = _nomeController.text.trim();
+    final String cpf = _cpfController.text.replaceAll(RegExp(r'\D'), '');
+    final String telefone = _telefoneController.text.replaceAll(RegExp(r'\D'), '');
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    final url = Uri.parse('$baseUrl/usuarios/mobile/$id');
+    final body = {
+      'nome': nome,
+      'telefone': telefone,
+      'cpf': cpf,
+      'userType': 'MOBILE',
+    };
+
+    debugPrint('📤 Enviando PUT para: $url');
+    debugPrint('📦 Corpo da requisição: ${jsonEncode(body)}');
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('✅ Dados atualizados com sucesso')),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Perfiluser(token: token)),
+        );
+      } else {
+        debugPrint('❌ Erro ${response.statusCode}: ${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ Erro ao atualizar: ${response.statusCode} - ${response.body}')),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Erro ao enviar: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('❌ Falha de conexão com o servidor')),
+      );
+    }
   }
-  final String id = this.id!;
-  final String nome = _nomeController.text.trim();
-  final String cpf = _cpfController.text.replaceAll(RegExp(r'\D'), '');
-  final String telefone = _telefoneController.text.replaceAll(RegExp(r'\D'), '');
-
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');  
-
-  final url = Uri.parse('$baseUrl/usuarios/mobile/$id');
-  final body = {
-    'nome': nome,
-    'telefone': telefone,
-    'cpf': cpf,
-    'userType': 'MOBILE',
-  };
-
-  // Imprimir no console a URL e os dados que estão sendo enviados
-  debugPrint('📤 Enviando PUT para: $url');
-  debugPrint('📦 Corpo da requisição: ${jsonEncode(body)}');
-
-  try {
-    final response = await http.put(
-      url,
-      headers: {'Authorization': 'Bearer $token', 
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'},
-
-      body: jsonEncode(body),
-    );
-
-if (response.statusCode == 200) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('✅ Dados atualizados com sucesso')),
-  );
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => Perfiluser(token: token),
-    ),
-  );
-} else {
-  debugPrint('❌ Erro ${response.statusCode}: ${response.body}');
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('❌ Erro ao atualizar: ${response.statusCode} - ${response.body}')),
-  );
-}
-
-  } catch (e) {
-    debugPrint('❌ Erro ao enviar: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('❌ Falha de conexão com o servidor')),
-    );
-  }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -289,7 +265,8 @@ if (response.statusCode == 200) {
             ),
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
-        onTap: _onNavBarTap,
+        enabled: false,
+        onTap: (_) {},
       ),
     );
   }

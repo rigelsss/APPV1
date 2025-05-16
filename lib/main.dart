@@ -11,7 +11,7 @@ import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
 import 'package:sudema_app/screens/praias.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
-import 'package:sudema_app/screens/editarperfil.dart';
+import 'package:sudema_app/screens/editar_perfil.dart';
 import 'package:sudema_app/screens/noticias.dart';
 
 import 'package:sudema_app/services/notification_handler.dart';
