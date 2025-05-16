@@ -20,7 +20,7 @@ class PerfiluserState extends State<Perfiluser> {
   String _errorMessage = '';
   late String _token;
 
-  int _currentIndex = 3;
+  int _currentIndex = -1;
 
   @override
   void initState() {
@@ -82,20 +82,15 @@ class PerfiluserState extends State<Perfiluser> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          _userData.isNotEmpty ? 'Olá, ${_userData['name']}' : 'Olá',
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        title: const Text('Perfil'),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
         elevation: 1,
         leading: Navigator.canPop(context)
             ? IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        )
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+              )
             : null,
       ),
       body: Builder(
@@ -113,25 +108,8 @@ class PerfiluserState extends State<Perfiluser> {
       ),
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/home');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/denuncias');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/praias');
-              break;
-            case 3:
-              break;
-          }
-        },
+        enabled: false, 
+        onTap: (index) {}, 
       ),
     );
   }
@@ -220,7 +198,7 @@ class PerfiluserState extends State<Perfiluser> {
                 const SizedBox(height: 10),
                 _buildMenuItem(
                   context,
-                  icon: Icons.manage_accounts,
+                  icon: Icons.edit,
                   title: 'Editar Perfil',
                   onTap: () => Navigator.pushNamed(context, '/editar-perfil'),
                 ),
@@ -229,7 +207,7 @@ class PerfiluserState extends State<Perfiluser> {
                 const SizedBox(height: 10),
                 _buildMenuItem(
                   context,
-                  icon: Icons.alternate_email,
+                  icon: Icons.email_outlined,
                   title: 'Alterar E-mail',
                   onTap: () => Navigator.pushNamed(context, '/EditarEmail'),
                 ),
@@ -269,8 +247,7 @@ class PerfiluserState extends State<Perfiluser> {
               ),
               const SizedBox(height: 8),
               TextButton.icon(
-                onPressed: () {
-                },
+                onPressed: () {},
                 icon: const Icon(Icons.delete, color: Colors.red),
                 label: const Text(
                   'Deletar Conta',
@@ -323,12 +300,12 @@ class _LabeledInfoItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1.0), 
+      padding: const EdgeInsets.symmetric(vertical: 1.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 80, 
+            width: 80,
             child: Text(
               '$label:',
               style: const TextStyle(
@@ -337,7 +314,7 @@ class _LabeledInfoItem extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 8), 
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               value,

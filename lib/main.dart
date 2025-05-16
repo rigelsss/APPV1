@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
 import 'package:sudema_app/screens/EditEmail.dart';
+
 import 'package:sudema_app/screens/EditSenha.dart';
 import 'package:sudema_app/screens/PageDenuncia.dart';
 import 'package:sudema_app/screens/PerfilUser.dart';
 import 'package:sudema_app/screens/contatos.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
+import 'package:sudema_app/screens/praias.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
 import 'package:sudema_app/screens/editarperfil.dart';
+import 'package:sudema_app/screens/noticias.dart';
 
 import 'package:sudema_app/services/notification_handler.dart';
 
@@ -49,6 +51,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => const SplashScreen(),
         '/home': (context) => const HomeScreen(),
         '/login': (context) => const LoginPage(),
+        '/balneablilidade': (context) => const PraiasPage(),
+        '/noticias': (context) => const NoticiasPage(),
         '/denuncias': (context) => const DenunciaPage(),
         '/editar-perfil': (context) => const EditarPerfil(),
         '/EditarEmail': (context) => const EditarEmail(),
