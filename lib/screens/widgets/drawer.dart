@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:sudema_app/screens/PerfilUser.dart';
+import 'package:sudema_app/screens/perfil_page.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 
 class CustomDrawer extends StatefulWidget {

@@ -7,7 +7,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
-import  '../screens/PerfilUser.dart';
+import  'perfil_page.dart';
 
 class EditarPerfil extends StatefulWidget {
   const EditarPerfil({super.key});

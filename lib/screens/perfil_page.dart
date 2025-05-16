@@ -108,13 +108,16 @@ class PerfiluserState extends State<Perfiluser> {
       ),
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
-        enabled: false, 
-        onTap: (index) {}, 
+        enabled: false,
+        onTap: (index) {},
       ),
     );
   }
 
   Widget _buildPerfil(BuildContext context) {
+    String telefone = _userData['phone'] ?? '';
+    String cpf = _userData['cpf'] ?? '';
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -166,12 +169,12 @@ class PerfiluserState extends State<Perfiluser> {
                     const SizedBox(height: 8),
                     _LabeledInfoItem(
                       label: 'Telefone',
-                      value: _userData['phone'] ?? 'Telefone não encontrado',
+                      value: formatarTelefone(telefone),
                     ),
                     const SizedBox(height: 8),
                     _LabeledInfoItem(
                       label: 'CPF',
-                      value: _userData['cpf'] ?? 'CPF não encontrado',
+                      value: formatarCpf(cpf),
                     ),
                   ],
                 ),
@@ -288,6 +291,22 @@ class PerfiluserState extends State<Perfiluser> {
         ],
       ),
     );
+  }
+
+  String formatarCpf(String cpf) {
+    final digitsOnly = cpf.replaceAll(RegExp(r'\D'), '');
+    if (digitsOnly.length != 11) return cpf;
+    return '${digitsOnly.substring(0, 3)}.${digitsOnly.substring(3, 6)}.${digitsOnly.substring(6, 9)}-${digitsOnly.substring(9)}';
+  }
+
+  String formatarTelefone(String telefone) {
+    final digitsOnly = telefone.replaceAll(RegExp(r'\D'), '');
+    if (digitsOnly.length == 11) {
+      return '+55 (${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 7)}-${digitsOnly.substring(7)}';
+    } else if (digitsOnly.length == 10) {
+      return '+55 (${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 6)}-${digitsOnly.substring(6)}';
+    }
+    return telefone;
   }
 }
 

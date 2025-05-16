@@ -5,7 +5,7 @@ import 'package:sudema_app/screens/alterar_email.dart';
 
 import 'package:sudema_app/screens/EditSenha.dart';
 import 'package:sudema_app/screens/PageDenuncia.dart';
-import 'package:sudema_app/screens/PerfilUser.dart';
+import 'package:sudema_app/screens/perfil_page.dart';
 import 'package:sudema_app/screens/contatos.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
