@@ -6,6 +6,7 @@ import 'widgets/appbardenuncia.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:sudema_app/services/controllerLogin.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -44,6 +45,10 @@ class _LoginPageState extends State<LoginPage> {
         });
 
         print('Token salvo: $_token');
+        
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token); 
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(data['message'] ?? 'Login realizado com sucesso'),

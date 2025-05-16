@@ -7,6 +7,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
+import  '../screens/PerfilUser.dart';
 
 class EditarPerfil extends StatefulWidget {
   const EditarPerfil({super.key});
@@ -17,6 +18,8 @@ class EditarPerfil extends StatefulWidget {
 
 class _EditarPerfilState extends State<EditarPerfil> {
   int _currentIndex = 0;
+
+  String? token;
   String? id;
 
   final _formKey = GlobalKey<FormState>();
@@ -153,6 +156,9 @@ Future<void> _salvarDados() async {
   final String cpf = _cpfController.text.replaceAll(RegExp(r'\D'), '');
   final String telefone = _telefoneController.text.replaceAll(RegExp(r'\D'), '');
 
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');  
+
   final url = Uri.parse('$baseUrl/usuarios/mobile/$id');
   final body = {
     'nome': nome,
@@ -168,20 +174,30 @@ Future<void> _salvarDados() async {
   try {
     final response = await http.put(
       url,
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Authorization': 'Bearer $token', 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'},
+
       body: jsonEncode(body),
     );
 
-    if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('✅ Dados atualizados com sucesso')),
-      );
-    } else {
-      debugPrint('❌ Erro ${response.statusCode}: ${response.body}');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('❌ Erro ao atualizar: ${response.statusCode} - ${response.body}')),
-      );
-    }
+if (response.statusCode == 200) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text('✅ Dados atualizados com sucesso')),
+  );
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => Perfiluser(token: token),
+    ),
+  );
+} else {
+  debugPrint('❌ Erro ${response.statusCode}: ${response.body}');
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('❌ Erro ao atualizar: ${response.statusCode} - ${response.body}')),
+  );
+}
+
   } catch (e) {
     debugPrint('❌ Erro ao enviar: $e');
     ScaffoldMessenger.of(context).showSnackBar(
