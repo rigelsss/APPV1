@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+
 import 'package:sudema_app/screens/identificacao_screen.dart';
 import 'package:sudema_app/screens/denuncia_screen.dart';
 import 'package:sudema_app/services/categoria_service.dart';
 import 'package:sudema_app/screens/aba_localizacao.dart';
 import 'package:sudema_app/screens/widgets/categoria_selector.dart';
 import 'package:sudema_app/screens/widgets/denuncia_top_bar.dart';
+import 'package:sudema_app/screens/login.dart';
+import 'package:sudema_app/screens/notificacoes.dart';
 import '../models/denuncia_data.dart';
 
 class NovaDenuncia extends StatefulWidget {
@@ -25,6 +30,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   List<dynamic> categorias = [];
   bool _isLoadingCategorias = true;
   String? _mensagemErro;
+  String? _token;
 
   final Map<int, String> iconesPorCategoria = {
     1: 'assets/images/fauna.png',
@@ -41,6 +47,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
     super.initState();
     DenunciaData().limpar();
     _carregarCategorias();
+    _carregarToken();
   }
 
   Future<void> _carregarCategorias() async {
@@ -54,6 +61,25 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
       setState(() {
         _isLoadingCategorias = false;
       });
+    }
+  }
+
+  Future<void> _carregarToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedToken = prefs.getString('token');
+    if (savedToken != null && savedToken.isNotEmpty) {
+      setState(() {
+        _token = savedToken;
+      });
+    }
+  }
+
+  bool get isLoggedIn {
+    if (_token == null) return false;
+    try {
+      return !JwtDecoder.isExpired(_token!);
+    } catch (_) {
+      return false;
     }
   }
 
@@ -103,8 +129,21 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
         title: const Text('Denunciar'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_none_outlined),
-            onPressed: () {},
+            icon: Icon(isLoggedIn ? Icons.notifications : Icons.login),
+            tooltip: isLoggedIn ? 'Notificações' : 'Fazer login',
+            onPressed: () {
+              if (isLoggedIn) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => NotificacoesPage(token: _token!)),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                );
+              }
+            },
           ),
         ],
       ),
@@ -174,10 +213,9 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
             onSubcategoriaSelecionada: (nome, id, texto) {
               setState(() {
                 _subcategoriaSelecionada = nome;
-                _categoriaSelecionada = texto; // Corrigido aqui
+                _categoriaSelecionada = texto;
                 DenunciaData().tipoDenunciaId = id.toString();
                 _mensagemErro = null;
-                print('>> tipoDenunciaId salvo em DenunciaData: \${DenunciaData().tipoDenunciaId}');
               });
             },
             onToggleExpand: (index) {

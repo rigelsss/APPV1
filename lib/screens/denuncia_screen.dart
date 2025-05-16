@@ -6,6 +6,8 @@ import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:sudema_app/screens/denunciaconcluida.dart';
 import 'package:intl/intl.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sudema_app/services/AuthMe.dart';
 
 class DenunciaScreen extends StatefulWidget {
   @override
@@ -25,6 +27,7 @@ class HttpExceptionWithStatus implements Exception {
 class _DenunciaScreenState extends State<DenunciaScreen> {
   XFile? _image;
   bool _confirmacao = false;
+  // ignore: unused_field
   bool _enviando = false;
 
   final _dataController = TextEditingController();
@@ -51,6 +54,24 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
         });
       }
     });
+    _garantirToken();
+  }
+
+  Future<void> _garantirToken() async {
+    final dados = DenunciaData();
+
+    if (dados.tokenUsuario == null || dados.usuarioId == null) {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+      if (token != null) {
+        final info = await AuthController.obterInformacoesUsuario(token);
+        if (info != null) {
+          dados.usuarioId = info['id'];
+          dados.tokenUsuario = token;
+          print('✅ Token recuperado na denúncia: ${dados.usuarioId}, ${dados.tokenUsuario}');
+        }
+      }
+    }
   }
 
   @override
@@ -101,7 +122,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     if (!_validateFields()) {
       Flushbar(
         message:
-        'Preencha todos os campos obrigatórios corretamente e confirme a declaração.',
+            'Preencha todos os campos obrigatórios corretamente e confirme a declaração.',
         backgroundColor: Colors.redAccent,
         duration: const Duration(seconds: 5),
         margin: const EdgeInsets.all(8),

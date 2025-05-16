@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+
 import 'package:sudema_app/screens/widgets/appbar.dart';
 import 'package:sudema_app/screens/home_screen.dart';
+import 'package:sudema_app/screens/login.dart';
 
 class conclusao_de_denuncia extends StatefulWidget {
   const conclusao_de_denuncia({super.key});
@@ -10,10 +14,45 @@ class conclusao_de_denuncia extends StatefulWidget {
 }
 
 class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
+  String? _token;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarToken();
+  }
+
+  Future<void> _carregarToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    if (token != null && token.isNotEmpty) {
+      setState(() {
+        _token = token;
+      });
+    }
+  }
+
+  bool get isLoggedIn {
+    if (_token == null) return false;
+    try {
+      return !JwtDecoder.isExpired(_token!);
+    } catch (_) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HomeAppBar(),
+      appBar: HomeAppBar(
+        isLoggedIn: isLoggedIn,
+        onLoginTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const LoginPage()),
+          );
+        },
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isWide = constraints.maxWidth > 600;
@@ -46,14 +85,14 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
+                        children: const [
+                          Icon(
                             Icons.check_circle_outline,
                             color: Color(0xFF1B8C00),
                             size: 32,
                           ),
-                          const SizedBox(width: 8),
-                          const Flexible(
+                          SizedBox(width: 8),
+                          Flexible(
                             child: Text(
                               'Denúncia realizada com sucesso!',
                               style: TextStyle(

@@ -48,14 +48,17 @@ class _NoticiasPageState extends State<NoticiasPage> {
         final decoded = utf8.decode(resposta.bodyBytes);
         final List<dynamic> dados = json.decode(decoded);
 
-        final tags = <String>{};
+        final categorias = <String>{};
         for (var noticia in dados) {
-          tags.addAll(List<String>.from(noticia['tags']));
+          final tagList = noticia['categorias'];
+          if (tagList is List) {
+            categorias.addAll(tagList.whereType<String>());
+          }
         }
 
         setState(() {
           noticias = dados;
-          todasTags = tags;
+          todasTags = categorias;
           aplicarFiltro();
           carregando = false;
         });
@@ -80,8 +83,11 @@ class _NoticiasPageState extends State<NoticiasPage> {
       final resumo = _removerHtml(n['resumo']).toLowerCase();
       final combinaBusca = titulo.contains(termoBusca.toLowerCase()) ||
           resumo.contains(termoBusca.toLowerCase());
-      final combinaTag =
-          filtroTag == 'Tudo' || (n['tags'] as List).contains(filtroTag);
+
+      final tagList = n['categorias'];
+      final combinaTag = filtroTag == 'Tudo' ||
+          (tagList is List && tagList.contains(filtroTag));
+
       return combinaBusca && combinaTag;
     }).toList();
     setState(() {});
@@ -91,15 +97,14 @@ class _NoticiasPageState extends State<NoticiasPage> {
     return html.replaceAll(RegExp(r'<[^>]*>'), '').trim();
   }
 
-void abrirNoticiaCompleta(dynamic id) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => NoticiaCompletaPage(id: id),
-    ),
-  );
-}
-
+  void abrirNoticiaCompleta(dynamic id) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NoticiaCompletaPage(id: id),
+      ),
+    );
+  }
 
   void abrirMaisNoticias() async {
     const url = 'https://sudema.pb.gov.br/noticias';
@@ -198,7 +203,9 @@ void abrirNoticiaCompleta(dynamic id) {
               itemBuilder: (context, index) {
                 if (index < filtradas.length) {
                   final noticia = filtradas[index];
-                  final List<dynamic> tags = noticia['tags'] ?? [];
+                  final List<dynamic> categorias = noticia['categorias'] is List
+                      ? noticia['categorias'].whereType<String>().toList()
+                      : [];
 
                   return Card(
                     color: Colors.grey[200],
@@ -255,7 +262,7 @@ void abrirNoticiaCompleta(dynamic id) {
                               Wrap(
                                 spacing: 8,
                                 runSpacing: 4,
-                                children: tags.map<Widget>((tag) {
+                                children: categorias.map<Widget>((tag) {
                                   return Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
@@ -280,7 +287,6 @@ void abrirNoticiaCompleta(dynamic id) {
                     ),
                   );
                 } else {
-                  // Último item extra: botão para acessar notícias antigas
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

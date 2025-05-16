@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomeScreen(),
         '/login': (context) => const LoginPage(),
         '/denuncias': (context) => const DenunciaPage(),
-        '/editar-perfil': (context) => const editarperfil(),
+        '/editar-perfil': (context) => const EditarPerfil(),
         '/EditarEmail': (context) => const EditarEmail(),
         '/EditarSenha': (context) => const EditarSenha(),
         '/perfiluser': (context) => const Perfiluser(),
