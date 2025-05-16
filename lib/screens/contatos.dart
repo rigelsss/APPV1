@@ -13,21 +13,60 @@ class Contatos extends StatefulWidget {
 
 Future<void> _abrirSite() async {
   final Uri url = Uri.parse('https://sudema.pb.gov.br/contatos');
-  if (await canLaunchUrl(url)) {
-    await launchUrl(url, mode: LaunchMode.externalApplication);
-  } else {
-    throw 'Não foi possível abrir o site.';
+
+  try {
+    final bool launched = await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!launched) {
+      if (!await launchUrl(url, mode: LaunchMode.inAppWebView)) {
+        throw 'Não foi possível abrir o site.';
+      }
+    }
+  } catch (e) {
+    print('Erro ao tentar abrir o site: $e');
   }
 }
 
 
 class _ContatosState extends State<Contatos> {
+  int _currentIndex = 0;
+
+  void _onNavBarTapped(int index) {
+    if (index == _currentIndex) return;
+
+    setState(() {
+      _currentIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home');
+        break;
+      case 1:
+        Navigator.pushReplacementNamed(context, '/denuncias');
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/balneabilidade');
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/noticias');
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(),
       drawer: CustomDrawer(),
       backgroundColor: Colors.white,
+      bottomNavigationBar: NavBar(
+        currentIndex: _currentIndex,
+        onTap: _onNavBarTapped,
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isWide = constraints.maxWidth > 600;
@@ -43,7 +82,7 @@ class _ContatosState extends State<Contatos> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    'Contato',
+                    'Contatos',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -73,7 +112,7 @@ class _ContatosState extends State<Contatos> {
                     ),
                   ),
                   SizedBox(height: 28),
-                  Text('Telefone para denúncias:', style: TextStyle(fontSize: 16),),
+                  Text('Telefone para denúncias:', style: TextStyle(fontSize: 16)),
                   SizedBox(height: 12),
                   Container(
                     padding: EdgeInsets.all(12),
@@ -84,14 +123,14 @@ class _ContatosState extends State<Contatos> {
                     child: Row(
                       children: [
                         Icon(Icons.phone_in_talk_outlined),
-                        SizedBox(width: 10,),
-                        Text('+55 (83) 3690-1965', style: TextStyle(fontSize: 18),)
+                        SizedBox(width: 10),
+                        Text('+55 (83) 3690-1965', style: TextStyle(fontSize: 18)),
                       ],
                     ),
                   ),
-                  SizedBox(height: 28,),
-                  Text('Telefone para contato SUDEMA:', style: TextStyle(fontSize: 16,),),
-                  SizedBox(height: 10,),
+                  SizedBox(height: 28),
+                  Text('Telefone para contato SUDEMA:', style: TextStyle(fontSize: 16)),
+                  SizedBox(height: 10),
                   Container(
                     padding: EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -101,8 +140,8 @@ class _ContatosState extends State<Contatos> {
                     child: Row(
                       children: [
                         Icon(Icons.phone_in_talk_outlined),
-                        SizedBox(width: 10,),
-                        Text('+55 (83) 3690-1965', style: TextStyle(fontSize: 18),)
+                        SizedBox(width: 10),
+                        Text('+55 (83) 3218-5606', style: TextStyle(fontSize: 18)),
                       ],
                     ),
                   ),
@@ -121,19 +160,26 @@ class _ContatosState extends State<Contatos> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 28,),
+                  SizedBox(height: 28),
                   Center(
-                    child: Text('O atendimento prensecial requer agendamento prévio', style: TextStyle(color: Colors.black),),
+                    child: Text(
+                      'O atendimento presencial requer agendamento prévio',
+                      style: TextStyle(color: Colors.black),
+                    ),
                   ),
-                  SizedBox(height: 10,),
+                  SizedBox(height: 10),
                   Center(
                     child: ElevatedButton(
                       onPressed: () async {
-                        final Uri url = Uri.parse('https://pub.dev/packages/url_launcher/install');
-                        if (await canLaunchUrl(url)) {
-                          await launchUrl(url, mode: LaunchMode.externalApplication);
-                        } else {
-                          throw 'Não foi possível abrir o site.';
+                        final Uri url = Uri.parse('https://sigma.pb.gov.br/saap/src/empreendedor/');
+                        try {
+                          if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                            if (!await launchUrl(url, mode: LaunchMode.inAppWebView)) {
+                              throw 'Não foi possível abrir o site.';
+                            }
+                          }
+                        } catch (e) {
+                          print('Erro ao abrir o site: $e');
                         }
                       },
                       style: ElevatedButton.styleFrom(
