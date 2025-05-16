@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../services/noticiasTop5_service.dart';
 import '../models/noticia.dart';
 import 'widgets/appbar.dart';
@@ -10,40 +12,43 @@ import '../screens/noticias.dart';
 import 'widgets/navbar.dart';
 import 'widgets/drawer.dart';
 import '../screens/fullNoticia_screen.dart';
+import 'login.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String? token;
-  const HomeScreen({super.key, this.token});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late String? token;
+  String? token;
   List<Noticia> _noticias = [];
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    token = widget.token;
+    _carregarToken();
     _carregarNoticias();
   }
 
-  List<Widget> get _pages => [
-        buildHomeBody(),
-      const DenunciaPage(),
-      const PraiasPage(),
-      const NoticiasPage(),
+  Future<void> _carregarToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedToken = prefs.getString('token');
 
-      ];
+    if (savedToken != null && savedToken.isNotEmpty) {
+      setState(() {
+        token = savedToken;
+      });
+    }
+  }
 
   bool get isLoggedIn {
     if (token == null) return false;
     try {
       return !JwtDecoder.isExpired(token!);
-    } catch (e) {
+    } catch (_) {
       return false;
     }
   }
@@ -64,14 +69,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: HomeAppBar(
         isLoggedIn: isLoggedIn,
-        onLoginTap: () {
-          Navigator.pushNamed(context, '/login').then((value) {
-            if (value != null && value is String) {
-              setState(() {
-                token = value;
-              });
-            }
-          });
+        onLoginTap: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const LoginPage()),
+          );
+
+          if (result != null && result is String) {
+            setState(() {
+              token = result;
+            });
+          }
         },
       ),
       drawer: CustomDrawer(token: token),
@@ -88,8 +96,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  List<Widget> get _pages => [
+        buildHomeBody(),
+        const DenunciaPage(),
+        const PraiasPage(),
+        const NoticiasPage(),
+      ];
+
   Widget buildHomeBody() {
     final screenWidth = MediaQuery.of(context).size.width;
+
     return SafeArea(
       child: SingleChildScrollView(
         child: Padding(
@@ -234,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 label: 'Denuncias',
                 imagePath: 'assets/images/fiscalizacao.jpg'),
             _buildServiceCardComImagem(
-                label: 'Portal da Transparência', 
+                label: 'Portal da Transparência',
                 imagePath: 'assets/images/portaltransparencia.jpg'),
             _buildServiceCardComImagem(
                 label: 'Educação Ambiental',
@@ -264,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  static Widget _buildServiceCardComImagem({
+  Widget _buildServiceCardComImagem({
     required String label,
     required String imagePath,
   }) {
@@ -348,8 +364,7 @@ Widget _buildCardNoticia(Noticia noticia) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(16)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: Image.network(
               noticia.imagemUrl,
               height: 140,
@@ -357,22 +372,32 @@ Widget _buildCardNoticia(Noticia noticia) {
               fit: BoxFit.cover,
             ),
           ),
+
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 6, 8, 0),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "$dataFormatada   $horaFormatada",
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ),
+          ),
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 4),
                 Text(
                   noticia.titulo,
                   style: GoogleFonts.roboto(
-                      fontWeight: FontWeight.bold, fontSize: 14),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  "$dataFormatada às $horaFormatada",
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -386,7 +411,7 @@ Widget _buildCardNoticia(Noticia noticia) {
                   ),
                 ],
               ),
-            ),
+          ),
           ],
         ),
       ),

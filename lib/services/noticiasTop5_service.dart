@@ -24,7 +24,7 @@ class CarregarNoticias {
           titulo: _extrairTextoHtml(json['titulo']),
           resumo: _extrairTextoHtml(json['resumo']),
           imagemUrl: json['imagem_url'],
-          dataHoraPublicacao: json['data_publicacao'],
+          dataHoraPublicacao: json['data_publicacao_formatada'],
         );
       }).toList();
     } else {

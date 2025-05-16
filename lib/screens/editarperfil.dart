@@ -167,7 +167,7 @@ Future<void> _salvarDados() async {
     'userType': 'MOBILE',
   };
 
-  // 🔍 Imprimir no console a URL e os dados que estão sendo enviados
+  // Imprimir no console a URL e os dados que estão sendo enviados
   debugPrint('📤 Enviando PUT para: $url');
   debugPrint('📦 Corpo da requisição: ${jsonEncode(body)}');
 
