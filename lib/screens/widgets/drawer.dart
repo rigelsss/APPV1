@@ -144,7 +144,7 @@ class CustomDrawerState extends State<CustomDrawer> {
                         ),
                       ),
                       Icon(
-                        isLoggedIn ? Icons.logout : Icons.login,
+                        isLoggedIn ? Icons.settings_rounded : Icons.login,
                         size: 18,
                       ),
                     ],
