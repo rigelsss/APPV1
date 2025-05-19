@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:another_flushbar/flushbar.dart';
+
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:sudema_app/screens/widgets/drawer.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
@@ -24,7 +26,19 @@ class _EditarEmailState extends State<EditarEmail> {
 
   bool _obscureText = true;
   int _currentIndex = -1;
-  String? _mensagemErro;
+
+  void _exibirErro(String mensagem) {
+    Flushbar(
+      title: 'Verifique suas credenciais',
+      message: mensagem,
+      duration: const Duration(seconds: 5),
+      backgroundColor: Colors.red.shade600,
+      icon: const Icon(Icons.error_outline, color: Colors.white),
+      flushbarPosition: FlushbarPosition.TOP,
+      borderRadius: BorderRadius.circular(10),
+      margin: const EdgeInsets.all(8),
+    ).show(context);
+  }
 
   void _onNavBarTap(int index) {
     setState(() {
@@ -54,9 +68,7 @@ class _EditarEmailState extends State<EditarEmail> {
     final token = prefs.getString('token');
 
     if (token == null) {
-      setState(() {
-        _mensagemErro = 'Usuário não autenticado.';
-      });
+      _exibirErro('Usuário não autenticado.');
       return;
     }
 
@@ -65,7 +77,6 @@ class _EditarEmailState extends State<EditarEmail> {
 
     final baseUrl = dotenv.env['URL_API'];
     final url = Uri.parse('$baseUrl/usuarios/mobile/$id/alterar-email');
-    print('📡 URL: $url');
 
     final response = await http.put(
       url,
@@ -87,9 +98,6 @@ class _EditarEmailState extends State<EditarEmail> {
 
         if (novoToken != null && novoToken is String) {
           await AuthController.updateToken(novoToken);
-          setState(() {
-            _mensagemErro = null;
-          });
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('E-mail alterado com sucesso!')),
@@ -100,39 +108,35 @@ class _EditarEmailState extends State<EditarEmail> {
             MaterialPageRoute(builder: (context) => Perfiluser(token: novoToken)),
           );
         } else {
-          setState(() {
-            _mensagemErro = 'Token não recebido. Tente novamente.';
-          });
+          _exibirErro('Token não recebido. Tente novamente.');
         }
-      } catch (e) {
-        setState(() {
-          _mensagemErro = 'Erro ao processar resposta do servidor.';
-        });
+      } catch (_) {
+        _exibirErro('Erro ao processar resposta do servidor.');
       }
     } else {
       if (response.body.isNotEmpty) {
         try {
           final responseBody = jsonDecode(response.body);
-          if (responseBody['errors'] != null &&
-              responseBody['errors'][0]['message'] == 'Senha atual incorreta') {
-            setState(() {
-              _mensagemErro = 'A senha informada está incorreta.';
-            });
+          final errors = responseBody['errors'];
+
+          if (errors is List && errors.isNotEmpty) {
+            final mensagem = errors[0]['message'];
+            if (mensagem == 'Senha atual incorreta') {
+              _exibirErro('A senha informada está incorreta.');
+            } else if (mensagem == 'E-mail já cadastrado') {
+              _exibirErro('Este e-mail já está em uso. Tente outro.');
+            } else {
+              _exibirErro(mensagem);
+            }
           } else {
-            setState(() {
-              _mensagemErro = 'Erro ao alterar e-mail. Tente novamente.';
-            });
+            _exibirErro('Erro ao alterar e-mail. Tente novamente.');
           }
-        } catch (e) {
-          setState(() {
-            _mensagemErro = 'Erro inesperado. Tente novamente.';
-          });
+        } catch (_) {
+          _exibirErro('Erro inesperado. Tente novamente.');
         }
       } else {
-        setState(() {
-          _mensagemErro = 'Erro ao alterar e-mail. '
-              'Status: ${response.statusCode}. ${response.reasonPhrase ?? ''}';
-        });
+        _exibirErro('Erro ao alterar e-mail. '
+            'Status: ${response.statusCode}. ${response.reasonPhrase ?? ''}');
       }
     }
   }
@@ -172,63 +176,64 @@ class _EditarEmailState extends State<EditarEmail> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Senha', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _senhaController,
-              obscureText: _obscureText,
-              decoration: _inputDecoration().copyWith(
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscureText ? Icons.visibility_off : Icons.visibility,
-                    color: Colors.grey,
+          child: ListView(
+            children: [
+              const Text('Senha', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _senhaController,
+                obscureText: _obscureText,
+                decoration: _inputDecoration().copyWith(
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureText = !_obscureText;
-                    });
-                  },
                 ),
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Informe a senha atual' : null,
               ),
-              validator: (value) =>
-                  value == null || value.isEmpty ? 'Informe a senha atual' : null,
-            ),
-            const SizedBox(height: 24),
-            const Text('Novo e-mail', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _novoEmailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: _inputDecoration(),
-              validator: (value) =>
-                  value == null || value.isEmpty ? 'Informe o novo e-mail' : null,
-            ),
-            const SizedBox(height: 24),
-            const Text('Confirme o novo e-mail',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _confirmarEmailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: _inputDecoration(),
-              validator: (value) {
-                if (value == null || value.isEmpty) return 'Confirme o novo e-mail';
-                if (value != _novoEmailController.text) return 'Os e-mails não coincidem';
-                return null;
-              },
-            ),
-            const SizedBox(height: 20),
-            if (_mensagemErro != null) ...[
-              Text(_mensagemErro!,
-                  style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
-              const SizedBox(height: 12),
-            ],
-            Center(
-              child: SizedBox(
+              const SizedBox(height: 24),
+              const Text('Novo e-mail', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _novoEmailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: _inputDecoration(),
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Informe o novo e-mail' : null,
+              ),
+              const SizedBox(height: 24),
+              const Text('Confirme o novo e-mail',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _confirmarEmailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: _inputDecoration(),
+                validator: (value) {
+                  if (value == null || value.isEmpty) return 'Confirme o novo e-mail';
+                  if (value != _novoEmailController.text) return 'Os e-mails não coincidem';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _confirmarAlteracao,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1B8C00),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 18),
                     child: Text(
@@ -236,16 +241,10 @@ class _EditarEmailState extends State<EditarEmail> {
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1B8C00),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
                 ),
               ),
-            ),
-          ]),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: NavBar(
