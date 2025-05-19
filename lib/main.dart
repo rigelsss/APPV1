@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
         '/editar-perfil': (context) => const EditarPerfil(),
         '/EditarEmail': (context) => const EditarEmail(),
         '/EditarSenha': (context) => const EditarSenha(),
-        '/perfiluser': (context) => const Perfiluser(),
+        '/perfil': (context) => const Perfiluser(),
         '/contatos' : (context) => const Contatos(),
       },
     );

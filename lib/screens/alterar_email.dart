@@ -9,7 +9,6 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:sudema_app/screens/widgets/drawer.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
-import 'perfil_page.dart';
 
 class EditarEmail extends StatefulWidget {
   const EditarEmail({super.key});
@@ -103,10 +102,8 @@ class _EditarEmailState extends State<EditarEmail> {
             const SnackBar(content: Text('E-mail alterado com sucesso!')),
           );
 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => Perfiluser(token: novoToken)),
-          );
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+
         } else {
           _exibirErro('Token não recebido. Tente novamente.');
         }

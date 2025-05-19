@@ -229,7 +229,17 @@ class PerfiluserState extends State<Perfiluser> {
                   context,
                   icon: Icons.lock_outline,
                   title: 'Alterar Senha',
-                  onTap: () => Navigator.pushNamed(context, '/EditarSenha'),
+                  onTap: () async {
+                    final novoToken = await Navigator.pushNamed(context, '/EditarEmail');
+                    if (novoToken != null && mounted) {
+                      setState(() {
+                        _token = novoToken as String;
+                        _isLoading = true;
+                        _errorFetching = false;
+                      });
+                      await _carregarDadosUsuario();
+                    }
+                  },
                 ),
                 const SizedBox(height: 10),
                 const Divider(color: Colors.grey, height: 1, indent: 16, endIndent: 16),
