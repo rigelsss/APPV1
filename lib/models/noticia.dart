@@ -1,9 +1,12 @@
+import 'package:intl/intl.dart';
+
+
 class Noticia {
   final String id;
   final String titulo;
   final String resumo;
   final String imagemUrl;
-  final String dataHoraPublicacao;
+  final DateTime dataHoraPublicacao; 
 
   Noticia({
     required this.id,
@@ -19,7 +22,7 @@ class Noticia {
       titulo: json['titulo'],
       resumo: json['resumo'],
       imagemUrl: json['imagem_url'],
-      dataHoraPublicacao: json['data_publicacao'],
+      dataHoraPublicacao: DateFormat("dd/MM/yyyy HH'h'mm").parse(json['data_publicacao_formatada']),
     );
   }
 }

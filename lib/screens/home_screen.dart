@@ -287,7 +287,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }) {
     return InkWell(
       onTap: () {
-        print('Serviço $label clicado!');
+        if (label == 'Balneabilidade') {
+          setState(() {
+            _selectedIndex = 2;
+          });
+        } else if (label == 'Denuncias') {
+          setState(() {
+            _selectedIndex = 1;
+          });
+        }
       },
       borderRadius: BorderRadius.circular(12),
       child: Container(
@@ -330,8 +338,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 Widget _buildCardNoticia(Noticia noticia) {
-  DateTime data =
-      DateTime.tryParse(noticia.dataHoraPublicacao) ?? DateTime.now();
+  DateTime data = noticia.dataHoraPublicacao;
+
   String dataFormatada =
       "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
   String horaFormatada =
@@ -368,7 +376,7 @@ Widget _buildCardNoticia(Noticia noticia) {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: Image.network(
               noticia.imagemUrl,
-              height: 140,
+              height: 200,
               width: double.infinity,
               fit: BoxFit.cover,
             ),
