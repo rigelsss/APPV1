@@ -28,16 +28,24 @@ class PerfiluserState extends State<Perfiluser> {
     _prepararToken();
   }
 
-  void _prepararToken() {
+  Future<void> _prepararToken() async {
     if (widget.token != null && widget.token!.isNotEmpty) {
       _token = widget.token!;
       _carregarDadosUsuario();
     } else {
-      setState(() {
-        _errorFetching = true;
-        _isLoading = false;
-        _errorMessage = 'Token inválido ou não fornecido.';
-      });
+      final prefs = await SharedPreferences.getInstance();
+      final savedToken = prefs.getString('token');
+
+      if (savedToken != null && savedToken.isNotEmpty) {
+        _token = savedToken;
+        _carregarDadosUsuario();
+      } else {
+        setState(() {
+          _errorFetching = true;
+          _isLoading = false;
+          _errorMessage = 'Token inválido ou não fornecido.';
+        });
+      }
     }
   }
 

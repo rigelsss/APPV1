@@ -4,9 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+import 'package:sudema_app/services/AuthMe.dart';
 import 'package:sudema_app/screens/widgets/drawer.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
+import 'perfil_page.dart';
 
 class EditarEmail extends StatefulWidget {
   const EditarEmail({super.key});
@@ -64,7 +65,7 @@ class _EditarEmailState extends State<EditarEmail> {
 
     final baseUrl = dotenv.env['URL_API'];
     final url = Uri.parse('$baseUrl/usuarios/mobile/$id/alterar-email');
-    print ('📡 URL: $url');
+    print('📡 URL: $url');
 
     final response = await http.put(
       url,
@@ -80,13 +81,34 @@ class _EditarEmailState extends State<EditarEmail> {
     );
 
     if (response.statusCode == 200) {
-      setState(() {
-        _mensagemErro = null;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('E-mail alterado com sucesso!')),
-      );
-      Navigator.pop(context);
+      try {
+        final responseBody = jsonDecode(response.body);
+        final novoToken = responseBody['token'];
+
+        if (novoToken != null && novoToken is String) {
+          await AuthController.updateToken(novoToken);
+          setState(() {
+            _mensagemErro = null;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('E-mail alterado com sucesso!')),
+          );
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Perfiluser(token: novoToken)),
+          );
+        } else {
+          setState(() {
+            _mensagemErro = 'Token não recebido. Tente novamente.';
+          });
+        }
+      } catch (e) {
+        setState(() {
+          _mensagemErro = 'Erro ao processar resposta do servidor.';
+        });
+      }
     } else {
       if (response.body.isNotEmpty) {
         try {
@@ -106,18 +128,14 @@ class _EditarEmailState extends State<EditarEmail> {
             _mensagemErro = 'Erro inesperado. Tente novamente.';
           });
         }
-        } else {
-          print('📡 Status code: ${response.statusCode}');
-          print('📡 Response body: "${response.body}"');
-
-          setState(() {
-            _mensagemErro = 'Erro ao alterar e-mail. '
-            'Status: ${response.statusCode}.'
-            ' ${response.reasonPhrase ?? ''}';
-            });   
-            }
-          }
-        }
+      } else {
+        setState(() {
+          _mensagemErro = 'Erro ao alterar e-mail. '
+              'Status: ${response.statusCode}. ${response.reasonPhrase ?? ''}';
+        });
+      }
+    }
+  }
 
   InputDecoration _inputDecoration() {
     return InputDecoration(

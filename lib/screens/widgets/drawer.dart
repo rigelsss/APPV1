@@ -4,9 +4,7 @@ import 'package:sudema_app/screens/perfil_page.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 
 class CustomDrawer extends StatefulWidget {
-  final String? token;
-
-  const CustomDrawer({super.key, this.token});
+  const CustomDrawer({super.key});
 
   @override
   CustomDrawerState createState() => CustomDrawerState();
@@ -15,46 +13,42 @@ class CustomDrawer extends StatefulWidget {
 class CustomDrawerState extends State<CustomDrawer> {
   String username = 'Acessar';
   bool isLoading = true;
+  String? _token;
 
   @override
   void initState() {
     super.initState();
-    _carregarNomeUsuario();
+    _carregarTokenEUsuario();
   }
 
-  Future<void> _carregarNomeUsuario() async {
-    if (widget.token != null && widget.token!.isNotEmpty) {
+  Future<void> _carregarTokenEUsuario() async {
+    final token = await AuthController.getToken();
+    setState(() => _token = token);
+
+    if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
       try {
-        final data = await AuthController.obterInformacoesUsuario(widget.token!);
+        final data = await AuthController.obterInformacoesUsuario(token);
         if (data != null) {
           setState(() {
             username = data['name'] ?? 'Acessar';
             isLoading = false;
           });
         } else {
-          setState(() {
-            isLoading = false;
-          });
+          setState(() => isLoading = false);
         }
       } catch (e) {
-        setState(() {
-          isLoading = false;
-        });
         print('Erro ao carregar nome do usuário: $e');
+        setState(() => isLoading = false);
       }
     } else {
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
     }
   }
 
   bool get isLoggedIn {
-    if (widget.token == null || widget.token!.isEmpty) {
-      return false;
-    }
+    if (_token == null || _token!.isEmpty) return false;
     try {
-      return !JwtDecoder.isExpired(widget.token!);
+      return !JwtDecoder.isExpired(_token!);
     } catch (e) {
       return false;
     }
@@ -100,13 +94,13 @@ class CustomDrawerState extends State<CustomDrawer> {
                   onTap: () => Navigator.pop(context),
                 ),
                 ListTile(
-                  leading: Icon(Icons.phone_in_talk_outlined),
-                  title: Text('Contato'),
+                  leading: const Icon(Icons.phone_in_talk_outlined),
+                  title: const Text('Contato'),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.pushNamed(context, '/contatos');
                   },
-                )
+                ),
               ],
             ),
           ),
@@ -115,7 +109,7 @@ class CustomDrawerState extends State<CustomDrawer> {
               if (isLoggedIn) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Perfiluser(token: widget.token)),
+                  MaterialPageRoute(builder: (context) => Perfiluser(token: _token)),
                 );
               } else {
                 Navigator.pushNamed(context, '/login');
@@ -124,9 +118,7 @@ class CustomDrawerState extends State<CustomDrawer> {
             child: Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(24),
-                ),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 36),
               child: Column(
@@ -152,7 +144,7 @@ class CustomDrawerState extends State<CustomDrawer> {
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );

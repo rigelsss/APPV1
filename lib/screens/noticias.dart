@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'fullNoticia_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class NoticiasPage extends StatefulWidget {
   const NoticiasPage({super.key});
@@ -213,12 +215,15 @@ class _NoticiasPageState extends State<NoticiasPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Image.network(
-                          noticia['imagem_url'],
+                        CachedNetworkImage(
+                          imageUrl: noticia['imagem_url'] ?? '',
                           width: double.infinity,
                           height: 300,
                           fit: BoxFit.cover,
+                          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) => const Icon(Icons.broken_image),
                         ),
+
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           child: Row(
