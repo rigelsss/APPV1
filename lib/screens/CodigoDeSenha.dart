@@ -41,7 +41,7 @@ class _CodigodesenhaState extends State<Codigodesenha> {
       if (response.statusCode == 204) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const Novasenha()),
+          MaterialPageRoute(builder: (context) => Novasenha(email: widget.email,token: _codigo,)),
         );
       } else {
         final error = jsonDecode(response.body)['message'] ?? 'Código inválido.';
