@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class RegistroController {
   Future<String?> validarERegistrar({
@@ -23,9 +22,8 @@ class RegistroController {
       return 'Você precisa aceitar os termos para continuar.';
     }
 
-    final baseUrl = dotenv.env['URL_API'] ?? '';
-    final url = Uri.parse('$baseUrl/auth/register');
-    
+    final url = Uri.parse('http://10.0.2.2:9000/auth/register');
+
     try {
       final response = await http.post(
         url,
@@ -36,7 +34,6 @@ class RegistroController {
           'email': email.trim(),
           'phone': telefone.trim(),
           'password': senha.trim(),
-          'passwordConfirmation': senha.trim(),
           'userType': 'MOBILE'
         }),
       );

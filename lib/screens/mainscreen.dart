@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/home_screen.dart';
-import 'widgets/navbar.dart';
+import '../screens/widgets_reutilizaveis/navbar.dart';
 import '../screens/PageDenuncia.dart';
 import '../screens/praias.dart';
 import '../screens/noticias.dart';

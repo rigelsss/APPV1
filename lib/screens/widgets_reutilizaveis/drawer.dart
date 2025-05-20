@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:sudema_app/screens/perfil_page.dart';
+import 'package:sudema_app/screens/PerfilUser.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 
 class CustomDrawer extends StatefulWidget {
-  const CustomDrawer({super.key});
+  final String? token;
+
+  const CustomDrawer({super.key, this.token});
 
   @override
   CustomDrawerState createState() => CustomDrawerState();
@@ -13,42 +15,46 @@ class CustomDrawer extends StatefulWidget {
 class CustomDrawerState extends State<CustomDrawer> {
   String username = 'Acessar';
   bool isLoading = true;
-  String? _token;
 
   @override
   void initState() {
     super.initState();
-    _carregarTokenEUsuario();
+    _carregarNomeUsuario();
   }
 
-  Future<void> _carregarTokenEUsuario() async {
-    final token = await AuthController.getToken();
-    setState(() => _token = token);
-
-    if (token != null && token.isNotEmpty && !JwtDecoder.isExpired(token)) {
+  Future<void> _carregarNomeUsuario() async {
+    if (widget.token != null && widget.token!.isNotEmpty) {
       try {
-        final data = await AuthController.obterInformacoesUsuario(token);
-        if (data != null) {
+        final data = await AuthController.obterInformacoesUsuario(widget.token!);
+        if (data != null && data['user'] != null) {
           setState(() {
-            username = data['name'] ?? 'Acessar';
+            username = data['user']['name'] ?? 'Acessar';
             isLoading = false;
           });
         } else {
-          setState(() => isLoading = false);
+          setState(() {
+            isLoading = false;
+          });
         }
       } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
         print('Erro ao carregar nome do usuário: $e');
-        setState(() => isLoading = false);
       }
     } else {
-      setState(() => isLoading = false);
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   bool get isLoggedIn {
-    if (_token == null || _token!.isEmpty) return false;
+    if (widget.token == null || widget.token!.isEmpty) {
+      return false;
+    }
     try {
-      return !JwtDecoder.isExpired(_token!);
+      return !JwtDecoder.isExpired(widget.token!);
     } catch (e) {
       return false;
     }
@@ -89,17 +95,9 @@ class CustomDrawerState extends State<CustomDrawer> {
                   onTap: () => Navigator.pop(context),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.newspaper),
+                  leading: const Icon(Icons.feed),
                   title: const Text('Notícias'),
                   onTap: () => Navigator.pop(context),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.phone_in_talk_outlined),
-                  title: const Text('Contato'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/contatos');
-                  },
                 ),
               ],
             ),
@@ -109,7 +107,7 @@ class CustomDrawerState extends State<CustomDrawer> {
               if (isLoggedIn) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Perfiluser(token: _token)),
+                  MaterialPageRoute(builder: (context) => Perfiluser(token: widget.token)),
                 );
               } else {
                 Navigator.pushNamed(context, '/login');
@@ -118,7 +116,9 @@ class CustomDrawerState extends State<CustomDrawer> {
             child: Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(24),
+                ),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 36),
               child: Column(
@@ -127,7 +127,7 @@ class CustomDrawerState extends State<CustomDrawer> {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      const Icon(Icons.account_circle_outlined, color: Colors.black54, size: 26),
+                      const Icon(Icons.person, color: Colors.black54, size: 26),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -136,7 +136,7 @@ class CustomDrawerState extends State<CustomDrawer> {
                         ),
                       ),
                       Icon(
-                        isLoggedIn ? Icons.settings_rounded : Icons.login,
+                        isLoggedIn ? Icons.settings : Icons.login,
                         size: 18,
                       ),
                     ],
@@ -144,7 +144,7 @@ class CustomDrawerState extends State<CustomDrawer> {
                 ],
               ),
             ),
-          ),
+          )
         ],
       ),
     );
