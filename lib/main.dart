@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:sudema_app/screens/EditEmail.dart';
-
+import 'package:sudema_app/screens/alterar_email.dart';
+import 'package:sudema_app/screens/deletar_conta.dart';
 import 'package:sudema_app/screens/EditSenha.dart';
 import 'package:sudema_app/screens/PageDenuncia.dart';
-import 'package:sudema_app/screens/PerfilUser.dart';
+import 'package:sudema_app/screens/perfil_page.dart';
 import 'package:sudema_app/screens/contatos.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
 import 'package:sudema_app/screens/praias.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
-import 'package:sudema_app/screens/editarperfil.dart';
+import 'package:sudema_app/screens/editar_perfil.dart';
 import 'package:sudema_app/screens/noticias.dart';
 
 import 'package:sudema_app/services/notification_handler.dart';
@@ -57,8 +57,9 @@ class MyApp extends StatelessWidget {
         '/editar-perfil': (context) => const EditarPerfil(),
         '/EditarEmail': (context) => const EditarEmail(),
         '/EditarSenha': (context) => const EditarSenha(),
-        '/perfiluser': (context) => const Perfiluser(),
+        '/perfil': (context) => const Perfiluser(),
         '/contatos' : (context) => const Contatos(),
+        '/deletar-conta': (context) => DeletarContaPage(userId: ''),
       },
     );
   }

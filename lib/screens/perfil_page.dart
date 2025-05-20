@@ -28,16 +28,24 @@ class PerfiluserState extends State<Perfiluser> {
     _prepararToken();
   }
 
-  void _prepararToken() {
+  Future<void> _prepararToken() async {
     if (widget.token != null && widget.token!.isNotEmpty) {
       _token = widget.token!;
       _carregarDadosUsuario();
     } else {
-      setState(() {
-        _errorFetching = true;
-        _isLoading = false;
-        _errorMessage = 'Token inválido ou não fornecido.';
-      });
+      final prefs = await SharedPreferences.getInstance();
+      final savedToken = prefs.getString('token');
+
+      if (savedToken != null && savedToken.isNotEmpty) {
+        _token = savedToken;
+        _carregarDadosUsuario();
+      } else {
+        setState(() {
+          _errorFetching = true;
+          _isLoading = false;
+          _errorMessage = 'Token inválido ou não fornecido.';
+        });
+      }
     }
   }
 
@@ -108,13 +116,16 @@ class PerfiluserState extends State<Perfiluser> {
       ),
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
-        enabled: false, 
-        onTap: (index) {}, 
+        enabled: false,
+        onTap: (index) {},
       ),
     );
   }
 
   Widget _buildPerfil(BuildContext context) {
+    String telefone = _userData['phone'] ?? '';
+    String cpf = _userData['cpf'] ?? '';
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -166,12 +177,12 @@ class PerfiluserState extends State<Perfiluser> {
                     const SizedBox(height: 8),
                     _LabeledInfoItem(
                       label: 'Telefone',
-                      value: _userData['phone'] ?? 'Telefone não encontrado',
+                      value: formatarTelefone(telefone),
                     ),
                     const SizedBox(height: 8),
                     _LabeledInfoItem(
                       label: 'CPF',
-                      value: _userData['cpf'] ?? 'CPF não encontrado',
+                      value: formatarCpf(cpf),
                     ),
                   ],
                 ),
@@ -207,7 +218,7 @@ class PerfiluserState extends State<Perfiluser> {
                 const SizedBox(height: 10),
                 _buildMenuItem(
                   context,
-                  icon: Icons.email_outlined,
+                  icon: Icons.alternate_email,
                   title: 'Alterar E-mail',
                   onTap: () => Navigator.pushNamed(context, '/EditarEmail'),
                 ),
@@ -218,7 +229,17 @@ class PerfiluserState extends State<Perfiluser> {
                   context,
                   icon: Icons.lock_outline,
                   title: 'Alterar Senha',
-                  onTap: () => Navigator.pushNamed(context, '/EditarSenha'),
+                  onTap: () async {
+                    final novoToken = await Navigator.pushNamed(context, '/EditarSenha');
+                    if (novoToken != null && mounted) {
+                      setState(() {
+                        _token = novoToken as String;
+                        _isLoading = true;
+                        _errorFetching = false;
+                      });
+                      await _carregarDadosUsuario();
+                    }
+                  },
                 ),
                 const SizedBox(height: 10),
                 const Divider(color: Colors.grey, height: 1, indent: 16, endIndent: 16),
@@ -247,7 +268,9 @@ class PerfiluserState extends State<Perfiluser> {
               ),
               const SizedBox(height: 8),
               TextButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/deletar-conta');
+                },
                 icon: const Icon(Icons.delete, color: Colors.red),
                 label: const Text(
                   'Deletar Conta',
@@ -288,6 +311,22 @@ class PerfiluserState extends State<Perfiluser> {
         ],
       ),
     );
+  }
+
+  String formatarCpf(String cpf) {
+    final digitsOnly = cpf.replaceAll(RegExp(r'\D'), '');
+    if (digitsOnly.length != 11) return cpf;
+    return '${digitsOnly.substring(0, 3)}.${digitsOnly.substring(3, 6)}.${digitsOnly.substring(6, 9)}-${digitsOnly.substring(9)}';
+  }
+
+  String formatarTelefone(String telefone) {
+    final digitsOnly = telefone.replaceAll(RegExp(r'\D'), '');
+    if (digitsOnly.length == 11) {
+      return '+55 (${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 7)}-${digitsOnly.substring(7)}';
+    } else if (digitsOnly.length == 10) {
+      return '+55 (${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 6)}-${digitsOnly.substring(6)}';
+    }
+    return telefone;
   }
 }
 

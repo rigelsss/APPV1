@@ -1,13 +1,14 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+
 import 'package:sudema_app/screens/widgets/navbar.dart';
-import  '../screens/PerfilUser.dart';
+import 'package:sudema_app/screens/perfil_page.dart';
+import 'package:sudema_app/services/editarPerfil_service.dart';
+import 'package:sudema_app/utils/validarCPF.dart';
+import 'package:sudema_app/screens/widgets/custom_form_field.dart';
 
 class EditarPerfil extends StatefulWidget {
   const EditarPerfil({super.key});
@@ -17,7 +18,7 @@ class EditarPerfil extends StatefulWidget {
 }
 
 class _EditarPerfilState extends State<EditarPerfil> {
-  int _currentIndex = 0;
+  final int _currentIndex = -1;
 
   String? token;
   String? id;
@@ -40,37 +41,17 @@ class _EditarPerfilState extends State<EditarPerfil> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    if (token != null && JwtDecoder.isExpired(token) == false) {
+    if (token != null && !JwtDecoder.isExpired(token)) {
       final decodedToken = JwtDecoder.decode(token);
       setState(() {
-        id = decodedToken['id']; 
+        id = decodedToken['id'];
+        this.token = token;
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('❌ Sessão expirada. Faça login novamente.')),
       );
       Navigator.pushReplacementNamed(context, '/login');
-    }
-  }
-
-  void _onNavBarTap(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        Navigator.pushNamed(context, '/home');
-        break;
-      case 1:
-        Navigator.pushNamed(context, '/denuncias');
-        break;
-      case 2:
-        Navigator.pushNamed(context, '/praias');
-        break;
-      case 3:
-        Navigator.pushNamed(context, '/noticias');
-        break;
     }
   }
 
@@ -82,129 +63,48 @@ class _EditarPerfilState extends State<EditarPerfil> {
     super.dispose();
   }
 
-  Widget buildLabeledField({
-    required String label,
-    required TextEditingController controller,
-    required FormFieldValidator<String> validator,
-    List<TextInputFormatter>? inputFormatters,
-    TextInputType? keyboardType,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          validator: validator,
-          inputFormatters: inputFormatters,
-          keyboardType: keyboardType,
-          decoration: InputDecoration(
-            hintText: '',
-            isDense: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.grey, width: 1),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.grey, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.grey, width: 1.2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-          ),
-        ),
-      ],
-    );
-  }
+  Future<void> _salvarDados() async {
+    if (!_formKey.currentState!.validate()) return;
 
-  bool validarCPF(String cpf) {
-    final numericCpf = cpf.replaceAll(RegExp(r'\D'), '');
-    if (numericCpf.length != 11 || RegExp(r'^(\d)\1{10}$').hasMatch(numericCpf)) return false;
-
-    List<int> digits = numericCpf.split('').map(int.parse).toList();
-    for (int j = 9; j < 11; j++) {
-      int sum = 0;
-      for (int i = 0; i < j; i++) {
-        sum += digits[i] * ((j + 1) - i);
-      }
-      int expectedDigit = (sum * 10) % 11;
-      if (expectedDigit == 10) expectedDigit = 0;
-      if (digits[j] != expectedDigit) return false;
+    final baseUrl = dotenv.env['URL_API'];
+    if (baseUrl == null || baseUrl.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('❌ URL da API não configurada')),
+      );
+      return;
     }
-    return true;
-  }
 
-Future<void> _salvarDados() async {
-  if (!_formKey.currentState!.validate()) return;
+    final String id = this.id!;
+    final String nome = _nomeController.text.trim();
+    final String cpf = _cpfController.text.replaceAll(RegExp(r'\D'), '');
+    final String telefone = _telefoneController.text.replaceAll(RegExp(r'\D'), '');
 
-  final baseUrl = dotenv.env['URL_API'];
-  if (baseUrl == null || baseUrl.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('❌ URL da API não configurada')),
-    );
-    return;
-  }
-  final String id = this.id!;
-  final String nome = _nomeController.text.trim();
-  final String cpf = _cpfController.text.replaceAll(RegExp(r'\D'), '');
-  final String telefone = _telefoneController.text.replaceAll(RegExp(r'\D'), '');
-
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');  
-
-  final url = Uri.parse('$baseUrl/usuarios/mobile/$id');
-  final body = {
-    'nome': nome,
-    'telefone': telefone,
-    'cpf': cpf,
-    'userType': 'MOBILE',
-  };
-
-  // Imprimir no console a URL e os dados que estão sendo enviados
-  debugPrint('📤 Enviando PUT para: $url');
-  debugPrint('📦 Corpo da requisição: ${jsonEncode(body)}');
-
-  try {
-    final response = await http.put(
-      url,
-      headers: {'Authorization': 'Bearer $token', 
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'},
-
-      body: jsonEncode(body),
+    final response = await UsuarioService.atualizarUsuario(
+      id: id,
+      token: token!,
+      dados: {
+        'nome': nome,
+        'telefone': telefone,
+        'cpf': cpf,
+        'userType': 'MOBILE',
+      },
     );
 
-if (response.statusCode == 200) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('✅ Dados atualizados com sucesso')),
-  );
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => Perfiluser(token: token),
-    ),
-  );
-} else {
-  debugPrint('❌ Erro ${response.statusCode}: ${response.body}');
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('❌ Erro ao atualizar: ${response.statusCode} - ${response.body}')),
-  );
-}
-
-  } catch (e) {
-    debugPrint('❌ Erro ao enviar: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('❌ Falha de conexão com o servidor')),
-    );
+    if (response.statusCode == 200) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('✅ Dados atualizados com sucesso')),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Perfiluser(token: token)),
+      );
+    } else {
+      debugPrint('❌ Erro ${response.statusCode}: ${response.body}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ Erro ao atualizar: ${response.statusCode} - ${response.body}')),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -289,7 +189,8 @@ if (response.statusCode == 200) {
             ),
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
-        onTap: _onNavBarTap,
+        enabled: false,
+        onTap: (_) {},
       ),
     );
   }
