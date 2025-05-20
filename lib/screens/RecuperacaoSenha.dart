@@ -27,8 +27,8 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
 
   Future<void> _enviarEmailDeRecuperacao(String email) async {
     final url = Uri.parse('${dotenv.env['URL_API']}/password-reset/forgot-password');
-    print('🔵 Enviando requisição de recuperação de senha para: $url');
-    print('📧 E-mail informado: $email');
+    print('Chamando endpoint: $url');
+    print('🔵 Chamando endpoint: $url');
 
     try {
       final response = await http.post(
@@ -39,12 +39,10 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
           'userType': 'MOBILE',
         }),
       );
-
       print('🟡 Status Code: ${response.statusCode}');
       print('🟡 Response Body: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 204) {
-        print('✅ Código de verificação enviado com sucesso.');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Código enviado para o e-mail informado.'),
@@ -54,32 +52,20 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Codigodesenha()),
+          MaterialPageRoute(builder: (context) => Codigodesenha(email: email)),
         );
       } else {
-        try {
-          final decoded = jsonDecode(response.body);
-          final error = decoded['message'] ?? 'Erro desconhecido ao enviar e-mail.';
-          print('🔴 Erro retornado pela API: $error');
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(error),
-              backgroundColor: Colors.red,
-            ),
-          );
-        } catch (e) {
-          print('🔴 Erro ao decodificar a resposta da API: $e');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Erro ao processar a resposta da API.'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
+        final error = jsonDecode(response.body)['message'] ?? 'Erro ao enviar e-mail.';
+        print('🔴 Erro na resposta: $error');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } catch (e) {
-      print('🔴 Erro de conexão ou inesperado: $e');
+      print('Erro de conexão: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro de conexão. Tente novamente.'),
@@ -88,6 +74,7 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

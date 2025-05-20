@@ -1,9 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sudema_app/screens/NovaSenha.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
 class Codigodesenha extends StatefulWidget {
-  const Codigodesenha({super.key});
+  final String email;
+
+  const Codigodesenha({super.key, required this.email});
 
   @override
   State<Codigodesenha> createState() => _CodigodesenhaState();
@@ -12,19 +17,44 @@ class Codigodesenha extends StatefulWidget {
 class _CodigodesenhaState extends State<Codigodesenha> {
   String _codigo = '';
 
-  void _verificarCodigo() {
-    if (_codigo.length == 6) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const Novasenha()),
-      );
-    } else {
+  Future<void> _verificarCodigo() async {
+    if (_codigo.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor, insira um código válido.')),
       );
+      return;
+    }
+
+    final url = Uri.parse('${dotenv.env['URL_API']}/password-reset/verify-token');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': widget.email,
+          'userType': 'MOBILE',
+          'token': _codigo,
+        }),
+      );
+
+      if (response.statusCode == 204) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Novasenha(email: widget.email,token: _codigo,)),
+        );
+      } else {
+        final error = jsonDecode(response.body)['message'] ?? 'Código inválido.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro de conexão. Tente novamente.')),
+      );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
