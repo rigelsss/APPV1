@@ -51,12 +51,12 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
     if (response.statusCode == 204) {
       await prefs.remove('token');
 
-      // Aguarda um frame para garantir que a navegação esteja completa antes de mostrar a Flushbar
       Navigator.of(context).pushNamedAndRemoveUntil(
-        '/home', 
+        '/home',
         (route) => false,
-        arguments: {'desativado': true},  
+        arguments: {'desativado': true},
       );
+
       Future.delayed(const Duration(milliseconds: 500), () {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           Flushbar(
@@ -133,7 +133,7 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
           children: [
             const SizedBox(height: 12),
             Image.asset(
-              'assets/images/warning.png',
+              'assets/images/warning.jpg',
               height: 120,
             ),
             const SizedBox(height: 24),
@@ -146,16 +146,16 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   fontSize: 13,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 40),
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 'Para prosseguir, insira a sua senha',
-                style: TextStyle(fontSize: 15),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 12),
@@ -164,11 +164,18 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
               obscureText: _obscureText,
               decoration: InputDecoration(
                 hintText: 'Senha',
-                border: OutlineInputBorder(
+                enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(
                     width: 2.0,
-                    color: Colors.grey[200]!,
+                    color: Colors.grey[500]!,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    width: 2.0,
+                    color: Colors.grey[500]!,
                   ),
                 ),
                 suffixIcon: IconButton(

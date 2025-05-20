@@ -129,7 +129,7 @@ class _ReativarContaPageState extends State<ReativarContaPage> {
               'Deseja reativá-la?',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 18,
               ),
               textAlign: TextAlign.center,
             ),
