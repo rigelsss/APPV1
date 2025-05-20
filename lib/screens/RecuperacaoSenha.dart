@@ -27,16 +27,24 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
 
   Future<void> _enviarEmailDeRecuperacao(String email) async {
     final url = Uri.parse('${dotenv.env['URL_API']}/password-reset/forgot-password');
-    print('Chamando endpoint: $url');
+    print('🔵 Enviando requisição de recuperação de senha para: $url');
+    print('📧 E-mail informado: $email');
 
     try {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email}),
+        body: jsonEncode({
+          'email': email,
+          'userType': 'MOBILE',
+        }),
       );
 
-      if (response.statusCode == 200) {
+      print('🟡 Status Code: ${response.statusCode}');
+      print('🟡 Response Body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        print('✅ Código de verificação enviado com sucesso.');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Código enviado para o e-mail informado.'),
@@ -44,22 +52,34 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
           ),
         );
 
-        // Navegar para a próxima tela
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Codigodesenha()),
         );
       } else {
-        final error = jsonDecode(response.body)['message'] ?? 'Erro ao enviar e-mail.';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error),
-            backgroundColor: Colors.red,
-          ),
-        );
+        try {
+          final decoded = jsonDecode(response.body);
+          final error = decoded['message'] ?? 'Erro desconhecido ao enviar e-mail.';
+          print('🔴 Erro retornado pela API: $error');
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } catch (e) {
+          print('🔴 Erro ao decodificar a resposta da API: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao processar a resposta da API.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } catch (e) {
-      print('Erro de conexão: $e');
+      print('🔴 Erro de conexão ou inesperado: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro de conexão. Tente novamente.'),
