@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/notificacoes.dart';
-import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,32 +19,22 @@ class PerfiluserState extends State<Perfiluser> {
   String _errorMessage = '';
   late String _token;
 
-  int _currentIndex = -1;
-
   @override
   void initState() {
     super.initState();
     _prepararToken();
   }
 
-  Future<void> _prepararToken() async {
+  void _prepararToken() {
     if (widget.token != null && widget.token!.isNotEmpty) {
       _token = widget.token!;
       _carregarDadosUsuario();
     } else {
-      final prefs = await SharedPreferences.getInstance();
-      final savedToken = prefs.getString('token');
-
-      if (savedToken != null && savedToken.isNotEmpty) {
-        _token = savedToken;
-        _carregarDadosUsuario();
-      } else {
-        setState(() {
-          _errorFetching = true;
-          _isLoading = false;
-          _errorMessage = 'Token inválido ou não fornecido.';
-        });
-      }
+      setState(() {
+        _errorFetching = true;
+        _isLoading = false;
+        _errorMessage = 'Token inválido ou não fornecido.';
+      });
     }
   }
 
@@ -53,9 +42,9 @@ class PerfiluserState extends State<Perfiluser> {
     try {
       final data = await AuthController.obterInformacoesUsuario(_token);
 
-      if (data != null) {
+      if (data != null && data['user'] != null) {
         setState(() {
-          _userData = data;
+          _userData = data['user'];
           _isLoading = false;
         });
       } else {
@@ -76,7 +65,7 @@ class PerfiluserState extends State<Perfiluser> {
 
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
+    await prefs.remove('token'); // ou prefs.clear() se quiser limpar tudo
 
     if (!mounted) return;
     Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
@@ -114,18 +103,10 @@ class PerfiluserState extends State<Perfiluser> {
           }
         },
       ),
-      bottomNavigationBar: NavBar(
-        currentIndex: _currentIndex,
-        enabled: false,
-        onTap: (index) {},
-      ),
     );
   }
 
   Widget _buildPerfil(BuildContext context) {
-    String telefone = _userData['phone'] ?? '';
-    String cpf = _userData['cpf'] ?? '';
-
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -177,12 +158,12 @@ class PerfiluserState extends State<Perfiluser> {
                     const SizedBox(height: 8),
                     _LabeledInfoItem(
                       label: 'Telefone',
-                      value: formatarTelefone(telefone),
+                      value: _userData['phone'] ?? 'Telefone não encontrado',
                     ),
                     const SizedBox(height: 8),
                     _LabeledInfoItem(
                       label: 'CPF',
-                      value: formatarCpf(cpf),
+                      value: _userData['cpf'] ?? 'CPF não encontrado',
                     ),
                   ],
                 ),
@@ -218,7 +199,7 @@ class PerfiluserState extends State<Perfiluser> {
                 const SizedBox(height: 10),
                 _buildMenuItem(
                   context,
-                  icon: Icons.alternate_email,
+                  icon: Icons.email_outlined,
                   title: 'Alterar E-mail',
                   onTap: () => Navigator.pushNamed(context, '/EditarEmail'),
                 ),
@@ -229,17 +210,7 @@ class PerfiluserState extends State<Perfiluser> {
                   context,
                   icon: Icons.lock_outline,
                   title: 'Alterar Senha',
-                  onTap: () async {
-                    final novoToken = await Navigator.pushNamed(context, '/EditarSenha');
-                    if (novoToken != null && mounted) {
-                      setState(() {
-                        _token = novoToken as String;
-                        _isLoading = true;
-                        _errorFetching = false;
-                      });
-                      await _carregarDadosUsuario();
-                    }
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/EditarSenha'),
                 ),
                 const SizedBox(height: 10),
                 const Divider(color: Colors.grey, height: 1, indent: 16, endIndent: 16),
@@ -269,7 +240,7 @@ class PerfiluserState extends State<Perfiluser> {
               const SizedBox(height: 8),
               TextButton.icon(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/deletar-conta');
+                  // ação de deletar conta
                 },
                 icon: const Icon(Icons.delete, color: Colors.red),
                 label: const Text(
@@ -304,29 +275,13 @@ class PerfiluserState extends State<Perfiluser> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.pop(context); // Fecha também a página de perfil
             },
             child: const Text('OK'),
           ),
         ],
       ),
     );
-  }
-
-  String formatarCpf(String cpf) {
-    final digitsOnly = cpf.replaceAll(RegExp(r'\D'), '');
-    if (digitsOnly.length != 11) return cpf;
-    return '${digitsOnly.substring(0, 3)}.${digitsOnly.substring(3, 6)}.${digitsOnly.substring(6, 9)}-${digitsOnly.substring(9)}';
-  }
-
-  String formatarTelefone(String telefone) {
-    final digitsOnly = telefone.replaceAll(RegExp(r'\D'), '');
-    if (digitsOnly.length == 11) {
-      return '+55 (${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 7)}-${digitsOnly.substring(7)}';
-    } else if (digitsOnly.length == 10) {
-      return '+55 (${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 6)}-${digitsOnly.substring(6)}';
-    }
-    return telefone;
   }
 }
 
@@ -338,34 +293,26 @@ class _LabeledInfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 1.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              '$label:',
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-              ),
+    return Row(
+      children: [
+        Text(
+          '$label: ',
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 14,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
             ),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

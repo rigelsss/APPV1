@@ -23,11 +23,6 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
   String _tipoEndereco = '';
   String _placemarkInfo = '';
   Timer? _debounce;
-  String? estado;
-  String? bairro;
-  String? municipio;
-  String? logradouro;
-  String? numero;
 
   final TextEditingController _buscaController = TextEditingController();
   static const String _googleApiKey = 'AIzaSyD-XTfAdL3WxwtBeKfvPhiu1m3niVn1CaM';
@@ -37,6 +32,7 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
   void initState() {
     super.initState();
     DenunciaData().enderecoConfirmado = false;
+
     _obterLocalizacaoAtual();
   }
 
@@ -52,144 +48,81 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
   }
 
   Future<void> _buscarEnderecoGoogle(LatLng posicao) async {
-  try {
-    final url = Uri.parse(
-      'https://maps.googleapis.com/maps/api/geocode/json?latlng=${posicao.latitude},${posicao.longitude}&key=$_googleApiKey&language=pt-BR',
-    );
-
-    final response = await http.get(url);
-    final data = json.decode(response.body);
-
-    if (data['status'] == 'OK' && data['results'].isNotEmpty) {
-      final results = data['results'] as List;
-
-      Map<String, dynamic> selecionado = results.firstWhere(
-        (r) => r['types'].contains('street_address'),
-        orElse: () => results.firstWhere(
-          (r) => r['types'].contains('route'),
-          orElse: () => results[0],
-        ),
+    try {
+      final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${posicao.latitude},${posicao.longitude}&key=$_googleApiKey&language=pt-BR',
       );
 
-      final enderecoFormatado = selecionado['formatted_address'];
-      final tipo = selecionado['types'].join(', ');
+      final response = await http.get(url);
+      final data = json.decode(response.body);
 
-      setState(() {
-        _endereco = enderecoFormatado;
-        _tipoEndereco = tipo;
-        _buscaController.text = enderecoFormatado;
-      });
+      if (data['status'] == 'OK' && data['results'].isNotEmpty) {
+        final results = data['results'] as List;
 
-      final dados = DenunciaData();
-      dados.latitude = double.parse(posicao.latitude.toStringAsFixed(8));
-      dados.longitude = double.parse(posicao.longitude.toStringAsFixed(8));
-      dados.endereco = enderecoFormatado;
-
-      // Geocoding reverso para dados adicionais
-      final placemarks = await geo.placemarkFromCoordinates(
-        posicao.latitude,
-        posicao.longitude,
-        localeIdentifier: "pt_BR",
-      );
-
-      if (placemarks.isNotEmpty) {
-        final p = placemarks.first;
-
-        dados.estado = p.administrativeArea ?? 'Desconhecido';
-        dados.bairro = p.subLocality ?? 'Desconhecido';
-        dados.municipio = (p.locality?.isNotEmpty == true
-            ? p.locality
-            : p.subAdministrativeArea) ?? 'Desconhecido';
-
-        final RegExp numeroRegex = RegExp(r',\s*(\d{1,5})');
-        final match = numeroRegex.firstMatch(enderecoFormatado);
-        final numero = match?.group(1);
-
-        dados.logradouro = (p.street != null && p.street!.isNotEmpty)
-            ? (numero != null ? '${p.street}, $numero' : p.street!)
-            : enderecoFormatado;
-
-        setState(() {
-          _placemarkInfo =
-              '${dados.logradouro}, ${dados.bairro}, ${dados.municipio}, ${dados.estado}';
-        });
-      }
-
-      if (devMode) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Google: $tipo\n📌 $_placemarkInfo'),
-            duration: const Duration(seconds: 5),
+        Map<String, dynamic> selecionado = results.firstWhere(
+          (r) => r['types'].contains('street_address'),
+          orElse: () => results.firstWhere(
+            (r) => r['types'].contains('route'),
+            orElse: () => results[0],
           ),
         );
+
+        final endereco = selecionado['formatted_address'];
+        final tipo = selecionado['types'].join(', ');
+
+        setState(() {
+          _endereco = endereco;
+          _tipoEndereco = tipo;
+          _buscaController.text = endereco;
+        });
+
+        DenunciaData().localizacao = posicao;
+        DenunciaData().endereco = endereco;
+
+        final placemarks = await geo.placemarkFromCoordinates(
+          posicao.latitude,
+          posicao.longitude,
+          localeIdentifier: "pt_BR",
+        );
+
+        if (placemarks.isNotEmpty) {
+          final p = placemarks.first;
+          setState(() {
+            _placemarkInfo = '${p.street}, ${p.subLocality}, ${p.locality}, ${p.postalCode}';
+          });
+        }
+
+        if (devMode) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Google: $tipo\n📌 $_placemarkInfo'),
+              duration: const Duration(seconds: 5),
+            ),
+          );
+        }
+      } else {
+        throw Exception('Nenhum resultado');
       }
-    } else {
-      throw Exception('Nenhum resultado');
-    }
-  } catch (e) {
-    setState(() {
-      _endereco = 'Endereço não encontrado';
-      _tipoEndereco = '';
-      _placemarkInfo = '';
-      _buscaController.text = _endereco;
-    });
-
-    final dados = DenunciaData();
-    dados.endereco = 'Endereço não encontrado';
-    dados.estado = 'Desconhecido';
-    dados.bairro = 'Desconhecido';
-    dados.municipio = 'Desconhecido';
-    dados.logradouro = 'Desconhecido';
-
-    if (devMode) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erro ao buscar endereço: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+    } catch (e) {
+      setState(() {
+        _endereco = 'Endereço não encontrado';
+        _tipoEndereco = '';
+        _placemarkInfo = '';
+        _buscaController.text = _endereco;
+      });
+      DenunciaData().endereco = 'Endereço não encontrado';
     }
   }
-}
 
-void _confirmarEndereco() {
-  if (_posicaoAtual == null) return;
+  void _confirmarEndereco() {
+    print('Endereço confirmado: $_endereco');
 
-  final dados = DenunciaData();
+    DenunciaData().localizacao = _posicaoAtual;
+    DenunciaData().endereco = _endereco;
+    DenunciaData().enderecoConfirmado = true;
 
-  // Validação: todos os campos essenciais devem estar preenchidos
-  if ([dados.estado, dados.bairro, dados.municipio, dados.logradouro]
-      .any((e) => e == null || e.isEmpty)) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Endereço incompleto. Tente reposicionar o mapa ou buscar manualmente.'),
-        backgroundColor: Colors.red,
-      ),
-    );
-    return;
+    widget.onEnderecoConfirmado();
   }
-
-  // Salva coordenadas e confirmação
-  dados.latitude = double.parse(_posicaoAtual!.latitude.toStringAsFixed(8));
-  dados.longitude = double.parse(_posicaoAtual!.longitude.toStringAsFixed(8));
-  dados.endereco = _endereco;
-  dados.enderecoConfirmado = true;
-
-  if (devMode) {
-    print('✅ Endereço confirmado:');
-    print('📍 Endereço: ${dados.endereco}');
-    print('🧭 Lat/Lng: ${dados.latitude}, ${dados.longitude}');
-    print('🏙️ Estado: ${dados.estado}');
-    print('🏘️ Bairro: ${dados.bairro}');
-    print('🏡 Município: ${dados.municipio}');
-    print('🛣️ Logradouro: ${dados.logradouro}');
-    print('☑️ Confirmado: ${dados.enderecoConfirmado}');
-  }
-
-  widget.onEnderecoConfirmado();
-}
-
-
 
   Future<void> _abrirBuscaModalEstilizado() async {
     final resultado = await showModalBottomSheet(
@@ -211,7 +144,8 @@ void _confirmarEndereco() {
         _buscaController.text = enderecoSelecionado;
       });
 
-      await _buscarEnderecoGoogle(destino);
+      DenunciaData().localizacao = _posicaoAtual;
+      DenunciaData().endereco = _endereco;
     }
   }
 

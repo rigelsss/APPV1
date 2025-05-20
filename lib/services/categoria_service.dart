@@ -1,24 +1,20 @@
+// lib/services/categoria_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 
 class CategoriaService {
-  static Future<List<dynamic>> buscarCategoriasComTipos() async {
+  static Future<List<dynamic>> buscarCategorias() async {
     try {
-      final response = await http.get(
-        Uri.parse('${dotenv.env['URL_API']}/denuncias/categorias/tipos'),
-      );
-
+      final response = await http.get(Uri.parse('http://10.0.2.2:3000/categorias'));
       if (response.statusCode == 200) {
-        final decodedBody = utf8.decode(response.bodyBytes);
-        return json.decode(decodedBody);
+        final List<dynamic> categorias = json.decode(response.body);
+        return categorias;
       } else {
-        print('Erro ao carregar categorias: ${response.statusCode}');
-        return [];
+        throw Exception('Erro ao carregar categorias: ${response.statusCode}');
       }
     } catch (e) {
-      print('Erro na requisição: $e');
-      return [];
+      print('Erro ao buscar categorias: $e');
+      rethrow; // repassa o erro para quem chamou
     }
   }
 }

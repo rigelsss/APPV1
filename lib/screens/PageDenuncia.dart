@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'webview_screen.dart';
-import 'denunciawraprellerscreen.dart';
+import 'NovaDenuncia.dart';
 
 class DenunciaPage extends StatelessWidget {
   const DenunciaPage({super.key});
@@ -29,7 +29,7 @@ class DenunciaPage extends StatelessWidget {
                     onPressed: () {
                       Navigator.push(
                         context,
-                          MaterialPageRoute(builder: (context) => const DenunciaWrapperScreen()),
+                        MaterialPageRoute(builder: (context) => const NovaDenuncia()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
