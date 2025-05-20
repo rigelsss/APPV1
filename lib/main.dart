@@ -13,6 +13,7 @@ import 'package:sudema_app/screens/praias.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
 import 'package:sudema_app/screens/editar_perfil.dart';
 import 'package:sudema_app/screens/noticias.dart';
+import 'package:sudema_app/screens/reativar_conta.dart';
 
 import 'package:sudema_app/services/notification_handler.dart';
 
@@ -60,6 +61,7 @@ class MyApp extends StatelessWidget {
         '/perfil': (context) => const Perfiluser(),
         '/contatos' : (context) => const Contatos(),
         '/deletar-conta': (context) => DeletarContaPage(),
+        '/reativar-conta': (context) => const ReativarContaPage(email: '', senha: ''),
       },
     );
   }
