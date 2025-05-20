@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sudema_app/services/estacoes_service.dart'; 
+import 'package:sudema_app/services/estacoes_service.dart';
+import 'package:sudema_app/models/praia_marker.dart';
+import 'package:sudema_app/screens/widgets/praias_widgets.dart';
+import 'package:sudema_app/screens/widgets/estacao_info_card.dart';
+import 'package:sudema_app/services/mapa_service.dart';
+import 'package:sudema_app/services/marcadores_service.dart';
 
 class PraiasPage extends StatefulWidget {
   const PraiasPage({super.key});
@@ -9,21 +14,14 @@ class PraiasPage extends StatefulWidget {
   State<PraiasPage> createState() => _PraiasPageState();
 }
 
-class _PraiaMarker {
-  final Marker marker;
-  final String classificacao;
-  _PraiaMarker({required this.marker, required this.classificacao});
-}
-
 class _PraiasPageState extends State<PraiasPage> {
   late GoogleMapController mapController;
   final LatLng _initialPosition = const LatLng(-7.1202, -34.8802);
+  final GlobalKey _mapKey = GlobalKey();
 
-  // dados carregados do JSON
   List<EstacaoMonitoramento> _estacoes = [];
   bool _isLoadingEstacoes = true;
 
-  // filtros e zoom
   List<String> classificacoesSelecionadas = ['Próprias', 'Impróprias'];
   String municipioSelecionado = '';
   String praiaSelecionada = '';
@@ -31,54 +29,43 @@ class _PraiasPageState extends State<PraiasPage> {
   double currentZoom = 11.0;
   final double minZoomToShowMarkers = 12.5;
 
-  final List<String> municipios = [
-    'Todos',
-    'Mataraca',
-    'Baia da Traição',
-    'Rio Tinto',
-    'Lucena',
-    'Cabedelo',
-    'João Pessoa',
-    'Conde',
-    'Pitimbú'
-  ];
-
   BitmapDescriptor? _iconePropria;
   BitmapDescriptor? _iconeImpropria;
 
-  // marcadores internos
-  final List<_PraiaMarker> _todosMarcadores = [];
+  final List<PraiaMarker> _todosMarcadores = [];
   final Set<Marker> _marcadoresVisiveis = {};
+
+  EstacaoMonitoramento? _estacaoSelecionada;
+  Offset? _overlayPosition;
 
   @override
   void initState() {
     super.initState();
-    print("▶ Iniciando carregamento das estações...");
-    _loadEstacoesFromJson();
-    _carregarIcones();
+    _inicializarTudo();
   }
 
-Future<void> _loadEstacoesFromJson() async {
-  try {
-    print("▶ Carregando estações via EstacoesService...");
-    _estacoes = await EstacoesService.carregarEstacoes();
-    print("  • ${_estacoes.length} estações carregadas");
-    setState(() {
-      _isLoadingEstacoes = false;
-    });
-    _gerarMarcadoresComSimulacao();
-  } catch (e, st) {
-    print("✖ Erro ao carregar estações: $e");
-    print(st);
-    setState(() {
-      _isLoadingEstacoes = false;
-    });
+  Future<void> _inicializarTudo() async {
+    try {
+      await _carregarIcones();
+      await _loadEstacoesFromJson();
+    } catch (e) {
+      print("Erro na inicialização: $e");
+      setState(() => _isLoadingEstacoes = false);
+    }
   }
-}
+
+  Future<void> _loadEstacoesFromJson() async {
+    try {
+      _estacoes = await EstacoesService.carregarEstacoes();
+      setState(() => _isLoadingEstacoes = false);
+    } catch (e) {
+      print("Erro: $e");
+      setState(() => _isLoadingEstacoes = false);
+    }
+  }
 
   Future<void> _carregarIcones() async {
     try {
-      print("  • Carregando ícones de praia...");
       _iconePropria = await BitmapDescriptor.fromAssetImage(
         const ImageConfiguration(size: Size(14, 14)),
         'assets/images/propria.png',
@@ -87,50 +74,49 @@ Future<void> _loadEstacoesFromJson() async {
         const ImageConfiguration(size: Size(14, 14)),
         'assets/images/impropria.png',
       );
-      print("  • Ícones carregados com sucesso");
+      print('✅ Ícones carregados com sucesso.');
     } catch (e) {
-      print("✖ Erro ao carregar ícones: $e");
+      print('❌ Erro ao carregar ícones: $e');
     }
   }
 
   void _gerarMarcadoresComSimulacao() {
-    print("▶ Gerando marcadores a partir de _estacoes...");
     _todosMarcadores.clear();
-    for (var est in _estacoes) {
-      final icon = est.classificacao == 'Próprias' ? _iconePropria : _iconeImpropria;
-      final marker = Marker(
-        markerId: MarkerId(est.codigo),
-        position: est.coordenadas,
-        icon: icon ?? BitmapDescriptor.defaultMarker,
-        infoWindow: InfoWindow(
-          title: est.nome,
-          snippet: '${est.endereco}\n${est.classificacao}',
-        ),
-      );
-      _todosMarcadores.add(_PraiaMarker(marker: marker, classificacao: est.classificacao));
-      print("  • Marcador criado: ${est.nome} (${est.classificacao})");
-    }
-    // aplica filtro inicial
-    setState(() {
-      _filtrarMarcadores();
-    });
+
+    final novosMarcadores = MarcadoresService.gerarMarcadores(
+      estacoes: _estacoes,
+      iconePropria: _iconePropria ?? BitmapDescriptor.defaultMarker,
+      iconeImpropria: _iconeImpropria ?? BitmapDescriptor.defaultMarker,
+      getScreenCoordinate: mapController.getScreenCoordinate,
+      getMapOffset: () {
+        final RenderBox box = _mapKey.currentContext!.findRenderObject() as RenderBox;
+        return box.localToGlobal(Offset.zero);
+      },
+      onTapEstacao: (est, offset) {
+        setState(() {
+          _estacaoSelecionada = est;
+          _overlayPosition = offset;
+        });
+      },
+    );
+
+    _todosMarcadores.addAll(novosMarcadores);
+    _filtrarMarcadores();
   }
 
   void _filtrarMarcadores() {
     _marcadoresVisiveis.clear();
     if (currentZoom >= minZoomToShowMarkers) {
       for (var pm in _todosMarcadores) {
-        // encontra a estacao pelo markerId
         final est = _estacoes.firstWhere((e) => e.codigo == pm.marker.markerId.value);
-        final matchMun = municipioSelecionado.isEmpty ||
-            municipioSelecionado == 'Todos' ||
-            est.municipio == municipioSelecionado;
+        final matchMun = municipioSelecionado.isEmpty || municipioSelecionado == 'Todos' || est.municipio == municipioSelecionado;
         final matchClass = classificacoesSelecionadas.contains(pm.classificacao);
         if (matchMun && matchClass) {
           _marcadoresVisiveis.add(pm.marker);
         }
       }
     }
+    setState(() {});
   }
 
   void _toggleClassificacao(String item) {
@@ -146,26 +132,10 @@ Future<void> _loadEstacoesFromJson() async {
     });
   }
 
-  LatLng _calcularCentroMunicipio(List<EstacaoMonitoramento> lista) {
-    final latSum = lista.map((e) => e.coordenadas.latitude).reduce((a, b) => a + b);
-    final lngSum = lista.map((e) => e.coordenadas.longitude).reduce((a, b) => a + b);
-    return LatLng(latSum / lista.length, lngSum / lista.length);
-  }
-
-  void _moverMapaParaMunicipio(String municipio) {
-    final lista = _estacoes.where((e) => e.municipio == municipio).toList();
-    if (lista.isNotEmpty) {
-      final destino = _calcularCentroMunicipio(lista);
-      mapController.animateCamera(CameraUpdate.newLatLngZoom(destino, 12.5));
-    }
-    _filtrarMarcadores();
-  }
-
   String _getClassificacaoLabel() {
     if (classificacoesSelecionadas.length == 2) return 'Mostrar tudo';
     if (classificacoesSelecionadas.contains('Próprias')) return 'Mostrar apenas próprias';
-    if (classificacoesSelecionadas.contains('Impróprias')) return 'Mostrar apenas impróprias';
-    return 'Mostrar tudo';
+    return 'Mostrar apenas impróprias';
   }
 
   @override
@@ -175,31 +145,27 @@ Future<void> _loadEstacoesFromJson() async {
         body: Center(child: CircularProgressIndicator()),
       );
     }
+
     return Scaffold(
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(16),
             color: Colors.white,
-            child: const Text(
-              "Balneabilidade",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
+            alignment:Alignment.centerLeft,
+            child: const Text("Balneabilidade", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
           ),
           Container(
-            color: Colors.grey.shade300,
+            color: Colors.grey.shade200,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Trechos monitorados",
-                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                    const Text("Trechos monitorados", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 4),
-                    Text("${_estacoes.length}",
-                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                    Text("${_estacoes.length}", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
                   ],
                 ),
                 const Spacer(),
@@ -209,13 +175,50 @@ Future<void> _loadEstacoesFromJson() async {
                   child: PopupMenuButton<String>(
                     onSelected: _toggleClassificacao,
                     itemBuilder: (_) => [
-                      _popupItem('Mostrar tudo', classificacoesSelecionadas.length == 2),
-                      _popupItem('Mostrar apenas próprias',
-                          classificacoesSelecionadas.contains('Próprias') && classificacoesSelecionadas.length == 1),
-                      _popupItem('Mostrar apenas impróprias',
-                          classificacoesSelecionadas.contains('Impróprias') && classificacoesSelecionadas.length == 1),
+                      PopupMenuItem<String>(
+                        value: 'Mostrar tudo',
+                        child: Row(
+                          children: [
+                            Radio<String>(
+                              value: 'Mostrar tudo',
+                              groupValue: _getClassificacaoLabel(),
+                              onChanged: (_) => Navigator.pop(context, 'Mostrar tudo'),
+                            ),
+                            const SizedBox(width: 8),
+                            const Text('Mostrar tudo'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'Mostrar apenas próprias',
+                        child: Row(
+                          children: [
+                            Radio<String>(
+                              value: 'Mostrar apenas próprias',
+                              groupValue: _getClassificacaoLabel(),
+                              onChanged: (_) => Navigator.pop(context, 'Mostrar apenas próprias'),
+                            ),
+                            const SizedBox(width: 8),
+                            const Text('Mostrar apenas próprias'),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'Mostrar apenas impróprias',
+                        child: Row(
+                          children: [
+                            Radio<String>(
+                              value: 'Mostrar apenas impróprias',
+                              groupValue: _getClassificacaoLabel(),
+                              onChanged: (_) => Navigator.pop(context, 'Mostrar apenas impróprias'),
+                            ),
+                            const SizedBox(width: 8),
+                            const Text('Mostrar apenas impróprias'),
+                          ],
+                        ),
+                      ),
                     ],
-                    child: _popupButton(_getClassificacaoLabel()),
+                    child: popupButton(_getClassificacaoLabel()),
                   ),
                 ),
               ],
@@ -225,98 +228,88 @@ Future<void> _loadEstacoesFromJson() async {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                _buildFiltroMunicipio(),
+                buildFiltroMunicipio(
+                  municipioSelecionado: municipioSelecionado,
+                  onSelected: (value) {
+                    setState(() => municipioSelecionado = value);
+                    if (value.isNotEmpty && value != 'Todos') {
+                      MapaService.moverMapaParaMunicipio(
+                        controller: mapController,
+                        estacoes: _estacoes,
+                        municipio: value,
+                        onComplete: _filtrarMarcadores,
+                      );
+                    } else {
+                      _filtrarMarcadores();
+                    }
+                  },
+                ),
                 const SizedBox(width: 8),
-                _buildFiltroPraia(),
+                buildFiltroPraia(),
               ],
             ),
           ),
           Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: GoogleMap(
-                onMapCreated: (controller) async {
-                  mapController = controller;
-                  final zoomLevel = await controller.getZoomLevel();
-                  setState(() {
-                    currentZoom = zoomLevel;
-                    _filtrarMarcadores();
-                  });
-                },
-                onCameraMove: (pos) {
-                  setState(() {
-                    currentZoom = pos.zoom;
-                    _filtrarMarcadores();
-                  });
-                },
-                initialCameraPosition: CameraPosition(target: _initialPosition, zoom: currentZoom),
-                myLocationButtonEnabled: false,
-                zoomControlsEnabled: false,
-                markers: _marcadoresVisiveis,
-              ),
+            child: Stack(
+              children: [
+                GoogleMap(
+                  key: _mapKey,
+                  onMapCreated: (controller) async {
+                    mapController = controller;
+                    final zoomLevel = await controller.getZoomLevel();
+                    setState(() {
+                      currentZoom = zoomLevel;
+                    });
+
+                    if (_estacoes.isNotEmpty && _todosMarcadores.isEmpty) {
+                      _gerarMarcadoresComSimulacao();
+                    }
+                  },
+                  onTap: (_) {
+                    setState(() {
+                      _estacaoSelecionada = null;
+                      _overlayPosition = null;
+                    });
+                  },
+                  onCameraMove: (pos) {
+                    setState(() {
+                      currentZoom = pos.zoom;
+                      _filtrarMarcadores();
+                    });
+                  },
+                  initialCameraPosition: CameraPosition(target: _initialPosition, zoom: currentZoom),
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                  markers: _marcadoresVisiveis,
+                ),
+                if (_estacaoSelecionada != null && _overlayPosition != null)
+                  Builder(
+                    builder: (context) {
+                      final screenSize = MediaQuery.of(context).size;
+                      const cardWidth = 260.0;
+                      const cardHeight = 160.0;
+                      const spacing = 12.0;
+
+                      double left = _overlayPosition!.dx + spacing;
+                      if (left + cardWidth > screenSize.width) {
+                        left = _overlayPosition!.dx - cardWidth - spacing;
+                      }
+                      left = left.clamp(8.0, screenSize.width - cardWidth - 8.0);
+
+                      double top = (_overlayPosition!.dy - cardHeight / 2).clamp(8.0, screenSize.height - cardHeight - 8.0);
+
+                      return Positioned(
+                        left: left,
+                        top: top,
+                        child: EstacaoInfoCard(estacao: _estacaoSelecionada!),
+                      );
+                    },
+                  ),
+              ],
             ),
-          ),
+          )
         ],
       ),
     );
   }
-
-  Widget _buildFiltroMunicipio() => Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Filtrar por", style: TextStyle(fontSize: 12)),
-            const SizedBox(height: 8),
-            PopupMenuButton<String>(
-              onSelected: (value) {
-                setState(() => municipioSelecionado = value);
-                if (value.isNotEmpty && value != 'Todos') {
-                  _moverMapaParaMunicipio(value);
-                } else {
-                  _filtrarMarcadores();
-                }
-              },
-              itemBuilder: (_) =>
-                  municipios.map((m) => PopupMenuItem<String>(value: m, child: Text(m))).toList(),
-              child: _popupButton(municipioSelecionado.isEmpty ? 'Municípios' : municipioSelecionado),
-            ),
-          ],
-        ),
-      );
-
-  Widget _buildFiltroPraia() => Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 24),
-            _popupButton("Trecho"),
-          ],
-        ),
-      );
-
-  Widget _popupButton(String label) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade500, width: 1.2),
-          borderRadius: BorderRadius.circular(6),
-          color: Colors.white,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Flexible(child: Text(label, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11))),
-            const Icon(Icons.keyboard_arrow_down_rounded, size: 20),
-          ],
-        ),
-      );
-
-  PopupMenuItem<String> _popupItem(String label, bool isChecked) => PopupMenuItem<String>(
-        value: label,
-        child: Row(
-          children: [
-            Checkbox(value: isChecked, onChanged: (_) => Navigator.pop(context, label)),
-            Flexible(child: Text(label)),
-          ],
-        ),
-      );
 }

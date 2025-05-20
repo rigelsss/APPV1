@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LoginController {
   static Future<Map<String, dynamic>?> realizarLogin(String email, String senha) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:9000/auth/login'),
+      Uri.parse('${dotenv.env['URL_API']}/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           "login": email,
