@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:sudema_app/screens/alterar_email.dart';
-
+import 'package:sudema_app/screens/deletar_conta.dart';
 import 'package:sudema_app/screens/EditSenha.dart';
 import 'package:sudema_app/screens/PageDenuncia.dart';
 import 'package:sudema_app/screens/perfil_page.dart';
@@ -59,6 +59,7 @@ class MyApp extends StatelessWidget {
         '/EditarSenha': (context) => const EditarSenha(),
         '/perfil': (context) => const Perfiluser(),
         '/contatos' : (context) => const Contatos(),
+        '/deletar-conta': (context) => DeletarContaPage(userId: ''),
       },
     );
   }

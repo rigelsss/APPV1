@@ -230,7 +230,7 @@ class PerfiluserState extends State<Perfiluser> {
                   icon: Icons.lock_outline,
                   title: 'Alterar Senha',
                   onTap: () async {
-                    final novoToken = await Navigator.pushNamed(context, '/EditarEmail');
+                    final novoToken = await Navigator.pushNamed(context, '/EditarSenha');
                     if (novoToken != null && mounted) {
                       setState(() {
                         _token = novoToken as String;
@@ -268,7 +268,9 @@ class PerfiluserState extends State<Perfiluser> {
               ),
               const SizedBox(height: 8),
               TextButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, '/deletar-conta');
+                },
                 icon: const Icon(Icons.delete, color: Colors.red),
                 label: const Text(
                   'Deletar Conta',
