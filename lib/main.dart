@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
         '/EditarSenha': (context) => const EditarSenha(),
         '/perfil': (context) => const Perfiluser(),
         '/contatos' : (context) => const Contatos(),
-        '/deletar-conta': (context) => DeletarContaPage(userId: ''),
+        '/deletar-conta': (context) => DeletarContaPage(),
       },
     );
   }

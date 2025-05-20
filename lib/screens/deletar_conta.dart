@@ -1,13 +1,13 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:another_flushbar/flushbar.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class DeletarContaPage extends StatefulWidget {
-  final String userId;
-
-  const DeletarContaPage({super.key, required this.userId});
+  const DeletarContaPage({super.key});
 
   @override
   State<DeletarContaPage> createState() => _DeletarContaPageState();
@@ -22,12 +22,20 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
     setState(() => _isLoading = true);
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
+    String? userId;
 
-    final url = '${dotenv.env['BASE_URL']}/usuarios/mobile/${widget.userId}/desativar';
+    if (token != null && !JwtDecoder.isExpired(token)) {
+      final decodedToken = JwtDecoder.decode(token);
+      userId = decodedToken['id'].toString();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('❌ Sessão expirada. Faça login novamente.')),
+      );
+      Navigator.pushReplacementNamed(context, '/login');
+      return;
+    }
 
-    print('BASE_URL: ${dotenv.env['BASE_URL']}');
-    print('userId: ${widget.userId}');  
-
+    final url = '${dotenv.env['URL_API']}/usuarios/mobile/$userId/desativar';
 
     final response = await http.patch(
       Uri.parse(url),
@@ -35,55 +43,64 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       },
+      body: jsonEncode({'senha': _senhaController.text}),
     );
 
     setState(() => _isLoading = false);
 
     if (response.statusCode == 204) {
-      if (mounted) {
-        Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
-        await Future.delayed(const Duration(milliseconds: 500));
-        Flushbar(
-          backgroundColor: const Color(0xFFD2FDE6),
-          duration: const Duration(seconds: 4),
-          flushbarPosition: FlushbarPosition.TOP,
-          borderRadius: BorderRadius.circular(12),
-          margin: const EdgeInsets.all(8),
-          messageText: Row(
-            children: [
-              const Icon(Icons.check_circle_rounded, color: Color(0xFF1B8C00), size: 32),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'Conta desativada!',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1B8C00),
+      await prefs.remove('token');
+
+      // Aguarda um frame para garantir que a navegação esteja completa antes de mostrar a Flushbar
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/home', 
+        (route) => false,
+        arguments: {'desativado': true},  
+      );
+      Future.delayed(const Duration(milliseconds: 500), () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          Flushbar(
+            backgroundColor: const Color(0xFFD2FDE6),
+            duration: const Duration(seconds: 4),
+            flushbarPosition: FlushbarPosition.TOP,
+            borderRadius: BorderRadius.circular(12),
+            margin: const EdgeInsets.all(8),
+            messageText: Row(
+              children: [
+                const Icon(Icons.check_circle_rounded, color: Color(0xFF1B8C00), size: 32),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        'Conta desativada!',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1B8C00),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Para reativar, basta realizar login novamente.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF1B8C00),
+                      SizedBox(height: 4),
+                      Text(
+                        'Para reativar, basta realizar login novamente.',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF1B8C00),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ).show(context);
-      }
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ).show(context);
+        });
+      });
     } else {
       Flushbar(
-        title: 'Erro',
-        message: 'Não foi possível desativar a conta.',
+        title: 'Senha incorreta',
+        message: 'Não foi possível desativar a conta. Verifique sua senha e tente novamente.',
         duration: const Duration(seconds: 4),
         backgroundColor: Colors.red.shade600,
         icon: const Icon(Icons.error_outline, color: Colors.white),
