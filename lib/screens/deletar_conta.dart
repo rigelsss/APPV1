@@ -197,8 +197,8 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _desativarConta,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  side: const BorderSide(color: Color(0xFF3C9C25), width: 1.5),
+                  backgroundColor: Colors.grey[200],
+                  side: const BorderSide(color: Color(0xFF3C9C25), width: 2.3),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -219,8 +219,8 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
               child: ElevatedButton(
                 onPressed: _isLoading ? null : () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  side: const BorderSide(color: Color(0xFFAC5A5A), width: 1.5),
+                  backgroundColor: Colors.grey[200],
+                  side: const BorderSide(color: Color(0xFFAC5A5A), width: 2.3),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
