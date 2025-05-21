@@ -14,6 +14,7 @@ class DenunciaData {
   bool? anonimo = false;
 
   // Identificação do usuário
+  String? usuarioEmail;
   String? usuarioId;
   String? tokenUsuario;
 
@@ -50,6 +51,7 @@ class DenunciaData {
       'enderecoConfirmado': enderecoConfirmado,
       'localizacao': localizacao,
       'posicao': posicao,
+      'usuarioEmail': usuarioEmail,
     };
   }
 
@@ -73,5 +75,8 @@ class DenunciaData {
 
     localizacao = null;
     posicao = null;
+
+    usuarioEmail = null;
+    usuarioId = null;
   }
 }

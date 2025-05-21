@@ -176,7 +176,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
       case 1:
         return AbaLocalizacao(onEnderecoConfirmado: _irParaIdentificacao);
       case 2:
-        return Identificacao(onProsseguir: _irParaDenuncia);
+        return Identificacao(onAvancar: _irParaDenuncia);
       case 3:
         return DenunciaScreen();
       default:
@@ -215,6 +215,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                 _subcategoriaSelecionada = nome;
                 _categoriaSelecionada = texto;
                 DenunciaData().tipoDenunciaId = id.toString();
+                DenunciaData().usuarioEmail = isLoggedIn ? JwtDecoder.decode(_token!)['email'] : null;
                 _mensagemErro = null;
               });
             },
