@@ -7,8 +7,6 @@ class DenunciaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -22,31 +20,35 @@ class DenunciaPage extends StatelessWidget {
                 style: TextStyle(fontSize: 32),
               ),
               const SizedBox(height: 20),
-              Center(
-                child: SizedBox(
-                  width: screenWidth * 0.9,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                          MaterialPageRoute(builder: (context) => const DenunciaWrapperScreen()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF2A2F8C),
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const DenunciaWrapperScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2A2F8C),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16), // Borda pouco arredondada
                     ),
-                    child: const Text(
-                      'Fazer uma nova denúncia',
-                      style: TextStyle(fontSize: 18, color: Colors.white),
-                    ),
+                  ),
+                  child: const Text(
+                    'Realizar denúncia',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
+
+              // Seções de texto
               const Text(
                 'Por que denunciar?',
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               const Text(
@@ -54,9 +56,10 @@ class DenunciaPage extends StatelessWidget {
                 style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 12),
+
               const Text(
                 'O que acontece após a denúncia?',
-                style: TextStyle(fontSize: 20, color: Colors.black87),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               const Text(
@@ -64,9 +67,10 @@ class DenunciaPage extends StatelessWidget {
                 style: TextStyle(fontSize: 16, color: Colors.black87),
               ),
               const SizedBox(height: 12),
+
               const Text(
                 'O que é considerado infração ambiental?',
-                style: TextStyle(fontSize: 20),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               const Text(
@@ -74,32 +78,31 @@ class DenunciaPage extends StatelessWidget {
                 style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 12),
-
-              // Botão para abrir o Decreto
-              Center(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const WebViewScreen(
-                          url: 'https://drive.google.com/file/d/1Bb3IhBcoZLN2FkPm_vzzkhkvhBMT7BQ_/view',
-                        ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const WebViewScreen(
+                        url: 'https://drive.google.com/file/d/1Bb3IhBcoZLN2FkPm_vzzkhkvhBMT7BQ_/view',
                       ),
-                    );
-                  },
-                  child: Container(
-                    width: screenWidth * 0.9,
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF5F5F5),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: const Color(0xFF2A2F8C)),
                     ),
-                    child: const Text(
+                  );
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFF2A2F8C)),
+                  ),
+                  child: const FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
                       'Decreto Estadual nº 44.889, de 26 de março de 2024',
                       style: TextStyle(
-                        fontSize: 14,
+                        fontSize: 16,
                         color: Color(0xFF2A2F8C),
                         decoration: TextDecoration.underline,
                       ),
@@ -108,7 +111,6 @@ class DenunciaPage extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
             ],
           ),

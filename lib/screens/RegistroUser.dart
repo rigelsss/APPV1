@@ -53,7 +53,7 @@ class _RegistroUserState extends State<RegistroUser> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            campoComErro("Nome", _nomeController, TextInputType.text, "Nome de usuário", _erroNome),
+            campoComErro("Nome completo", _nomeController, TextInputType.text, "Nome completo", _erroNome),
             campoComErro("CPF", _cpfController, TextInputType.number, "000.000.000-00", _erroCpf),
             campoComErro("Contato", _contatoController, TextInputType.phone, "(00)00000-0000", _erroContato),
             campoComErro("E-mail", _emailController, TextInputType.emailAddress, "exemplo@exemplo.com", _erroEmail),
@@ -121,7 +121,7 @@ class _RegistroUserState extends State<RegistroUser> {
               child: ElevatedButton(
                 onPressed: () async {
                   setState(() {
-                    _erroNome = _nomeController.text.isEmpty ? 'Nome é obrigatório' : null;
+                    _erroNome = _nomeController.text.isEmpty ? 'adicione o nome completo' : null;
                     _erroCpf = _cpfController.text.isEmpty ? 'CPF é obrigatório' : null;
                     _erroContato = _contatoController.text.isEmpty ? 'Contato é obrigatório' : null;
                     _erroEmail = _emailController.text.isEmpty ? 'E-mail é obrigatório' : null;
