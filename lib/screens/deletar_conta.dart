@@ -167,14 +167,14 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(
-                    width: 2.0,
+                    width: 1.5,
                     color: Colors.grey[500]!,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(
-                    width: 2.0,
+                    width: 1.5,
                     color: Colors.grey[500]!,
                   ),
                 ),
@@ -194,13 +194,14 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
+              height: 56,
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _desativarConta,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[200],
-                  side: const BorderSide(color: Color(0xFF3C9C25), width: 2.3),
+                  side: const BorderSide(color: Color(0xFF3C9C25), width: 1.5),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
@@ -213,16 +214,17 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
+              height: 56, 
               child: ElevatedButton(
                 onPressed: _isLoading ? null : () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[200],
-                  side: const BorderSide(color: Color(0xFFAC5A5A), width: 2.3),
+                  side: const BorderSide(color: Color(0xFFAC5A5A), width: 1.5),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
