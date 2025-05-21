@@ -32,6 +32,8 @@ class _RegistroUserState extends State<RegistroUser> {
   bool _obscureText = true;
   bool _isChecked = false;
 
+
+
   @override
   void dispose() {
     _nomeController.dispose();
@@ -42,186 +44,210 @@ class _RegistroUserState extends State<RegistroUser> {
     _confirmarSenhaController.dispose();
     super.dispose();
   }
+  bool validarSenhaSegura(String senha) {
+    final regex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#\$&*~%^+=]).{8,}$');
+    return regex.hasMatch(senha);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarDenuncia(title: 'Cadastro'),
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            campoComErro("Nome completo", _nomeController, TextInputType.text, "Nome completo", _erroNome),
-            campoComErro("CPF", _cpfController, TextInputType.number, "000.000.000-00", _erroCpf),
-            campoComErro("Contato", _contatoController, TextInputType.phone, "(00)00000-0000", _erroContato),
-            campoComErro("E-mail", _emailController, TextInputType.emailAddress, "exemplo@exemplo.com", _erroEmail),
-            campoSenha("Senha", _senhaController, _erroSenha),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: Text(
-                'A senha deve ter no mínimo 8 caracteres e conter letras, números e caracteres especiais',
-                style: TextStyle(fontSize: 14, color: Color(0xFF747474)),
-              ),
-            ),
-            campoSenha("Confirme sua senha", _confirmarSenhaController, _erroConfirmarSenha),
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Checkbox(
-                  value: _isChecked,
-                  shape: const CircleBorder(),
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _isChecked = value ?? false;
-                    });
-                  },
-                ),
-                Expanded(
-                  child: Text(
-                    'Declaro que as informações acima prestadas são verdadeiras...',
-                    style: TextStyle(fontSize: 16, color: Colors.black),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: RichText(
-                text: TextSpan(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 600),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextSpan(
-                      text: 'Ao usar este aplicativo você concorda com os',
-                      style: TextStyle(color: Colors.black, fontSize: 12),
-                    ),
-                    TextSpan(
-                      text: ' Termos e Condições',
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                    campoComErro("Nome completo", _nomeController, TextInputType.text, "Nome completo", _erroNome),
+                    campoComErro("CPF", _cpfController, TextInputType.number, "000.000.000-00", _erroCpf),
+                    campoComErro("Contato", _contatoController, TextInputType.phone, "(00)00000-0000", _erroContato),
+                    campoComErro("E-mail", _emailController, TextInputType.emailAddress, "exemplo@exemplo.com", _erroEmail),
+                    campoSenha("Senha", _senhaController, _erroSenha),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: Text(
+                        'A senha deve ter no mínimo 8 caracteres e conter letras, números e caracteres especiais',
+                        style: TextStyle(fontSize: 14, color: Color(0xFF747474)),
                       ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Termoscondicoes(),
-                            ),
-                          );
-                        },
                     ),
+                    campoSenha("Confirme sua senha", _confirmarSenhaController, _erroConfirmarSenha),
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Checkbox(
+                          value: _isChecked,
+                          shape: const CircleBorder(),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _isChecked = value ?? false;
+                            });
+                          },
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
+                            style: TextStyle(fontSize: 14, color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Center(
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Ao usar este aplicativo você concorda com os',
+                              style: TextStyle(color: Colors.black, fontSize: 12),
+                            ),
+                            TextSpan(
+                              text: ' Termos e Condições',
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Termoscondicoes(),
+                                    ),
+                                  );
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          setState(() {
+                            _erroNome = _nomeController.text.trim().split(' ').length < 2
+                                ? 'Digite o nome completo (nome e sobrenome)'
+                                : null;
+                            _erroCpf = _cpfController.text.isEmpty ? 'CPF é obrigatório' : null;
+                            _erroContato = _contatoController.text.isEmpty ? 'Contato é obrigatório' : null;
+                            _erroEmail = _emailController.text.isEmpty ? 'E-mail é obrigatório' : null;
+                            _erroSenha = _senhaController.text.isEmpty
+                                ? 'Senha é obrigatória'
+                                : !validarSenhaSegura(_senhaController.text)
+                                ? 'A senha deve ter no mínimo 8 caracteres, incluir letras, números e caracteres especiais.'
+                                : null;
+
+                            _erroConfirmarSenha = _confirmarSenhaController.text.isEmpty ? 'Confirmação de senha é obrigatória' : null;
+                          });
+
+                          if (_erroNome != null ||
+                              _erroCpf != null ||
+                              _erroContato != null ||
+                              _erroEmail != null ||
+                              _erroSenha != null ||
+                              _erroConfirmarSenha != null) {
+                            Flushbar(
+                              message: 'Preencha todos os campos obrigatórios.',
+                              duration: Duration(seconds: 3),
+                              backgroundColor: Colors.red,
+                              flushbarPosition: FlushbarPosition.TOP,
+                              icon: Icon(Icons.error, color: Colors.white),
+                            ).show(context);
+                            return;
+                          }
+
+                          if (_senhaController.text != _confirmarSenhaController.text) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('As senhas não coincidem.')),
+                            );
+                            return;
+                          }
+
+                          final resultado = await _controller.validarERegistrar(
+                            nome: _nomeController.text,
+                            cpf: _cpfController.text,
+                            telefone: _contatoController.text,
+                            email: _emailController.text,
+                            senha: _senhaController.text,
+                            aceitouTermos: _isChecked,
+                          );
+
+                          if (resultado == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Cadastro realizado com sucesso!')),
+                            );
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => LoginPage()),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(resultado)),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          padding: EdgeInsets.symmetric(vertical: 15, horizontal: 140),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'Criar Conta',
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Center(
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Já possui uma conta? ',
+                              style: TextStyle(color: Colors.black, fontSize: 18),
+                            ),
+                            TextSpan(
+                              text: 'Faça login',
+                              style: TextStyle(
+                                color: Color(0xFF2A2F8C),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LoginPage(),
+                                    ),
+                                  );
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  setState(() {
-                    _erroNome = _nomeController.text.isEmpty ? 'adicione o nome completo' : null;
-                    _erroCpf = _cpfController.text.isEmpty ? 'CPF é obrigatório' : null;
-                    _erroContato = _contatoController.text.isEmpty ? 'Contato é obrigatório' : null;
-                    _erroEmail = _emailController.text.isEmpty ? 'E-mail é obrigatório' : null;
-                    _erroSenha = _senhaController.text.isEmpty ? 'Senha é obrigatória' : null;
-                    _erroConfirmarSenha = _confirmarSenhaController.text.isEmpty ? 'Confirmação de senha é obrigatória' : null;
-                  });
-
-                  if (_erroNome != null ||
-                      _erroCpf != null ||
-                      _erroContato != null ||
-                      _erroEmail != null ||
-                      _erroSenha != null ||
-                      _erroConfirmarSenha != null) {
-                    Flushbar(
-                      message: 'Preencha todos os campos obrigatórios.',
-                      duration: Duration(seconds: 3),
-                      backgroundColor: Colors.red,
-                      flushbarPosition: FlushbarPosition.TOP,
-                      icon: Icon(Icons.error, color: Colors.white),
-                    ).show(context);
-                    return;
-                  }
-
-                  if (_senhaController.text != _confirmarSenhaController.text) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('As senhas não coincidem.')),
-                    );
-                    return;
-                  }
-
-                  final resultado = await _controller.validarERegistrar(
-                    nome: _nomeController.text,
-                    cpf: _cpfController.text,
-                    telefone: _contatoController.text,
-                    email: _emailController.text,
-                    senha: _senhaController.text,
-                    aceitouTermos: _isChecked,
-                  );
-
-                  if (resultado == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Cadastro realizado com sucesso!')),
-                    );
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(resultado)),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 140),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                child: Text(
-                  'Criar Conta',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'Já possui uma conta? ',
-                      style: TextStyle(color: Colors.black, fontSize: 18),
-                    ),
-                    TextSpan(
-                      text: 'Faça login',
-                      style: TextStyle(
-                        color: Color(0xFF2A2F8C),
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        decoration: TextDecoration.underline,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          );
-                        },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -256,7 +282,7 @@ class _RegistroUserState extends State<RegistroUser> {
 
   Widget campoSenha(String label, TextEditingController controller, String? erro) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24.0),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
