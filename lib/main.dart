@@ -13,9 +13,8 @@ import 'package:sudema_app/screens/praias.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
 import 'package:sudema_app/screens/editar_perfil.dart';
 import 'package:sudema_app/screens/noticias.dart';
-
+import 'package:sudema_app/screens/reativar_conta.dart';
 import 'package:sudema_app/services/notification_handler.dart';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -59,7 +58,8 @@ class MyApp extends StatelessWidget {
         '/EditarSenha': (context) => const EditarSenha(),
         '/perfil': (context) => const Perfiluser(),
         '/contatos' : (context) => const Contatos(),
-        '/deletar-conta': (context) => DeletarContaPage(userId: ''),
+        '/deletar-conta': (context) => const DeletarContaPage(),
+        '/reativar-conta': (context) => const ReativarContaPage(email: '', senha: ''),
       },
     );
   }
