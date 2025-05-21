@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
         '/balneablilidade': (context) => const PraiasPage(),
         '/noticias': (context) => const NoticiasPage(),
         '/denuncias': (context) => const DenunciaPage(),
-        '/editar-perfil': (context) => const EditarPerfil(),
+        '/editar-perfil': (context) => const EditarPerfil(nomeAtual: '', telefoneAtual: '', cpfAtual: ''),
         '/EditarEmail': (context) => const EditarEmail(),
         '/EditarSenha': (context) => const EditarSenha(),
         '/perfil': (context) => const Perfiluser(),
