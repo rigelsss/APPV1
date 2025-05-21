@@ -11,7 +11,6 @@ import 'package:sudema_app/utils/validarCPF.dart';
 import 'package:sudema_app/screens/widgets/custom_form_field.dart';
 
 class EditarPerfil extends StatefulWidget {
-
   final String nomeAtual;
   final String telefoneAtual;
   final String cpfAtual;
@@ -21,7 +20,7 @@ class EditarPerfil extends StatefulWidget {
     required this.nomeAtual,
     required this.telefoneAtual,
     required this.cpfAtual,
-    });
+  });
 
   @override
   State<EditarPerfil> createState() => _EditarPerfilState();
@@ -47,8 +46,10 @@ class _EditarPerfilState extends State<EditarPerfil> {
     _recuperarUsuarioId();
 
     _nomeController.text = widget.nomeAtual;
-    _telefoneController.text = widget.telefoneAtual;
-    _cpfController.text = widget.cpfAtual;
+    _telefoneController.text =
+        telMask.maskText(widget.telefoneAtual.replaceAll(RegExp(r'\D'), ''));
+    _cpfController.text =
+        cpfMask.maskText(widget.cpfAtual.replaceAll(RegExp(r'\D'), ''));
   }
 
   Future<void> _recuperarUsuarioId() async {
