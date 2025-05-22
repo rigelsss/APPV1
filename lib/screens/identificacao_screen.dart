@@ -25,27 +25,26 @@ class _AbaIdentificacaoState extends State<Identificacao> {
   }
 
   Future<void> _verificarLogin() async {
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
 
-  if (token != null && !JwtDecoder.isExpired(token)) {
-    final dadosUsuario = await AuthController.obterInformacoesUsuario(token);
+    if (token != null && !JwtDecoder.isExpired(token)) {
+      final dadosUsuario = await AuthController.obterInformacoesUsuario(token);
 
-    if (dadosUsuario != null && dadosUsuario['email'] != null) {
-      setState(() {
-        _logado = true;
-        usuarioEmail = dadosUsuario['email'];
-        _anonimo = false;
-        DenunciaData().usuarioEmail = usuarioEmail;
-      });
+      if (dadosUsuario != null && dadosUsuario['email'] != null) {
+        setState(() {
+          _logado = true;
+          usuarioEmail = dadosUsuario['email'];
+          _anonimo = false;
+          DenunciaData().usuarioEmail = usuarioEmail;
+        });
+      } else {
+        print('⚠️ Email não encontrado nos dados do usuário');
+      }
     } else {
-      print('⚠️ Email não encontrado nos dados do usuário');
+      print('⚠️ Token inválido ou expirado');
     }
-  } else {
-    print('⚠️ Token inválido ou expirado');
   }
-}
-
 
   void _selecionarAnonimo() {
     setState(() {
@@ -109,14 +108,25 @@ class _AbaIdentificacaoState extends State<Identificacao> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Você acessou o sistema como $usuarioEmail',
-                  style: const TextStyle(fontSize: 14),
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                    ),
+                    children: [
+                      const TextSpan(text: 'Você acessou o sistema como '),
+                      TextSpan(
+                        text: usuarioEmail ?? '',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
-                  height: 52,
+                  height: 58,
                   child: ElevatedButton(
                     onPressed: _selecionarIdentificado,
                     style: ElevatedButton.styleFrom(
@@ -129,7 +139,7 @@ class _AbaIdentificacaoState extends State<Identificacao> {
                         width: 1.5,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                     ),
                     child: const Text('Prosseguir com identificação'),
@@ -138,7 +148,7 @@ class _AbaIdentificacaoState extends State<Identificacao> {
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
-                  height: 52,
+                  height: 58,
                   child: ElevatedButton(
                     onPressed: _selecionarAnonimo,
                     style: ElevatedButton.styleFrom(
@@ -151,7 +161,7 @@ class _AbaIdentificacaoState extends State<Identificacao> {
                         width: 1.5,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                     ),
                     child: const Text('Continuar de forma anônima'),
