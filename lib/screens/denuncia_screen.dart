@@ -8,6 +8,8 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'dart:io';
+import 'package:dotted_border/dotted_border.dart';
+
 
 class DenunciaScreen extends StatefulWidget {
   @override
@@ -222,27 +224,16 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 ),
                 const SizedBox(height: 24),
                 _buildLabel('Data do ocorrido *'),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _dataController,
                   focusNode: _dataFocus,
                   readOnly: true,
-                  decoration: InputDecoration(
-                    hintText: 'dd/mm/aaaa',
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: _selecionarData,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[300]!, width: 1.5),
-                    ),
-                    errorText: _exibirErroData && !_dataValida
-                        ? 'Data inválida ou no futuro'
-                        : null,
-                  ),
+                  decoration: _dataInputDecoration(),
                 ),
                 const SizedBox(height: 24),
                 _buildLabel('Descrição *'),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _descricaoController,
                   maxLines: 4,
@@ -253,6 +244,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 ),
                 const SizedBox(height: 24),
                 _buildLabel('Ponto de referência *'),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _referenciaController,
                   decoration: _inputDecoration(
@@ -262,6 +254,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 ),
                 const SizedBox(height: 24),
                 _buildLabel('Informações do denunciado *'),
+                const SizedBox(height: 10),
                 TextField(
                   controller: _denunciadoController,
                   decoration: _inputDecoration(
@@ -271,6 +264,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 ),
                 const SizedBox(height: 24),
                 _buildLabel('Adicionar arquivos'),
+                const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () async {
                     final picker = ImagePicker();
@@ -328,55 +322,85 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
 
   Widget _buildLabel(String texto) => Text(texto, style: const TextStyle(fontSize: 16));
 
-  InputDecoration _inputDecoration(String hint, String? erro) {
-    return InputDecoration(
-      hintText: hint,
-      errorText: erro,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.grey[300]!, width: 1.5),
-      ),
-    );
-  }
+InputDecoration _inputDecoration(String hint, String? erro) {
+  final base = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(6),
+    borderSide: const BorderSide(color: Color.fromARGB(255, 191, 191, 191), width: 1.5),
+  );
+
+  return InputDecoration(
+    hintText: hint,
+    hintStyle: const TextStyle(color: Color.fromARGB(255, 142, 142, 142)),
+    errorText: erro,
+    enabledBorder: base,
+    focusedBorder: base,
+    errorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
+    focusedErrorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
+  );
+}
+
+InputDecoration _dataInputDecoration() {
+  final base = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(6),
+    borderSide: const BorderSide(color: Color.fromARGB(255, 191, 191, 191), width: 1.5),
+  );
+
+  return InputDecoration(
+    hintText: 'dd/mm/aaaa',
+    hintStyle: const TextStyle(color: Color.fromARGB(255, 142, 142, 142)), 
+    suffixIcon: IconButton(
+      icon: const Icon(Icons.calendar_today),
+      onPressed: _selecionarData,
+    ),
+    errorText: _exibirErroData && !_dataValida ? 'Data inválida' : null,
+    enabledBorder: base,
+    focusedBorder: base,
+    errorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
+    focusedErrorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
+  );
+}
 }
 
 class DottedBorderContainer extends StatelessWidget {
   final List<XFile> imagens;
 
-  const DottedBorderContainer({required this.imagens});
+  const DottedBorderContainer({super.key, required this.imagens});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 120,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey, width: 1.5, style: BorderStyle.solid),
-        borderRadius: BorderRadius.circular(8),
+    return DottedBorder(
+      color: const Color.fromARGB(255, 191, 191, 191),
+      strokeWidth: 1.5,
+      dashPattern: [8, 4],
+      borderType: BorderType.RRect,
+      radius: const Radius.circular(6),
+      child: Container(
+        height: 120,
+        width: double.infinity,
+        padding: const EdgeInsets.all(8),
+        child: imagens.isEmpty
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.upload_outlined, size: 32, color: Colors.grey),
+                  SizedBox(height: 8),
+                  Text('Clique para enviar', style: TextStyle(color: Colors.grey)),
+                ],
+              )
+            : ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: imagens.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  return Image.file(
+                    File(imagens[index].path),
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  );
+                },
+              ),
       ),
-      child: imagens.isEmpty
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(Icons.upload_file, size: 32, color: Colors.grey),
-                SizedBox(height: 8),
-                Text('Clique para enviar', style: TextStyle(color: Colors.grey)),
-              ],
-            )
-          : ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.all(8),
-              itemCount: imagens.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
-              itemBuilder: (context, index) {
-                return Image.file(
-                  File(imagens[index].path),
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                );
-              },
-            ),
     );
   }
 }
