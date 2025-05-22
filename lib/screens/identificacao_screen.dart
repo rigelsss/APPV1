@@ -29,7 +29,6 @@ class _IdentificacaoState extends State<Identificacao> {
 
     final dados = DenunciaData();
 
-    // Verificação adicional caso os dados não tenham sido preenchidos corretamente
     if (dados.usuarioId == null || dados.tokenUsuario == null) {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');

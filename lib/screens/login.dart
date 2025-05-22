@@ -120,6 +120,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       appBar: AppBarDenuncia(title: 'Login'),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Center(
@@ -214,59 +215,59 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-                const Row(
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        thickness: 1,
-                        endIndent: 10,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    Text('ou', style: TextStyle(color: Colors.black87)),
-                    Expanded(
-                      child: Divider(
-                        thickness: 1,
-                        indent: 10,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 24,
-                    ),
-                    side: const BorderSide(color: Colors.white),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/img.png',
-                        width: 32,
-                        height: 24,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(width: 8),
-                      const Flexible(
-                        child: Text(
-                          'Login com Google',
-                          style: TextStyle(color: Colors.black87, fontSize: 18),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
+                // const Row(
+                //   children: [
+                //     Expanded(
+                //       child: Divider(
+                //         thickness: 1,
+                //         endIndent: 10,
+                //         color: Colors.black87,
+                //       ),
+                //     ),
+                //     Text('ou', style: TextStyle(color: Colors.black87)),
+                //     Expanded(
+                //       child: Divider(
+                //         thickness: 1,
+                //         indent: 10,
+                //         color: Colors.black87,
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // const SizedBox(height: 24),
+                // ElevatedButton(
+                //   onPressed: () {},
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor: Colors.white,
+                //     padding: const EdgeInsets.symmetric(
+                //       vertical: 16,
+                //       horizontal: 24,
+                //     ),
+                //     side: const BorderSide(color: Colors.white),
+                //   ),
+                //   child: Row(
+                //     mainAxisSize: MainAxisSize.min,
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Image.asset(
+                //         'assets/images/img.png',
+                //         width: 32,
+                //         height: 24,
+                //         fit: BoxFit.contain,
+                //       ),
+                //       const SizedBox(width: 8),
+                //       const Flexible(
+                //         child: Text(
+                //           'Login com Google',
+                //           style: TextStyle(color: Colors.black87, fontSize: 18),
+                //           overflow: TextOverflow.ellipsis,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

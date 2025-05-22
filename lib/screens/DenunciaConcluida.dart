@@ -53,15 +53,17 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
           );
         },
       ),
+      backgroundColor: Colors.white,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isWide = constraints.maxWidth > 600;
-          final paddingHorizontal = isWide ? constraints.maxWidth * 0.2 : 16.0;
+          final horizontalPadding = isWide ? constraints.maxWidth * 0.2 : 16.0;
+          final containerMaxWidth = isWide ? 400.0 : double.infinity;
 
           return SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: paddingHorizontal,
+                horizontal: horizontalPadding,
                 vertical: 24,
               ),
               child: Column(
@@ -76,63 +78,69 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
                   ),
                   const SizedBox(height: 30),
                   Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 24, horizontal: 24),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFD2FDE6),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Icon(
-                            Icons.check_circle_outline,
-                            color: Color(0xFF1B8C00),
-                            size: 32,
-                          ),
-                          SizedBox(width: 8),
-                          Flexible(
-                            child: Text(
-                              'Denúncia realizada com sucesso!',
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Color(0xFF1B8C00),
-                              ),
-                              overflow: TextOverflow.ellipsis,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: containerMaxWidth),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 24, horizontal: 24),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFD2FDE6),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Icon(
+                              Icons.check_circle_outline,
+                              color: Color(0xFF1B8C00),
+                              size: 32,
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Denúncia realizada com sucesso!',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Color(0xFF1B8C00),
+                                ),
+                                maxLines: 1,
+                                softWrap: false,
+                                // sem overflow, para não mostrar "..."
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 30),
                   Center(
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: isWide ? 300 : double.infinity,
-                      ),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const HomeScreen(),
+                      constraints: BoxConstraints(maxWidth: containerMaxWidth),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const HomeScreen(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            backgroundColor: const Color(0xFF2A2F8C),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 16, horizontal: 100),
-                          backgroundColor: const Color(0xFF2A2F8C),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ),
-                        child: const Text(
-                          'Voltar à página inicial!',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                          textAlign: TextAlign.center,
+                          child: const Text(
+                            'Voltar à página inicial!',
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     ),
