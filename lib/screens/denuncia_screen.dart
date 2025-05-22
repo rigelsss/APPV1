@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'dart:io';
 
-
 class DenunciaScreen extends StatefulWidget {
   @override
   _DenunciaScreenState createState() => _DenunciaScreenState();
@@ -26,7 +25,7 @@ class HttpExceptionWithStatus implements Exception {
 }
 
 class _DenunciaScreenState extends State<DenunciaScreen> {
-  XFile? _image;
+  List<XFile> _imagens = [];
   bool _confirmacao = false;
   // ignore: unused_field
   bool _enviando = false;
@@ -139,7 +138,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
         ..descricao = _descricaoController.text
         ..referencia = _referenciaController.text
         ..informacaoDenunciado = _denunciadoController.text
-        ..imagemPath = _image?.path;
+        ..imagemPaths = _imagens.map((file) => file.path).toList();
 
       final resultado = await DenunciaService.enviar(context, dados);
 
@@ -198,7 +197,6 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     final textoDireita = (dados.anonimo ?? false)
       ? 'Denúncia anônima'
       : (dados.usuarioEmail ?? '');
-
 
     return Scaffold(
       body: SafeArea(
@@ -276,10 +274,12 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 GestureDetector(
                   onTap: () async {
                     final picker = ImagePicker();
-                    final file = await picker.pickImage(source: ImageSource.gallery);
-                    if (file != null) setState(() => _image = file);
+                    final files = await picker.pickMultiImage();
+                    if (files.isNotEmpty) {
+                      setState(() => _imagens.addAll(files));
+                    }
                   },
-                  child: DottedBorderContainer(_image),
+                  child: DottedBorderContainer(imagens: _imagens),
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -341,9 +341,9 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
 }
 
 class DottedBorderContainer extends StatelessWidget {
-  final XFile? image;
+  final List<XFile> imagens;
 
-  const DottedBorderContainer(this.image);
+  const DottedBorderContainer({required this.imagens});
 
   @override
   Widget build(BuildContext context) {
@@ -354,21 +354,29 @@ class DottedBorderContainer extends StatelessWidget {
         border: Border.all(color: Colors.grey, width: 1.5, style: BorderStyle.solid),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Center(
-        child: image != null
-            ? Image.file(
-                File(image!.path),
-                fit: BoxFit.cover,
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.upload_file, size: 32, color: Colors.grey),
-                  SizedBox(height: 8),
-                  Text('Clique para enviar', style: TextStyle(color: Colors.grey)),
-                ],
-              ),
-      ),
+      child: imagens.isEmpty
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Icon(Icons.upload_file, size: 32, color: Colors.grey),
+                SizedBox(height: 8),
+                Text('Clique para enviar', style: TextStyle(color: Colors.grey)),
+              ],
+            )
+          : ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.all(8),
+              itemCount: imagens.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                return Image.file(
+                  File(imagens[index].path),
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.cover,
+                );
+              },
+            ),
     );
   }
 }

@@ -1,24 +1,20 @@
 class DenunciaData {
-  // Singleton
   static final DenunciaData _instance = DenunciaData._internal();
   factory DenunciaData() => _instance;
   DenunciaData._internal();
 
-  // Dados da denúncia
   String? tipoDenunciaId;
   String? descricao;
   String? informacaoDenunciado;
   String? dataOcorrencia;
   String? referencia;
-  String? imagemPath;
+  List<String> imagemPaths = [];
   bool? anonimo;
 
-  // Identificação do usuário
   String? usuarioEmail;
   String? usuarioId;
   String? tokenUsuario;
 
-  // Endereço e localização
   double? latitude;
   double? longitude;
   String? estado;
@@ -27,8 +23,8 @@ class DenunciaData {
   String? logradouro;
   String? endereco;
   bool enderecoConfirmado = false;
-  String? localizacao; 
-  String? posicao;     
+  String? localizacao;
+  String? posicao;
 
   Map<String, dynamic> toJson() {
     return {
@@ -37,7 +33,7 @@ class DenunciaData {
       'dataOcorrencia': dataOcorrencia,
       'referencia': referencia,
       'denunciado': informacaoDenunciado,
-      'imagemPath': imagemPath,
+      'imagemPaths': imagemPaths,
       'anonimo': anonimo,
       'usuarioId': usuarioId,
       'tokenUsuario': tokenUsuario,
@@ -61,7 +57,7 @@ class DenunciaData {
     informacaoDenunciado = null;
     dataOcorrencia = null;
     referencia = null;
-    imagemPath = null;
+    imagemPaths = [];
     anonimo = null;
 
     latitude = null;

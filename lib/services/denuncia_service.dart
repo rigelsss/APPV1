@@ -87,25 +87,29 @@ class DenunciaService {
     ));
 
     // 🖼️ Anexo da imagem (se houver)
-    if (data.imagemPath != null && File(data.imagemPath!).existsSync()) {
-      try {
-        final file = File(data.imagemPath!);
-        final extension = file.path.split('.').last.toLowerCase();
-        final mediaType = extension == 'png' ? 'png' : 'jpeg';
+    if (data.imagemPaths.isNotEmpty) {
+      for (final path in data.imagemPaths) {
+      final file = File(path);
+    
+      if (file.existsSync()) {
+        try {
+          final extension = file.path.split('.').last.toLowerCase();
+          final mediaType = extension == 'png' ? 'png' : 'jpeg';
 
-        request.files.add(await http.MultipartFile.fromPath(
-          'anexos',
-          file.path,
-          filename: file.path.split('/').last,
-          contentType: MediaType('image', mediaType),
-        ));
-      } catch (e) {
-        debugPrint('⚠️ Erro ao adicionar imagem: $e');
-        CustomSnackbar.erro(context, 'Erro ao processar imagem. Tente outra.');
-        return false;
+          request.files.add(await http.MultipartFile.fromPath(
+            'anexos',
+            file.path,
+            filename: file.path.split('/').last,
+            contentType: MediaType('image', mediaType),
+          ));
+        } catch (e) {
+          debugPrint('⚠️ Erro ao adicionar imagem $path: $e');
+          CustomSnackbar.erro(context, 'Erro ao processar imagem: ${file.path}');
+          return false;
+        }
       }
     }
-
+  }
     // 📡 Enviando a requisição
     try {
       final response = await request.send();
