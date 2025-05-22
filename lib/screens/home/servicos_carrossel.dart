@@ -38,7 +38,7 @@ class ServicosCarrossel extends StatelessWidget {
       },
       {
         'label': 'CTE',
-        'image': 'assets/images/licenciamento.jpg',
+        'image': 'assets/images/CTE.jpg',
         'url': 'https://cte.sigma.pb.gov.br/'
       },
     ];
