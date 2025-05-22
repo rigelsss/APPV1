@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:sudema_app/screens/TermosCondicoes.dart';
 import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
 import 'login.dart';
 import 'package:sudema_app/services/ControllerRegister.dart';
 import 'package:another_flushbar/flushbar.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class RegistroUser extends StatefulWidget {
   const RegistroUser({super.key});
@@ -32,7 +34,18 @@ class _RegistroUserState extends State<RegistroUser> {
   bool _obscureText = true;
   bool _isChecked = false;
 
+  // 🧩 Máscaras
+  final cpfFormatter = MaskTextInputFormatter(
+    mask: '###.###.###-##',
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy,
+  );
 
+  final celularFormatter = MaskTextInputFormatter(
+    mask: '(##) #####-####',
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy,
+  );
 
   @override
   void dispose() {
@@ -44,6 +57,7 @@ class _RegistroUserState extends State<RegistroUser> {
     _confirmarSenhaController.dispose();
     super.dispose();
   }
+
   bool validarSenhaSegura(String senha) {
     final regex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#\$&*~%^+=]).{8,}$');
     return regex.hasMatch(senha);
@@ -66,8 +80,8 @@ class _RegistroUserState extends State<RegistroUser> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     campoComErro("Nome completo", _nomeController, TextInputType.text, "Nome completo", _erroNome),
-                    campoComErro("CPF", _cpfController, TextInputType.number, "000.000.000-00", _erroCpf),
-                    campoComErro("Contato", _contatoController, TextInputType.phone, "(00)00000-0000", _erroContato),
+                    campoComErro("CPF", _cpfController, TextInputType.number, "000.000.000-00", _erroCpf, formatter: cpfFormatter),
+                    campoComErro("Contato", _contatoController, TextInputType.phone, "(00)00000-0000", _erroContato, formatter: celularFormatter),
                     campoComErro("E-mail", _emailController, TextInputType.emailAddress, "exemplo@exemplo.com", _erroEmail),
                     campoSenha("Senha", _senhaController, _erroSenha),
                     Padding(
@@ -144,7 +158,6 @@ class _RegistroUserState extends State<RegistroUser> {
                                 : !validarSenhaSegura(_senhaController.text)
                                 ? 'A senha deve ter no mínimo 8 caracteres, incluir letras, números e caracteres especiais.'
                                 : null;
-
                             _erroConfirmarSenha = _confirmarSenhaController.text.isEmpty ? 'Confirmação de senha é obrigatória' : null;
                           });
 
@@ -173,8 +186,8 @@ class _RegistroUserState extends State<RegistroUser> {
 
                           final resultado = await _controller.validarERegistrar(
                             nome: _nomeController.text,
-                            cpf: _cpfController.text,
-                            telefone: _contatoController.text,
+                            cpf: cpfFormatter.getUnmaskedText(),
+                            telefone: celularFormatter.getUnmaskedText(),
                             email: _emailController.text,
                             senha: _senhaController.text,
                             aceitouTermos: _isChecked,
@@ -252,7 +265,8 @@ class _RegistroUserState extends State<RegistroUser> {
     );
   }
 
-  Widget campoComErro(String label, TextEditingController controller, TextInputType type, String hint, String? erro) {
+  Widget campoComErro(String label, TextEditingController controller, TextInputType type, String hint, String? erro,
+      {MaskTextInputFormatter? formatter}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
       child: Column(
@@ -262,6 +276,7 @@ class _RegistroUserState extends State<RegistroUser> {
           TextField(
             controller: controller,
             keyboardType: type,
+            inputFormatters: formatter != null ? [formatter] : [],
             decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: hint,

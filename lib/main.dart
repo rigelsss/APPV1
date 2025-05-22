@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
 import 'package:sudema_app/screens/alterar_email.dart';
 import 'package:sudema_app/screens/deletar_conta.dart';
 import 'package:sudema_app/screens/EditSenha.dart';
@@ -34,6 +35,11 @@ Future<void> main() async {
   await NotificationHandler.initializeFlutterNotifications();
   NotificationHandler.listenToForegroundMessages();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
 
   runApp(const MyApp());
 }
