@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sudema_app/services/denuncia_service.dart';
-import 'package:sudema_app/screens/widgets/image_picker.dart';
 import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:sudema_app/screens/denunciaconcluida.dart';
 import 'package:intl/intl.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/services/AuthMe.dart';
+import 'dart:io';
+import 'package:dotted_border/dotted_border.dart';
+
 
 class DenunciaScreen extends StatefulWidget {
   @override
@@ -25,7 +27,7 @@ class HttpExceptionWithStatus implements Exception {
 }
 
 class _DenunciaScreenState extends State<DenunciaScreen> {
-  XFile? _image;
+  List<XFile> _imagens = [];
   bool _confirmacao = false;
   // ignore: unused_field
   bool _enviando = false;
@@ -34,7 +36,6 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   final _descricaoController = TextEditingController();
   final _referenciaController = TextEditingController();
   final _denunciadoController = TextEditingController();
-
   final _dataFocus = FocusNode();
 
   bool _dataValida = true;
@@ -68,6 +69,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
         if (info != null) {
           dados.usuarioId = info['id'];
           dados.tokenUsuario = token;
+          dados.usuarioEmail = info['email'];
           print('✅ Token recuperado na denúncia: ${dados.usuarioId}, ${dados.tokenUsuario}');
         }
       }
@@ -121,8 +123,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   Future<void> _enviar() async {
     if (!_validateFields()) {
       Flushbar(
-        message:
-            'Preencha todos os campos obrigatórios corretamente e confirme a declaração.',
+        message: 'Preencha todos os campos obrigatórios corretamente e confirme a declaração.',
         backgroundColor: Colors.redAccent,
         duration: const Duration(seconds: 5),
         margin: const EdgeInsets.all(8),
@@ -139,7 +140,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
         ..descricao = _descricaoController.text
         ..referencia = _referenciaController.text
         ..informacaoDenunciado = _denunciadoController.text
-        ..imagemPath = _image?.path;
+        ..imagemPaths = _imagens.map((file) => file.path).toList();
 
       final resultado = await DenunciaService.enviar(context, dados);
 
@@ -148,8 +149,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => const conclusao_de_denuncia()),
+          MaterialPageRoute(builder: (context) => const conclusao_de_denuncia()),
         );
       } else {
         _mostrarErro('❌ Erro inesperado: o envio falhou, mas sem detalhes do servidor.');
@@ -176,120 +176,230 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     );
   }
 
+  Future<void> _selecionarData() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null) {
+      setState(() {
+        _dataController.text = DateFormat('dd/MM/yyyy').format(picked);
+        _dataValida = true;
+        _exibirErroData = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final dados = DenunciaData();
+    final textoDireita = (dados.anonimo ?? false)
+      ? 'Denúncia anônima'
+      : (dados.usuarioEmail ?? '');
 
     return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isWide = constraints.maxWidth > 600;
-          final padding = isWide ? screenWidth * 0.2 : 16.0;
-
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: padding, vertical: 24),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Data do ocorrido *', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _dataController,
-                    focusNode: _dataFocus,
-                    decoration: InputDecoration(
-                      labelText: 'Data do ocorrido *',
-                      hintText: 'dd/mm/aaaa',
-                      suffixIcon: const Icon(Icons.calendar_today),
-                      border: const OutlineInputBorder(),
-                      errorText: _exibirErroData && !_dataValida
-                          ? 'Data inválida ou no futuro (formato: dd/mm/aaaa)'
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text('Descrição *', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _descricaoController,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      hintText: 'Descreva a infração...',
-                      border: const OutlineInputBorder(),
-                      errorText: _erroDescricao ? 'Descrição obrigatória.' : null,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text('Ponto de referência *', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _referenciaController,
-                    decoration: InputDecoration(
-                      hintText: 'Nome, nome da empresa, documento',
-                      border: const OutlineInputBorder(),
-                      errorText: _erroReferencia ? 'Campo obrigatório.' : null,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text('Informações do denunciado *', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _denunciadoController,
-                    decoration: InputDecoration(
-                      hintText: 'Nome, nome da empresa, documento...',
-                      border: const OutlineInputBorder(),
-                      errorText: _erroDenunciado ? 'Campo obrigatório.' : null,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  ImagePickerWidget(
-                    onImagePicked: (file) => setState(() => _image = file),
-                    image: _image,
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Checkbox(
-                        value: _confirmacao,
-                        shape: const CircleBorder(),
-                        onChanged: (value) {
-                          setState(() => _confirmacao = value ?? false);
-                        },
-                      ),
-                      const Expanded(
-                        child: Text(
-                          'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: ElevatedButton.icon(
-                      onPressed: _enviar,
-                      label: const Text(
-                        'Concluir denúncia',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      icon: const Icon(Icons.check, color: Colors.white),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1B8C00),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 22,
-                          horizontal: 100,
-                        ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'Denúncia',
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ),
+                    Text(
+                      textoDireita,
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Data do ocorrido *'),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _dataController,
+                  focusNode: _dataFocus,
+                  readOnly: true,
+                  decoration: _dataInputDecoration(),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Descrição *'),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _descricaoController,
+                  maxLines: 4,
+                  decoration: _inputDecoration(
+                    'Descreva a infração identificada...',
+                    _erroDescricao ? 'Descrição obrigatória.' : null,
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Ponto de referência *'),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _referenciaController,
+                  decoration: _inputDecoration(
+                    'Nome, nome da empresa, documento...',
+                    _erroReferencia ? 'Campo obrigatório.' : null,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Informações do denunciado *'),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: _denunciadoController,
+                  decoration: _inputDecoration(
+                    'Nome, nome da empresa, documento...',
+                    _erroDenunciado ? 'Campo obrigatório.' : null,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Adicionar arquivos'),
+                const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () async {
+                    final picker = ImagePicker();
+                    final files = await picker.pickMultiImage();
+                    if (files.isNotEmpty) {
+                      setState(() => _imagens.addAll(files));
+                    }
+                  },
+                  child: DottedBorderContainer(imagens: _imagens),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Checkbox(
+                      value: _confirmacao,
+                      shape: const CircleBorder(),
+                      onChanged: (value) {
+                        setState(() => _confirmacao = value ?? false);
+                      },
+                    ),
+                    const Expanded(
+                      child: Text(
+                        'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _enviar,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1B8C00),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      'Concluir denúncia',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          );
-        },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLabel(String texto) => Text(texto, style: const TextStyle(fontSize: 16));
+
+InputDecoration _inputDecoration(String hint, String? erro) {
+  final base = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(6),
+    borderSide: const BorderSide(color: Color.fromARGB(255, 191, 191, 191), width: 1.5),
+  );
+
+  return InputDecoration(
+    hintText: hint,
+    hintStyle: const TextStyle(color: Color.fromARGB(255, 142, 142, 142)),
+    errorText: erro,
+    enabledBorder: base,
+    focusedBorder: base,
+    errorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
+    focusedErrorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
+  );
+}
+
+InputDecoration _dataInputDecoration() {
+  final base = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(6),
+    borderSide: const BorderSide(color: Color.fromARGB(255, 191, 191, 191), width: 1.5),
+  );
+
+  return InputDecoration(
+    hintText: 'dd/mm/aaaa',
+    hintStyle: const TextStyle(color: Color.fromARGB(255, 142, 142, 142)), 
+    suffixIcon: IconButton(
+      icon: const Icon(Icons.calendar_today),
+      onPressed: _selecionarData,
+    ),
+    errorText: _exibirErroData && !_dataValida ? 'Data inválida' : null,
+    enabledBorder: base,
+    focusedBorder: base,
+    errorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
+    focusedErrorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
+  );
+}
+}
+
+class DottedBorderContainer extends StatelessWidget {
+  final List<XFile> imagens;
+
+  const DottedBorderContainer({super.key, required this.imagens});
+
+  @override
+  Widget build(BuildContext context) {
+    return DottedBorder(
+      color: const Color.fromARGB(255, 191, 191, 191),
+      strokeWidth: 1.5,
+      dashPattern: [8, 4],
+      borderType: BorderType.RRect,
+      radius: const Radius.circular(6),
+      child: Container(
+        height: 120,
+        width: double.infinity,
+        padding: const EdgeInsets.all(8),
+        child: imagens.isEmpty
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.upload_outlined, size: 32, color: Colors.grey),
+                  SizedBox(height: 8),
+                  Text('Clique para enviar', style: TextStyle(color: Colors.grey)),
+                ],
+              )
+            : ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: imagens.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  return Image.file(
+                    File(imagens[index].path),
+                    width: 100,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  );
+                },
+              ),
       ),
     );
   }

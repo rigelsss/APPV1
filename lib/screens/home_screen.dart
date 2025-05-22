@@ -149,7 +149,8 @@ class _HomeScreenState extends State<HomeScreen> {
         HomeBody(
           noticias: _noticias,
           onSelecionarDenuncia: () => setState(() => _selectedIndex = 1),
-          onSelecionarNoticias: () => setState(() => _selectedIndex = 2),
+          onSelecionarNoticias: () => setState(() => _selectedIndex = 3),
+          onSelecionarBalneabildiade: () => setState (() => _selectedIndex = 2),
         ),
         const DenunciaPage(),
         const PraiasPage(),

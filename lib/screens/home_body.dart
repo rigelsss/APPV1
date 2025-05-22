@@ -11,12 +11,14 @@ class HomeBody extends StatelessWidget {
   final List<Noticia> noticias;
   final VoidCallback onSelecionarDenuncia;
   final VoidCallback onSelecionarNoticias;
+  final VoidCallback onSelecionarBalneabildiade;
 
   const HomeBody({
     super.key,
     required this.noticias,
     required this.onSelecionarDenuncia,
     required this.onSelecionarNoticias,
+    required this.onSelecionarBalneabildiade,
   });
 
   @override
@@ -41,7 +43,7 @@ class HomeBody extends StatelessWidget {
             ServicosCarrossel(
               onSelecionar: (label) {
                 if (label == 'Balneabilidade') {
-                  onSelecionarNoticias(); 
+                  onSelecionarBalneabildiade(); 
                 } else if (label == 'Denuncias') {
                   onSelecionarDenuncia();
                 }

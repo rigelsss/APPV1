@@ -3,6 +3,7 @@ import 'package:sudema_app/screens/notificacoes.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sudema_app/screens/editar_perfil.dart';
 
 class Perfiluser extends StatefulWidget {
   final String? token;
@@ -212,7 +213,16 @@ class PerfiluserState extends State<Perfiluser> {
                   context,
                   icon: Icons.edit,
                   title: 'Editar Perfil',
-                  onTap: () => Navigator.pushNamed(context, '/editar-perfil'),
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditarPerfil(
+                      nomeAtual: _userData['name'] ?? '',
+                      telefoneAtual: _userData['phone'] ?? '',
+                      cpfAtual: _userData['cpf'] ?? '',
+                    ),
+                   ),
+                  ),
                 ),
                 const SizedBox(height: 10),
                 const Divider(color: Colors.grey, height: 1, indent: 16, endIndent: 16),
@@ -274,7 +284,7 @@ class PerfiluserState extends State<Perfiluser> {
                 },
                 icon: const Icon(Icons.delete, color: Colors.red),
                 label: const Text(
-                  'Deletar Conta',
+                  'Desativar Conta',
                   style: TextStyle(color: Colors.red),
                 ),
               ),
