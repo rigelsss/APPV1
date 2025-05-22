@@ -102,6 +102,7 @@ class PerfiluserState extends State<Perfiluser> {
               )
             : null,
       ),
+      backgroundColor: Colors.white,
       body: Builder(
         builder: (context) {
           if (_isLoading) {
