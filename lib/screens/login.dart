@@ -8,6 +8,8 @@ import 'package:sudema_app/services/controllerLogin.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../screens/reativar_conta.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -21,38 +23,33 @@ class _LoginPageState extends State<LoginPage> {
   bool _checkboxValue = false;
   bool _obscureText = true;
   String? _token;
-  String tokenFake =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiUmlnZWwgU2FsZXMiLCJlbWFpbCI6InJpZ2VsQGV4YW1wbGUuY29tIiwicGhvbmUiOiIoODMpIDk5OTk5LTk5OTkiLCJjcGYiOiIxMjMuNDU2Ljc4OS0wMCJ9.aoFANumU9ua_Fhire_kFq6do-wNI4rxDW5jlVCZ7c1Q';
 
   Future<void> realizarLogin() async {
     final email = emailController.text.trim();
     final senha = passwordController.text.trim();
 
     if (email.isEmpty || senha.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Preencha todos os campos')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha todos os campos')),
+      );
       return;
     }
 
     try {
-      final data = await LoginController.realizarLogin(email, senha);
+      final resultado = await LoginController.realizarLogin(email, senha);
 
-      if (data != null) {
-        final token = data['token'];
+      if (resultado['success']) {
+        final token = resultado['data']['token'];
         setState(() {
           _token = token;
         });
 
         print('Token salvo: $_token');
-        
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', token); 
+        await prefs.setString('token', token);
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(data['message'] ?? 'Login realizado com sucesso'),
-          ),
+          SnackBar(content: Text(resultado['data']['message'] ?? 'Login realizado com sucesso')),
         );
 
         await obterInformacoesUsuario();
@@ -60,11 +57,16 @@ class _LoginPageState extends State<LoginPage> {
         if (_token != null) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-              builder: (context) => const HomeScreen(),
-            ),
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
           );
         }
+      } else if (resultado['disabledUser'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ReativarContaPage(email: email, senha: senha),
+          ),
+        );
       } else {
         Flushbar(
           title: 'Erro',

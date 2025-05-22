@@ -4,10 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class LoginController {
-  static Future<Map<String, dynamic>?> realizarLogin(String email, String senha) async {
+  static Future<Map<String, dynamic>> realizarLogin(String email, String senha) async {
     try {
       final response = await http.post(
-      Uri.parse('${dotenv.env['URL_API']}/auth/login'),
+        Uri.parse('${dotenv.env['URL_API']}/auth/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           "login": email,
@@ -16,28 +16,24 @@ class LoginController {
         }),
       );
 
+      final responseData = jsonDecode(response.body);
+
       if (response.statusCode == 200) {
-        // Decodificar a resposta e salvar o token
-        final responseData = jsonDecode(response.body);
-        final token = responseData['token']; // Verifique se a chave 'token' está correta.
-
-        // Salvar o token
-        if (token != null) {
-          await _salvarToken(token);
-        }
-
-        return responseData;
+        final token = responseData['token']; 
+        if (token != null) await _salvarToken(token);
+        return {'success': true, 'data': responseData};
+      } else if (response.statusCode == 403 &&
+                 responseData['errorCode'] == 'DISABLED_USER') {
+        return {'success': false, 'disabledUser': true};
       } else {
-        print('Erro ${response.statusCode}: ${response.body}');
-        return null;
+        return {'success': false, 'message': responseData['message'] ?? 'Erro desconhecido'};
       }
     } catch (e) {
       print('Erro de conexão: $e');
-      return null;
+      return {'success': false, 'message': 'Erro de conexão'};
     }
   }
 
-  // Função para salvar o token
   static Future<void> _salvarToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
