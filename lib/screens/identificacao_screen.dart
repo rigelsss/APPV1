@@ -110,8 +110,8 @@ class _AbaIdentificacaoState extends State<Identificacao> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Você acessou o sistema como $usuarioEmail.',
-                  style: const TextStyle(fontSize: 16),
+                  'Você acessou o sistema como $usuarioEmail',
+                  style: const TextStyle(fontSize: 14),
                 ),
                 const SizedBox(height: 20),
                 SizedBox(

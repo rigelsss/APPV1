@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sudema_app/services/denuncia_service.dart';
-import 'package:sudema_app/screens/widgets/image_picker.dart';
 import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:sudema_app/screens/denunciaconcluida.dart';
 import 'package:intl/intl.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/services/AuthMe.dart';
+import 'dart:io';
+
 
 class DenunciaScreen extends StatefulWidget {
   @override
@@ -34,7 +35,6 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   final _descricaoController = TextEditingController();
   final _referenciaController = TextEditingController();
   final _denunciadoController = TextEditingController();
-
   final _dataFocus = FocusNode();
 
   bool _dataValida = true;
@@ -68,6 +68,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
         if (info != null) {
           dados.usuarioId = info['id'];
           dados.tokenUsuario = token;
+          dados.usuarioEmail = info['email'];
           print('✅ Token recuperado na denúncia: ${dados.usuarioId}, ${dados.tokenUsuario}');
         }
       }
@@ -121,8 +122,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   Future<void> _enviar() async {
     if (!_validateFields()) {
       Flushbar(
-        message:
-            'Preencha todos os campos obrigatórios corretamente e confirme a declaração.',
+        message: 'Preencha todos os campos obrigatórios corretamente e confirme a declaração.',
         backgroundColor: Colors.redAccent,
         duration: const Duration(seconds: 5),
         margin: const EdgeInsets.all(8),
@@ -148,8 +148,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => const conclusao_de_denuncia()),
+          MaterialPageRoute(builder: (context) => const conclusao_de_denuncia()),
         );
       } else {
         _mostrarErro('❌ Erro inesperado: o envio falhou, mas sem detalhes do servidor.');
@@ -176,120 +175,199 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     );
   }
 
+  Future<void> _selecionarData() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
+    );
+
+    if (picked != null) {
+      setState(() {
+        _dataController.text = DateFormat('dd/MM/yyyy').format(picked);
+        _dataValida = true;
+        _exibirErroData = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final dados = DenunciaData();
+    final textoDireita = (dados.anonimo ?? false)
+      ? 'Denúncia anônima'
+      : (dados.usuarioEmail ?? '');
+
 
     return Scaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isWide = constraints.maxWidth > 600;
-          final padding = isWide ? screenWidth * 0.2 : 16.0;
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'Denúncia',
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Text(
+                      textoDireita,
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Data do ocorrido *'),
+                TextField(
+                  controller: _dataController,
+                  focusNode: _dataFocus,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    hintText: 'dd/mm/aaaa',
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: _selecionarData,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(color: Colors.grey[300]!, width: 1.5),
+                    ),
+                    errorText: _exibirErroData && !_dataValida
+                        ? 'Data inválida ou no futuro'
+                        : null,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Descrição *'),
+                TextField(
+                  controller: _descricaoController,
+                  maxLines: 4,
+                  decoration: _inputDecoration(
+                    'Descreva a infração identificada...',
+                    _erroDescricao ? 'Descrição obrigatória.' : null,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Ponto de referência *'),
+                TextField(
+                  controller: _referenciaController,
+                  decoration: _inputDecoration(
+                    'Nome, nome da empresa, documento...',
+                    _erroReferencia ? 'Campo obrigatório.' : null,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Informações do denunciado *'),
+                TextField(
+                  controller: _denunciadoController,
+                  decoration: _inputDecoration(
+                    'Nome, nome da empresa, documento...',
+                    _erroDenunciado ? 'Campo obrigatório.' : null,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildLabel('Adicionar arquivos'),
+                GestureDetector(
+                  onTap: () async {
+                    final picker = ImagePicker();
+                    final file = await picker.pickImage(source: ImageSource.gallery);
+                    if (file != null) setState(() => _image = file);
+                  },
+                  child: DottedBorderContainer(_image),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Checkbox(
+                      value: _confirmacao,
+                      shape: const CircleBorder(),
+                      onChanged: (value) {
+                        setState(() => _confirmacao = value ?? false);
+                      },
+                    ),
+                    const Expanded(
+                      child: Text(
+                        'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _enviar,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1B8C00),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      'Concluir denúncia',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: padding, vertical: 24),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Data do ocorrido *', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _dataController,
-                    focusNode: _dataFocus,
-                    decoration: InputDecoration(
-                      labelText: 'Data do ocorrido *',
-                      hintText: 'dd/mm/aaaa',
-                      suffixIcon: const Icon(Icons.calendar_today),
-                      border: const OutlineInputBorder(),
-                      errorText: _exibirErroData && !_dataValida
-                          ? 'Data inválida ou no futuro (formato: dd/mm/aaaa)'
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text('Descrição *', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _descricaoController,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      hintText: 'Descreva a infração...',
-                      border: const OutlineInputBorder(),
-                      errorText: _erroDescricao ? 'Descrição obrigatória.' : null,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text('Ponto de referência *', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _referenciaController,
-                    decoration: InputDecoration(
-                      hintText: 'Nome, nome da empresa, documento',
-                      border: const OutlineInputBorder(),
-                      errorText: _erroReferencia ? 'Campo obrigatório.' : null,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Text('Informações do denunciado *', style: TextStyle(fontSize: 16)),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _denunciadoController,
-                    decoration: InputDecoration(
-                      hintText: 'Nome, nome da empresa, documento...',
-                      border: const OutlineInputBorder(),
-                      errorText: _erroDenunciado ? 'Campo obrigatório.' : null,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  ImagePickerWidget(
-                    onImagePicked: (file) => setState(() => _image = file),
-                    image: _image,
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Checkbox(
-                        value: _confirmacao,
-                        shape: const CircleBorder(),
-                        onChanged: (value) {
-                          setState(() => _confirmacao = value ?? false);
-                        },
-                      ),
-                      const Expanded(
-                        child: Text(
-                          'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Center(
-                    child: ElevatedButton.icon(
-                      onPressed: _enviar,
-                      label: const Text(
-                        'Concluir denúncia',
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                      icon: const Icon(Icons.check, color: Colors.white),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1B8C00),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 22,
-                          horizontal: 100,
-                        ),
-                      ),
-                    ),
-                  ),
+  Widget _buildLabel(String texto) => Text(texto, style: const TextStyle(fontSize: 16));
+
+  InputDecoration _inputDecoration(String hint, String? erro) {
+    return InputDecoration(
+      hintText: hint,
+      errorText: erro,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey[300]!, width: 1.5),
+      ),
+    );
+  }
+}
+
+class DottedBorderContainer extends StatelessWidget {
+  final XFile? image;
+
+  const DottedBorderContainer(this.image);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 120,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey, width: 1.5, style: BorderStyle.solid),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Center(
+        child: image != null
+            ? Image.file(
+                File(image!.path),
+                fit: BoxFit.cover,
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.upload_file, size: 32, color: Colors.grey),
+                  SizedBox(height: 8),
+                  Text('Clique para enviar', style: TextStyle(color: Colors.grey)),
                 ],
               ),
-            ),
-          );
-        },
       ),
     );
   }

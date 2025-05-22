@@ -11,7 +11,7 @@ class DenunciaData {
   String? dataOcorrencia;
   String? referencia;
   String? imagemPath;
-  bool? anonimo = false;
+  bool? anonimo;
 
   // Identificação do usuário
   String? usuarioEmail;
@@ -38,7 +38,7 @@ class DenunciaData {
       'referencia': referencia,
       'denunciado': informacaoDenunciado,
       'imagemPath': imagemPath,
-      'anonimo': anonimo ?? false,
+      'anonimo': anonimo,
       'usuarioId': usuarioId,
       'tokenUsuario': tokenUsuario,
       'latitude': latitude,
@@ -62,7 +62,7 @@ class DenunciaData {
     dataOcorrencia = null;
     referencia = null;
     imagemPath = null;
-    anonimo = false;
+    anonimo = null;
 
     latitude = null;
     longitude = null;
