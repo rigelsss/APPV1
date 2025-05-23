@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-
 class BannerDenuncia extends StatelessWidget {
   final VoidCallback onTap;
-  final double screenWidth;
 
   const BannerDenuncia({
     super.key,
     required this.onTap,
-    required this.screenWidth,
   });
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width; // ⬅️ Detecta largura da tela
+    final screenHeight = MediaQuery.of(context).size.height; // ⬅️ Detecta altura da tela
+
     return Align(
       alignment: Alignment.center,
       child: SizedBox(
-        width: screenWidth * 0.9,
+        width: screenWidth * 0.9, // ✅ Responsivo com base no tamanho da tela
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(20),
@@ -27,33 +27,36 @@ class BannerDenuncia extends StatelessWidget {
                   'assets/images/denuncia_bg.png',
                   fit: BoxFit.cover,
                   width: double.infinity,
-                  height: screenWidth * 0.25,
+                  height: screenWidth * 0.25, // ✅ Altura proporcional
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(14.0),
+              Container(
+                height: screenWidth * 0.25,
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.04, // ✅ Padding proporcional
+                  vertical: screenHeight * 0.015,
+                ),
                 child: Row(
                   children: [
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          SizedBox(height: 10),
+                        children: [
                           Text(
                             'Identificou uma infração ambiental?',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: screenWidth * 0.040, // ✅ Tamanho do texto proporcional
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 15),
+                          SizedBox(height: screenHeight * 0.01), // ✅ Espaço proporcional
                           Text(
                             'Faça uma denúncia!',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: screenWidth * 0.040,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -62,8 +65,8 @@ class BannerDenuncia extends StatelessWidget {
                     ),
                     Image.asset(
                       'assets/images/megafone.png',
-                      width: 50,
-                      height: 50,
+                      width: screenWidth * 0.12, // ✅ Tamanho proporcional
+                      height: screenWidth * 0.12,
                       color: Colors.white,
                     ),
                   ],
