@@ -37,7 +37,7 @@ class HomeBody extends StatelessWidget {
             SizedBox(height: screenHeight * 0.02),
             BannerDenuncia(
               onTap: onSelecionarDenuncia,
-              screenWidth: screenWidth,
+
             ),
             SizedBox(height: screenHeight * 0.03),
             const TituloComLinha(titulo: 'Nossos serviços'),
