@@ -29,8 +29,10 @@ class CustomDrawerState extends State<CustomDrawer> {
       try {
         final data = await AuthController.obterInformacoesUsuario(token);
         if (data != null) {
+          final nomeCompleto = data['name'] ?? 'Acessar';
+          final primeiroNome = nomeCompleto.split(' ').first;
           setState(() {
-            username = data['name'] ?? 'Acessar';
+            username = primeiroNome;
             isLoading = false;
           });
         } else {
