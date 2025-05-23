@@ -28,7 +28,6 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
   Future<void> _enviarEmailDeRecuperacao(String email) async {
     final url = Uri.parse('${dotenv.env['URL_API']}/password-reset/forgot-password');
     print('Chamando endpoint: $url');
-    print('🔵 Chamando endpoint: $url');
 
     try {
       final response = await http.post(
@@ -39,8 +38,8 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
           'userType': 'MOBILE',
         }),
       );
-      print('🟡 Status Code: ${response.statusCode}');
-      print('🟡 Response Body: ${response.body}');
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 204) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -56,7 +55,6 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
         );
       } else {
         final error = jsonDecode(response.body)['message'] ?? 'Erro ao enviar e-mail.';
-        print('🔴 Erro na resposta: $error');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(error),
@@ -65,7 +63,6 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
         );
       }
     } catch (e) {
-      print('Erro de conexão: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erro de conexão. Tente novamente.'),
@@ -75,64 +72,74 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBarDenuncia(title: 'Recuperação de Senha'),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(height: 20),
-            Text(
-              'Informe o e-mail associado à sua conta para alteração de senha.',
-              style: TextStyle(fontSize: 18),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth < 500 ? 16 : screenWidth * 0.15,
+              vertical: 24,
             ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'E-mail',
-              ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            SizedBox(height: 24),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  String email = _emailController.text.trim();
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Informe o e-mail associado à sua conta para alteração de senha.',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SizedBox(height: 20),
+                TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'E-mail',
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                SizedBox(height: 24),
+                Center(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        String email = _emailController.text.trim();
 
-                  if (email.isEmpty || !_isValidEmail(email)) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Por favor, insira um e-mail válido.'),
-                        backgroundColor: Colors.red,
+                        if (email.isEmpty || !_isValidEmail(email)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Por favor, insira um e-mail válido.'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
+
+                        _enviarEmailDeRecuperacao(email);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2A2F8C),
+                        padding: EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                    );
-                    return;
-                  }
-
-                  _enviarEmailDeRecuperacao(email);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2A2F8C),
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 80),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                      child: Text(
+                        'Enviar Código de Verificação',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
+                      ),
+                    ),
                   ),
                 ),
-                child: Text(
-                  'Enviar Código de Verificação',
-                  style: TextStyle(color: Colors.white, fontSize: 18),
-                ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
