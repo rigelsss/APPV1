@@ -5,8 +5,6 @@ import 'package:sudema_app/screens/home/banner_denuncia.dart';
 import 'package:sudema_app/screens/home/servicos_carrossel.dart';
 import 'package:sudema_app/screens/home/titulo_com_linha.dart';
 
-
-
 class HomeBody extends StatelessWidget {
   final List<Noticia> noticias;
   final VoidCallback onSelecionarDenuncia;
@@ -23,58 +21,66 @@ class HomeBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenSize = MediaQuery.of(context).size;
+    final screenHeight = screenSize.height;
+    final screenWidth = screenSize.width;
 
     return SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(8),
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.03,
+          vertical: screenHeight * 0.01,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
+            SizedBox(height: screenHeight * 0.02),
             BannerDenuncia(
               onTap: onSelecionarDenuncia,
               screenWidth: screenWidth,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: screenHeight * 0.03),
             const TituloComLinha(titulo: 'Nossos serviços'),
-            const SizedBox(height: 20),
-            
+            SizedBox(height: screenHeight * 0.02),
             ServicosCarrossel(
               onSelecionar: (label) {
                 if (label == 'Balneabilidade') {
-                  onSelecionarBalneabildiade(); 
+                  onSelecionarBalneabildiade();
                 } else if (label == 'Denuncias') {
                   onSelecionarDenuncia();
                 }
               },
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: screenHeight * 0.03),
             TituloComLinha(
               titulo: 'Últimas notícias',
               verTodas: true,
               onVerTodas: onSelecionarNoticias,
-              ),
-            const SizedBox(height: 20),
-            _buildNoticias(context),
+            ),
+            SizedBox(height: screenHeight * 0.02),
+            _buildNoticias(context, screenHeight),
           ],
         ),
       ),
     );
   }
-  Widget _buildNoticias(BuildContext context) {
+
+  Widget _buildNoticias(BuildContext context, double screenHeight) {
     return SizedBox(
-      height: 340,
+      height: screenHeight * 0.4,
       child: noticias.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: noticias.length,
-              itemBuilder: (context, index) {
-                final noticia = noticias[index];
-                return NoticiaCard(noticia: noticia);
-              },
-            ),
+        scrollDirection: Axis.horizontal,
+        itemCount: noticias.length,
+        itemBuilder: (context, index) {
+          final noticia = noticias[index];
+          return Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: NoticiaCard(noticia: noticia),
+          );
+        },
+      ),
     );
   }
 }

@@ -44,7 +44,7 @@ class BannerDenuncia extends StatelessWidget {
                             'Identificou uma infração ambiental?',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -53,7 +53,7 @@ class BannerDenuncia extends StatelessWidget {
                             'Faça uma denúncia!',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 14,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
