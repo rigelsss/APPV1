@@ -40,7 +40,8 @@ class AuthController {
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final decodedBody = utf8.decode(response.bodyBytes);
+        final data = jsonDecode(decodedBody);
         if (data['user'] != null) {
           print('✅ Dados recebidos do /auth/me: ${data['user']}');
           return data['user'];
