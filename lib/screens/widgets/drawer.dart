@@ -104,45 +104,59 @@ class CustomDrawerState extends State<CustomDrawer> {
               ],
             ),
           ),
-          InkWell(
-            onTap: () {
-              if (isLoggedIn) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Perfiluser(token: _token)),
-                );
-              } else {
-                Navigator.pushNamed(context, '/login');
-              }
-            },
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 36),
-              child: Column(
-                children: [
-                  const Divider(height: 1, thickness: 1),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      const Icon(Icons.account_circle_outlined, color: Colors.black54, size: 26),
-                      const SizedBox(width: 12),
-                      Expanded(
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 36),
+            child: Column(
+              children: [
+                const Divider(height: 1, thickness: 1),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    const Icon(Icons.account_circle_outlined, color: Colors.black54, size: 26),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          if (isLoggedIn) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Perfiluser(token: _token)),
+                            );
+                          } else {
+                            Navigator.pushNamed(context, '/login');
+                          }
+                        },
                         child: Text(
                           isLoading ? 'Carregando...' : username,
                           style: const TextStyle(fontSize: 18),
                         ),
                       ),
-                      Icon(
-                        isLoggedIn ? Icons.settings_rounded : Icons.login,
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        if (isLoggedIn) {
+                          await AuthController.logout();
+                          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                          setState(() {
+                            _token = null;
+                            username = 'Acessar';
+                          });
+                        } else {
+                          Navigator.pushNamed(context, '/login');
+                        }
+                      },
+                      child: Icon(
+                        isLoggedIn ? Icons.logout_outlined : Icons.login,
                         size: 18,
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ],
