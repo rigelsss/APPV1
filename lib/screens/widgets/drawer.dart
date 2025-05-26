@@ -88,12 +88,14 @@ class CustomDrawerState extends State<CustomDrawer> {
                 ListTile(
                   leading: const Icon(Icons.beach_access),
                   title: const Text('Balneabilidade'),
-                  onTap: () => Navigator.pop(context),
+                  onTap: (){ Navigator.pop(context);
+                  Navigator.pushNamed(context, '/balneablilidade');}
                 ),
                 ListTile(
                   leading: const Icon(Icons.newspaper),
                   title: const Text('Notícias'),
-                  onTap: () => Navigator.pop(context),
+                  onTap: () { Navigator.pop(context);
+                  Navigator.pushNamed(context, '/noticias');}
                 ),
                 ListTile(
                   leading: const Icon(Icons.phone_in_talk_outlined),
