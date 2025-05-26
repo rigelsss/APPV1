@@ -25,6 +25,7 @@ class DenunciaData {
   bool enderecoConfirmado = false;
   String? localizacao;
   String? posicao;
+  bool? categoriaConfirmada = false;
 
   Map<String, dynamic> toJson() {
     return {
@@ -48,6 +49,7 @@ class DenunciaData {
       'localizacao': localizacao,
       'posicao': posicao,
       'usuarioEmail': usuarioEmail,
+      'categoriaConfirmada': categoriaConfirmada,
     };
   }
 
@@ -74,5 +76,6 @@ class DenunciaData {
 
     usuarioEmail = null;
     usuarioId = null;
+    categoriaConfirmada = null;
   }
 }

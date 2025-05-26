@@ -20,7 +20,7 @@ class NovaDenuncia extends StatefulWidget {
 }
 
 class _NovaDenunciaState extends State<NovaDenuncia> {
-  final List<String> opcao = ['Categoria', 'Localização', 'Identificação', 'Denúncia'];
+  final List<String> opcao = ['Identificação', 'Categoria', 'Localização', 'Denúncia'];
 
   int selectedIndex = 0;
   String? _categoriaSelecionada;
@@ -84,21 +84,33 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   }
 
   bool _podeIrParaAba(int index) {
-    if (index == 1) {
-      return _categoriaSelecionada != null && _subcategoriaSelecionada?.isNotEmpty == true;
-    } else if (index == 2 || index == 3) {
-      return DenunciaData().enderecoConfirmado == true;
+    switch (index) {
+      case 0:
+        return true;
+      case 1:
+        return DenunciaData().usuarioEmail != null;
+      case 2:
+        return _categoriaSelecionada != null && _subcategoriaSelecionada?.isNotEmpty == true;
+      case 3:
+        return DenunciaData().enderecoConfirmado == true;
+      default:
+        return false;
     }
-    return true;
   }
 
   void _aoSelecionarAba(int index) {
     if (!_podeIrParaAba(index)) {
       setState(() {
-        if (index == 1) {
-          _mensagemErro = 'Selecione uma categoria e subcategoria antes de continuar.';
-        } else {
-          _mensagemErro = 'Confirme o endereço antes de continuar.';
+        switch (index) {
+          case 1:
+            _mensagemErro = 'Preencha os dados de identificação antes de continuar.';
+            break;
+          case 2:
+            _mensagemErro = 'Selecione uma categoria e subcategoria antes de continuar.';
+            break;
+          case 3:
+            _mensagemErro = 'Confirme o endereço antes de continuar.';
+            break;
         }
       });
       return;
@@ -109,7 +121,14 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
     });
   }
 
-  void _irParaIdentificacao() {
+  void _irParaCategoria() {
+    setState(() {
+      selectedIndex = 1;
+      _mensagemErro = null;
+    });
+  }
+
+  void _irParaLocalizacao() {
     setState(() {
       selectedIndex = 2;
       _mensagemErro = null;
@@ -119,6 +138,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   void _irParaDenuncia() {
     setState(() {
       selectedIndex = 3;
+      _mensagemErro = null;
     });
   }
 
@@ -172,11 +192,11 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   Widget _buildConteudoSelecionado() {
     switch (selectedIndex) {
       case 0:
-        return _buildCategoriaContent();
+        return Identificacao(onAvancar: _irParaCategoria);
       case 1:
-        return AbaLocalizacao(onEnderecoConfirmado: _irParaIdentificacao);
+        return _buildCategoriaContent();
       case 2:
-        return Identificacao(onAvancar: _irParaDenuncia);
+        return AbaLocalizacao(onEnderecoConfirmado: _irParaDenuncia);
       case 3:
         return DenunciaScreen();
       default:
@@ -216,6 +236,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                 _categoriaSelecionada = texto;
                 DenunciaData().tipoDenunciaId = id.toString();
                 DenunciaData().usuarioEmail = isLoggedIn ? JwtDecoder.decode(_token!)['email'] : null;
+                DenunciaData().categoriaConfirmada = true; 
                 _mensagemErro = null;
               });
             },
@@ -242,7 +263,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
             onPressed: (_categoriaSelecionada != null &&
                     _subcategoriaSelecionada != null &&
                     _subcategoriaSelecionada!.isNotEmpty)
-                ? () => _aoSelecionarAba(1)
+                ? () => _aoSelecionarAba(2)
                 : null,
             child: const Center(
               child: Text(
