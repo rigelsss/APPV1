@@ -118,7 +118,7 @@ class _NoticiaCompletaPageState extends State<NoticiaCompletaPage> {
                             Image.network(
                               noticia!['imagem_url'],
                               width: double.infinity,
-                              height: 250,
+                              height: 500,
                               fit: BoxFit.cover,
                             ),
                           const SizedBox(height: 16),
