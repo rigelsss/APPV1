@@ -61,7 +61,7 @@ class _ContatosState extends State<Contatos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(),
-      drawer: CustomDrawer(),
+      drawer: CustomDrawer(onItemSelected: (int index) {  },),
       backgroundColor: Colors.white,
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,

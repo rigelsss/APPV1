@@ -81,6 +81,12 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
+  void _onDrawerItemSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    Navigator.of(context).pop(); // fecha o Drawer
+  }
 
   Future<void> _carregarToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -131,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
       ),
-      drawer: CustomDrawer(),
+      drawer: CustomDrawer(onItemSelected: _onDrawerItemSelected),
       backgroundColor: Colors.white,
       body: _pages[_selectedIndex],
       bottomNavigationBar: NavBar(

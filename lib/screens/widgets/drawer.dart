@@ -4,10 +4,12 @@ import 'package:sudema_app/screens/perfil_page.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 
 class CustomDrawer extends StatefulWidget {
-  const CustomDrawer({super.key});
+  final Function(int) onItemSelected;
+  const CustomDrawer({super.key, required this.onItemSelected});
 
   @override
   CustomDrawerState createState() => CustomDrawerState();
+
 }
 
 class CustomDrawerState extends State<CustomDrawer> {
@@ -81,21 +83,20 @@ class CustomDrawerState extends State<CustomDrawer> {
                   leading: const Icon(Icons.campaign),
                   title: const Text('Denúncias'),
                   onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/denuncias');
+                    widget.onItemSelected(1);
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.beach_access),
                   title: const Text('Balneabilidade'),
-                  onTap: (){ Navigator.pop(context);
-                  Navigator.pushNamed(context, '/balneablilidade');}
+                  onTap: () {widget.onItemSelected(2);}
                 ),
                 ListTile(
                   leading: const Icon(Icons.newspaper),
                   title: const Text('Notícias'),
-                  onTap: () { Navigator.pop(context);
-                  Navigator.pushNamed(context, '/noticias');}
+                  onTap: () {
+                    widget.onItemSelected(3);
+                  },
                 ),
                 ListTile(
                   leading: const Icon(Icons.phone_in_talk_outlined),
