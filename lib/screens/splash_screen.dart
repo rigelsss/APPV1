@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
-    Timer(const Duration(seconds: 6), () {
+    Timer(const Duration(seconds: 4), () {
       _controller.forward().whenComplete(() {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const HomeScreen()),

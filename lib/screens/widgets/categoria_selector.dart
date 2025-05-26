@@ -37,7 +37,6 @@ class CategoriaSelector extends StatelessWidget {
         final String imagem = iconesPorCategoria[id] ?? 'assets/images/image-break.png';
         final List<dynamic> tiposDenuncia = categoria['tiposDenuncia'] ?? [];
         final isExpanded = categoriasExpandidas.contains(index);
-        final selecionado = categoriaSelecionada == texto;
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 4),
@@ -45,7 +44,10 @@ class CategoriaSelector extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ListTile(
-                onTap: () => onCategoriaSelecionada(texto),
+                onTap: () {
+                  onCategoriaSelecionada(texto);
+                  onToggleExpand(index);
+                },
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 leading: SizedBox(
                   width: 40,
@@ -60,15 +62,9 @@ class CategoriaSelector extends StatelessWidget {
                   ),
                 ),
                 title: Text(texto, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (selecionado) const Icon(Icons.check, color: Colors.green),
-                    IconButton(
-                      icon: Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
-                      onPressed: () => onToggleExpand(index),
-                    ),
-                  ],
+                trailing: IconButton(
+                  icon: Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
+                  onPressed: () => onToggleExpand(index),
                 ),
               ),
               if (isExpanded)

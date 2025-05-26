@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ServicosCarrossel extends StatelessWidget {
+class ServicosCarrossel extends StatefulWidget {
   final Function(String label) onSelecionar;
 
   const ServicosCarrossel({super.key, required this.onSelecionar});
+
+  @override
+  State<ServicosCarrossel> createState() => _ServicosCarrosselState();
+}
+
+class _ServicosCarrosselState extends State<ServicosCarrossel> {
+  final ScrollController _scrollController = ScrollController();
 
   Future<void> _abrirUrl(String url) async {
     final Uri uri = Uri.parse(url);
@@ -27,7 +34,7 @@ class ServicosCarrossel extends StatelessWidget {
         'image': 'assets/images/denuncia.jpg'
       },
       {
-        'label': 'Portal da Transparencia',
+        'label': 'Transparencia',
         'image': 'assets/images/portaltransparencia.jpg',
         'url': 'https://sigma.pb.gov.br/transparencia/'
       },
@@ -43,54 +50,89 @@ class ServicosCarrossel extends StatelessWidget {
       },
     ];
 
-    return SizedBox(
-      height: 130,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: servicos.length,
-        itemBuilder: (context, index) {
-          final servico = servicos[index];
-          return GestureDetector(
-            onTap: () {
-              if (servico.containsKey('url')) {
-                _abrirUrl(servico['url']);
-              } else {
-                onSelecionar(servico['label']);
-              }
-            },
-            child: Container(
-              width: 120,
-              margin: const EdgeInsets.only(right: 12),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                    child: Image.asset(
-                      servico['image'],
-                      fit: BoxFit.cover,
-                      height: 80,
+    return Row(
+      children: [
+      IconButton(
+        icon: Image.asset(
+        'assets/images/seta_esquerda.png',
+          width: 24,
+          height: 24,
+        ),
+          onPressed: () {
+            _scrollController.animateTo(
+              _scrollController.offset - 300,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          },
+        ),
+        Expanded(
+          child: SizedBox(
+            height: 130,
+            child: ListView.builder(
+              controller: _scrollController,
+              scrollDirection: Axis.horizontal,
+              itemCount: servicos.length,
+              itemBuilder: (context, index) {
+                final servico = servicos[index];
+                return GestureDetector(
+                  onTap: () {
+                    if (servico.containsKey('url')) {
+                      _abrirUrl(servico['url']);
+                    } else {
+                      widget.onSelecionar(servico['label']);
+                    }
+                  },
+                  child: Container(
+                    width: 120,
+                    margin: const EdgeInsets.only(right: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ClipRRect(
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                          child: Image.asset(
+                            servico['image'],
+                            fit: BoxFit.cover,
+                            height: 80,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            servico['label'],
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      servico['label'],
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
+                );
+              },
             ),
-          );
-        },
-      ),
+          ),
+        ),
+        IconButton(     
+          icon: Image.asset(
+          'assets/images/seta_direita.png',
+          width: 24,
+          height: 24,
+          ),
+          onPressed: () {
+            _scrollController.animateTo(
+              _scrollController.offset + 300,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          },
+        ),
+      ],
     );
   }
 }

@@ -142,18 +142,23 @@ class _PraiasPageState extends State<PraiasPage> {
   Widget build(BuildContext context) {
     if (_isLoadingEstacoes) {
       return const Scaffold(
+        backgroundColor: Colors.white,
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(16),
             color: Colors.white,
-            alignment:Alignment.centerLeft,
-            child: const Text("Balneabilidade", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            alignment: Alignment.centerLeft,
+            child: const Text(
+              "Balneabilidade",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
           ),
           Container(
             color: Colors.grey.shade200,

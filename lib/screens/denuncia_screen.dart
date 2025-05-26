@@ -10,7 +10,6 @@ import 'package:sudema_app/services/AuthMe.dart';
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 
-
 class DenunciaScreen extends StatefulWidget {
   @override
   _DenunciaScreenState createState() => _DenunciaScreenState();
@@ -197,122 +196,126 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
   Widget build(BuildContext context) {
     final dados = DenunciaData();
     final textoDireita = (dados.anonimo ?? false)
-      ? 'Denúncia anônima'
-      : (dados.usuarioEmail ?? '');
+        ? 'Denúncia anônima'
+        : (dados.usuarioEmail ?? '');
 
     return Scaffold(
+      backgroundColor: Colors.white, // fundo branco do Scaffold
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Expanded(
-                      child: Text(
-                        'Denúncia',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        child: Container(
+          color: Colors.white, // fundo branco interno
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Denúncia',
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Text(
+                        textoDireita,
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  _buildLabel('Data do ocorrido *'),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _dataController,
+                    focusNode: _dataFocus,
+                    readOnly: true,
+                    decoration: _dataInputDecoration(),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildLabel('Descrição *'),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _descricaoController,
+                    maxLines: 4,
+                    decoration: _inputDecoration(
+                      'Descreva a infração identificada...',
+                      _erroDescricao ? 'Descrição obrigatória.' : null,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildLabel('Ponto de referência *'),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _referenciaController,
+                    decoration: _inputDecoration(
+                      'Nome, nome da empresa, documento...',
+                      _erroReferencia ? 'Campo obrigatório.' : null,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildLabel('Informações do denunciado *'),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _denunciadoController,
+                    decoration: _inputDecoration(
+                      'Nome, nome da empresa, documento...',
+                      _erroDenunciado ? 'Campo obrigatório.' : null,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildLabel('Adicionar arquivos'),
+                  const SizedBox(height: 10),
+                  GestureDetector(
+                    onTap: () async {
+                      final picker = ImagePicker();
+                      final files = await picker.pickMultiImage();
+                      if (files.isNotEmpty) {
+                        setState(() => _imagens.addAll(files));
+                      }
+                    },
+                    child: DottedBorderContainer(imagens: _imagens),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Checkbox(
+                        value: _confirmacao,
+                        shape: const CircleBorder(),
+                        onChanged: (value) {
+                          setState(() => _confirmacao = value ?? false);
+                        },
+                      ),
+                      const Expanded(
+                        child: Text(
+                          'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: _enviar,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1B8C00),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Text(
+                        'Concluir denúncia',
+                        style: TextStyle(color: Colors.white, fontSize: 18),
                       ),
                     ),
-                    Text(
-                      textoDireita,
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                _buildLabel('Data do ocorrido *'),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: _dataController,
-                  focusNode: _dataFocus,
-                  readOnly: true,
-                  decoration: _dataInputDecoration(),
-                ),
-                const SizedBox(height: 24),
-                _buildLabel('Descrição *'),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: _descricaoController,
-                  maxLines: 4,
-                  decoration: _inputDecoration(
-                    'Descreva a infração identificada...',
-                    _erroDescricao ? 'Descrição obrigatória.' : null,
                   ),
-                ),
-                const SizedBox(height: 24),
-                _buildLabel('Ponto de referência *'),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: _referenciaController,
-                  decoration: _inputDecoration(
-                    'Nome, nome da empresa, documento...',
-                    _erroReferencia ? 'Campo obrigatório.' : null,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                _buildLabel('Informações do denunciado *'),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: _denunciadoController,
-                  decoration: _inputDecoration(
-                    'Nome, nome da empresa, documento...',
-                    _erroDenunciado ? 'Campo obrigatório.' : null,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                _buildLabel('Adicionar arquivos'),
-                const SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () async {
-                    final picker = ImagePicker();
-                    final files = await picker.pickMultiImage();
-                    if (files.isNotEmpty) {
-                      setState(() => _imagens.addAll(files));
-                    }
-                  },
-                  child: DottedBorderContainer(imagens: _imagens),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Checkbox(
-                      value: _confirmacao,
-                      shape: const CircleBorder(),
-                      onChanged: (value) {
-                        setState(() => _confirmacao = value ?? false);
-                      },
-                    ),
-                    const Expanded(
-                      child: Text(
-                        'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _enviar,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1B8C00),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: const Text(
-                      'Concluir denúncia',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -320,45 +323,46 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     );
   }
 
-  Widget _buildLabel(String texto) => Text(texto, style: const TextStyle(fontSize: 16));
+  Widget _buildLabel(String texto) =>
+      Text(texto, style: const TextStyle(fontSize: 16));
 
-InputDecoration _inputDecoration(String hint, String? erro) {
-  final base = OutlineInputBorder(
-    borderRadius: BorderRadius.circular(6),
-    borderSide: const BorderSide(color: Color.fromARGB(255, 191, 191, 191), width: 1.5),
-  );
+  InputDecoration _inputDecoration(String hint, String? erro) {
+    final base = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(6),
+      borderSide: const BorderSide(color: Color.fromARGB(255, 191, 191, 191), width: 1.5),
+    );
 
-  return InputDecoration(
-    hintText: hint,
-    hintStyle: const TextStyle(color: Color.fromARGB(255, 142, 142, 142)),
-    errorText: erro,
-    enabledBorder: base,
-    focusedBorder: base,
-    errorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
-    focusedErrorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
-  );
-}
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(color: Color.fromARGB(255, 142, 142, 142)),
+      errorText: erro,
+      enabledBorder: base,
+      focusedBorder: base,
+      errorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
+      focusedErrorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
+    );
+  }
 
-InputDecoration _dataInputDecoration() {
-  final base = OutlineInputBorder(
-    borderRadius: BorderRadius.circular(6),
-    borderSide: const BorderSide(color: Color.fromARGB(255, 191, 191, 191), width: 1.5),
-  );
+  InputDecoration _dataInputDecoration() {
+    final base = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(6),
+      borderSide: const BorderSide(color: Color.fromARGB(255, 191, 191, 191), width: 1.5),
+    );
 
-  return InputDecoration(
-    hintText: 'dd/mm/aaaa',
-    hintStyle: const TextStyle(color: Color.fromARGB(255, 142, 142, 142)), 
-    suffixIcon: IconButton(
-      icon: const Icon(Icons.calendar_today),
-      onPressed: _selecionarData,
-    ),
-    errorText: _exibirErroData && !_dataValida ? 'Data inválida' : null,
-    enabledBorder: base,
-    focusedBorder: base,
-    errorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
-    focusedErrorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
-  );
-}
+    return InputDecoration(
+      hintText: 'dd/mm/aaaa',
+      hintStyle: const TextStyle(color: Color.fromARGB(255, 142, 142, 142)),
+      suffixIcon: IconButton(
+        icon: const Icon(Icons.calendar_today),
+        onPressed: _selecionarData,
+      ),
+      errorText: _exibirErroData && !_dataValida ? 'Data inválida' : null,
+      enabledBorder: base,
+      focusedBorder: base,
+      errorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
+      focusedErrorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
+    );
+  }
 }
 
 class DottedBorderContainer extends StatelessWidget {
