@@ -1,0 +1,108 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:sudema_app/models/denuncia_data.dart';
+import 'package:sudema_app/screens/denuncia/localizacao/endereco_modal_sheet.dart';
+import 'widgets/mapa_interativo.dart';
+import 'widgets/painel_confirmar_endereco.dart';
+
+class AbaLocalizacao extends StatefulWidget {
+  final VoidCallback onEnderecoConfirmado;
+  const AbaLocalizacao({super.key, required this.onEnderecoConfirmado});
+
+  @override
+  State<AbaLocalizacao> createState() => _AbaLocalizacaoState();
+}
+
+class _AbaLocalizacaoState extends State<AbaLocalizacao> {
+  LatLng? _posicaoAtual;
+  String _endereco = 'Carregando endereço...';
+  final TextEditingController _buscaController = TextEditingController();
+  late GoogleMapController _mapController;
+
+  void atualizarEndereco(LatLng novaPosicao, String endereco) {
+    setState(() {
+      _posicaoAtual = novaPosicao;
+      _endereco = endereco;
+      _buscaController.text = endereco;
+    });
+  }
+
+  void confirmarEndereco() {
+    if (_posicaoAtual == null) return;
+
+    final dados = DenunciaData();
+    if ([dados.estado, dados.bairro, dados.municipio, dados.logradouro].any((e) => e == null || e.isEmpty)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Endereço incompleto. Tente reposicionar o mapa ou buscar manualmente.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    dados.latitude = double.parse(_posicaoAtual!.latitude.toStringAsFixed(8));
+    dados.longitude = double.parse(_posicaoAtual!.longitude.toStringAsFixed(8));
+    dados.endereco = _endereco;
+    dados.enderecoConfirmado = true;
+
+    widget.onEnderecoConfirmado();
+  }
+
+  Future<void> abrirBuscaManual() async {
+    final resultado = await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const EnderecoModalSheet(),
+    );
+
+    if (resultado != null && resultado['latLng'] != null) {
+      final destino = resultado['latLng'] as LatLng;
+      final endereco = resultado['endereco'];
+
+      _mapController.animateCamera(CameraUpdate.newLatLng(destino));
+
+      atualizarEndereco(destino, endereco);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final enderecoValido = DenunciaData().endereco != null &&
+        DenunciaData().endereco!.isNotEmpty &&
+        DenunciaData().endereco != 'Endereço não encontrado';
+
+    return Stack(
+      children: [
+        MapaInterativo(
+          posicaoAtual: _posicaoAtual,
+          onAtualizarPosicao: atualizarEndereco,
+          onMapCreatedExternal: (controller) {
+            _mapController = controller;
+          },
+        ),
+
+        if (_posicaoAtual == null)
+          const Center(child: CircularProgressIndicator()),
+
+        // Ícone fixo central (pino vermelho)
+        const Center(
+          child: Icon(
+            Icons.location_pin,
+            size: 40,
+            color: Colors.red,
+          ),
+        ),
+
+        PainelConfirmarEndereco(
+          controller: _buscaController,
+          enderecoValido: enderecoValido,
+          onPesquisarPress: abrirBuscaManual,
+          onConfirmarPress: confirmarEndereco,
+        ),
+      ],
+    );
+  }
+}
