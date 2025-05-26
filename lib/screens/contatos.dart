@@ -32,7 +32,7 @@ Future<void> _abrirSite() async {
 
 
 class _ContatosState extends State<Contatos> {
-  int _currentIndex = 0;
+  int _currentIndex = -1;
 
   void _onNavBarTapped(int index) {
     if (index == _currentIndex) return;
@@ -61,7 +61,7 @@ class _ContatosState extends State<Contatos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(),
-      drawer: CustomDrawer(),
+      drawer: CustomDrawer(onItemSelected: (int ) {  },),
       backgroundColor: Colors.white,
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
@@ -101,12 +101,26 @@ class _ContatosState extends State<Contatos> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
-                      children: const [
-                        Icon(Icons.access_time, color: Colors.black54),
-                        SizedBox(width: 10),
-                        Text(
-                          '08h às 12:00  /  13:30 ás 16:00',
-                          style: TextStyle(fontSize: 18),
+                      crossAxisAlignment: CrossAxisAlignment.center, // ícone centralizado verticalmente
+                      children: [
+                        const Icon(Icons.access_time, color: Colors.black),
+                        const SizedBox(width: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'Segunda a sexta-feira',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              '08h às 12:00  |  13:30 às 16:00',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ],
                         ),
                       ],
                     ),

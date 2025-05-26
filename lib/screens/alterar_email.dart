@@ -168,7 +168,7 @@ class _EditarEmailState extends State<EditarEmail> {
         ),
         elevation: 0,
       ),
-      drawer: const CustomDrawer(),
+      drawer:  CustomDrawer(onItemSelected: (int index) {  },),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
