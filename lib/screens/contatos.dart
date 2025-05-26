@@ -32,7 +32,7 @@ Future<void> _abrirSite() async {
 
 
 class _ContatosState extends State<Contatos> {
-  int _currentIndex = 0;
+  int _currentIndex = -1;
 
   void _onNavBarTapped(int index) {
     if (index == _currentIndex) return;
@@ -61,7 +61,7 @@ class _ContatosState extends State<Contatos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(),
-      drawer: CustomDrawer(onItemSelected: (int index) {  },),
+      drawer: CustomDrawer(onItemSelected: (int ) {  },),
       backgroundColor: Colors.white,
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
