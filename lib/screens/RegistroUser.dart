@@ -22,6 +22,8 @@ class _RegistroUserState extends State<RegistroUser> {
   String? _erroEmail;
   String? _erroSenha;
   String? _erroConfirmarSenha;
+  String? _erroTermos;
+
 
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
@@ -112,6 +114,14 @@ class _RegistroUserState extends State<RegistroUser> {
                         ),
                       ],
                     ),
+                    if (_erroTermos != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          _erroTermos!,
+                          style: TextStyle(color: Colors.red, fontSize: 12),
+                        ),
+                      ),
                     SizedBox(height: 20),
                     Center(
                       child: RichText(
@@ -159,6 +169,7 @@ class _RegistroUserState extends State<RegistroUser> {
                                 ? 'A senha deve ter no mínimo 8 caracteres, incluir letras, números e caracteres especiais.'
                                 : null;
                             _erroConfirmarSenha = _confirmarSenhaController.text.isEmpty ? 'Confirmação de senha é obrigatória' : null;
+                            _erroTermos = !_isChecked ? 'Você deve aceitar os termos para continuar.' : null;
                           });
 
                           if (_erroNome != null ||
@@ -166,7 +177,8 @@ class _RegistroUserState extends State<RegistroUser> {
                               _erroContato != null ||
                               _erroEmail != null ||
                               _erroSenha != null ||
-                              _erroConfirmarSenha != null) {
+                              _erroConfirmarSenha != null ||
+                              _erroTermos != null) {
                             Flushbar(
                               message: 'Preencha todos os campos obrigatórios.',
                               duration: Duration(seconds: 3),
