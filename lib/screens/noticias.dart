@@ -1,3 +1,4 @@
+// noticias_page.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -5,7 +6,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'fullNoticia_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
 
 class NoticiasPage extends StatefulWidget {
   const NoticiasPage({super.key});
@@ -181,6 +181,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                         ),
                         selected: filtroTag == tag,
                         selectedColor: const Color(0xFF2A2F8C),
+                        backgroundColor: Colors.white,
                         shape: StadiumBorder(
                           side: BorderSide(
                             color: filtroTag == tag
@@ -209,44 +210,43 @@ class _NoticiasPageState extends State<NoticiasPage> {
                       ? noticia['categorias'].whereType<String>().toList()
                       : [];
 
-                  return Card(
-                    color: Colors.grey[200],
-                    margin: const EdgeInsets.only(bottom: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: noticia['imagem_url'] ?? '',
-                          width: double.infinity,
-                          height: 300,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) => const Icon(Icons.broken_image),
-                        ),
-
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                noticia['data_publicacao_formatada'],
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
+                  return GestureDetector(
+                    onTap: () => abrirNoticiaCompleta(noticia['id']),
+                    child: Card(
+                      color: Colors.grey[200],
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: noticia['imagem_url'] ?? '',
+                            width: double.infinity,
+                            height: 300,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) => const Icon(Icons.broken_image),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () => abrirNoticiaCompleta(noticia['id']),
-                                child: Text(
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  noticia['data_publicacao_formatada'],
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
                                   _removerHtml(noticia['titulo']),
                                   style: const TextStyle(
                                     fontSize: 16,
@@ -254,41 +254,38 @@ class _NoticiasPageState extends State<NoticiasPage> {
                                     decoration: TextDecoration.underline,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              GestureDetector(
-                                onTap: () => abrirNoticiaCompleta(noticia['id']),
-                                child: Text(
+                                const SizedBox(height: 8),
+                                Text(
                                   _removerHtml(noticia['resumo']),
                                   style: const TextStyle(fontSize: 14),
                                 ),
-                              ),
-                              const SizedBox(height: 12),
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 4,
-                                children: categorias.map<Widget>((tag) {
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFB9CD23),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      tag,
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 12,
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 4,
+                                  children: categorias.map<Widget>((tag) {
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFB9CD23),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            ],
+                                      child: Text(
+                                        tag,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                      ],
+                          const SizedBox(height: 12),
+                        ],
+                      ),
                     ),
                   );
                 } else {
