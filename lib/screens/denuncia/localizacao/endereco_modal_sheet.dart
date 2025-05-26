@@ -40,7 +40,7 @@ class _EnderecoModalSheetState extends State<EnderecoModalSheet> {
 
     setState(() => _carregando = true);
 
-    var result = await _googlePlace.autocomplete.get(
+    final result = await _googlePlace.autocomplete.get(
       input,
       language: 'pt',
       components: [Component('country', 'br')],
@@ -114,11 +114,15 @@ class _EnderecoModalSheetState extends State<EnderecoModalSheet> {
                         title: Text(p.structuredFormatting?.mainText ?? ''),
                         subtitle: Text(p.structuredFormatting?.secondaryText ?? ''),
                         onTap: () async {
-                          var details = await _googlePlace.details.get(p.placeId!);
+                          final placeId = p.placeId;
+                          if (placeId == null) return;
+
+                          final details = await _googlePlace.details.get(placeId);
 
                           if (details == null ||
                               details.result == null ||
-                              details.result!.geometry == null) {
+                              details.result!.geometry == null ||
+                              details.result!.geometry!.location == null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Erro ao obter detalhes do local.')),
                             );
@@ -126,12 +130,14 @@ class _EnderecoModalSheetState extends State<EnderecoModalSheet> {
                           }
 
                           final loc = details.result!.geometry!.location!;
-                          _controller.clear();
-                          setState(() => _predictions = []);
+                          final enderecoCompleto = p.description ?? "Endereço não disponível";
+
+                          // Fecha o teclado
+                          FocusScope.of(context).unfocus();
 
                           Navigator.pop(context, {
                             'latLng': LatLng(loc.lat!, loc.lng!),
-                            'endereco': p.description,
+                            'endereco': enderecoCompleto,
                           });
                         },
                       );
