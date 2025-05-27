@@ -30,7 +30,6 @@ Future<void> _abrirSite() async {
   }
 }
 
-
 class _ContatosState extends State<Contatos> {
   int _currentIndex = -1;
 
@@ -49,7 +48,7 @@ class _ContatosState extends State<Contatos> {
         Navigator.pushReplacementNamed(context, '/denuncias');
         break;
       case 2:
-        Navigator.pushReplacementNamed(context, '/balneabilidade');
+        Navigator.pushReplacementNamed(context, '/balneablilidade');
         break;
       case 3:
         Navigator.pushReplacementNamed(context, '/noticias');
@@ -61,7 +60,7 @@ class _ContatosState extends State<Contatos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeAppBar(),
-      drawer: CustomDrawer(onItemSelected: (int ) {  },),
+      drawer: CustomDrawer(onItemSelected: (int) {}),
       backgroundColor: Colors.white,
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
@@ -101,26 +100,29 @@ class _ContatosState extends State<Contatos> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center, // ícone centralizado verticalmente
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         const Icon(Icons.access_time, color: Colors.black),
                         const SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Segunda a sexta-feira',
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.black,
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Text(
+                                'Segunda a sexta-feira',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              '08h às 12:00  |  13:30 às 16:00',
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          ],
+                              SizedBox(height: 4),
+                              Text(
+                                '08h às 12:00  |  13:30 às 16:00',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -138,7 +140,12 @@ class _ContatosState extends State<Contatos> {
                       children: [
                         Icon(Icons.phone_in_talk_outlined),
                         SizedBox(width: 10),
-                        Text('+55 (83) 3690-1965', style: TextStyle(fontSize: 18)),
+                        Flexible(
+                          child: Text(
+                            '+55 (83) 3690-1965',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -155,7 +162,12 @@ class _ContatosState extends State<Contatos> {
                       children: [
                         Icon(Icons.phone_in_talk_outlined),
                         SizedBox(width: 10),
-                        Text('+55 (83) 3218-5606', style: TextStyle(fontSize: 18)),
+                        Flexible(
+                          child: Text(
+                            '+55 (83) 3218-5606',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -213,7 +225,7 @@ class _ContatosState extends State<Contatos> {
                   SizedBox(height: 40),
                   Center(
                     child: Column(
-                      children: [
+                      children: const [
                         Text(
                           'Superintendência de Administração do Meio Ambiente - SUDEMA',
                           textAlign: TextAlign.center,
