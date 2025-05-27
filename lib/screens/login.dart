@@ -143,8 +143,14 @@ class _LoginPageState extends State<LoginPage> {
                   controller: emailController,
                   decoration: const InputDecoration(
                     labelText: 'E-mail',
+                    labelStyle: TextStyle(color: Colors.black),
                     hintText: 'Digite seu e-mail',
-                    border: OutlineInputBorder(),
+                    hintStyle: TextStyle(color: Colors.black),
+                    border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                    enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black, width: 2.0),
+                    ),
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -154,8 +160,14 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText: _obscureText,
                   decoration: InputDecoration(
                     labelText: 'Senha',
+                    labelStyle: TextStyle(color: Colors.black),
                     hintText: 'Digite sua senha',
-                    border: const OutlineInputBorder(),
+                    hintStyle: TextStyle(color: Colors.black),
+                    border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                    enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black, width: 2.0),
+                    ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscureText ? Icons.visibility_off : Icons.visibility,
