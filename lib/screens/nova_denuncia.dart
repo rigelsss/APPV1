@@ -128,6 +128,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
     });
   }
 
+  // ignore: unused_element
   void _irParaLocalizacao() {
     setState(() {
       selectedIndex = 2;

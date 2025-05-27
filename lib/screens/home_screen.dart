@@ -6,12 +6,12 @@ import '../services/noticiasTop5_service.dart';
 import '../models/noticia.dart';
 import 'widgets/appbar.dart';
 import '../screens/praias.dart';
-import '../screens/PageDenuncia.dart';
 import '../screens/noticias.dart';
 import 'widgets/navbar.dart';
 import 'widgets/drawer.dart';
 import 'login.dart';
 import 'package:another_flushbar/flushbar.dart';
+import '../screens/denunciawraprellerscreen.dart'; 
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -81,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
+
   void _onDrawerItemSelected(int index) {
     setState(() {
       _selectedIndex = index;
@@ -156,9 +157,9 @@ class _HomeScreenState extends State<HomeScreen> {
           noticias: _noticias,
           onSelecionarDenuncia: () => setState(() => _selectedIndex = 1),
           onSelecionarNoticias: () => setState(() => _selectedIndex = 3),
-          onSelecionarBalneabildiade: () => setState (() => _selectedIndex = 2),
+          onSelecionarBalneabildiade: () => setState(() => _selectedIndex = 2),
         ),
-        const DenunciaPage(),
+        const DenunciaWrapperScreen(), 
         const PraiasPage(),
         const NoticiasPage(),
       ];
