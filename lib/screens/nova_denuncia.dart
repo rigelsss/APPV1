@@ -148,25 +148,6 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Denunciar'),
-        actions: [
-          IconButton(
-            icon: Icon(isLoggedIn ? Icons.notifications : Icons.login),
-            tooltip: isLoggedIn ? 'Notificações' : 'Fazer login',
-            onPressed: () {
-              if (isLoggedIn) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => NotificacoesPage(token: _token!)),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LoginPage()),
-                );
-              }
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
