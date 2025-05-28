@@ -204,7 +204,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         );
                       },
-                      child: const Text('Esqueceu a senha?'),
+                      child: const Text('Esqueceu a senha?', style: TextStyle(color: Colors.black),),
                     ),
                   ],
                 ),

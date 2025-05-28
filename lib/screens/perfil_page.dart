@@ -83,6 +83,7 @@ class PerfiluserState extends State<Perfiluser> {
     Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 
+
   @override
   Widget build(BuildContext context) {
     if (_errorFetching && _errorMessage.isNotEmpty) {
@@ -118,8 +119,26 @@ class PerfiluserState extends State<Perfiluser> {
       ),
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
-        enabled: false,
-        onTap: (index) {},
+        enabled: true,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+          switch (index) {
+            case 0:
+              Navigator.pushNamed(context, '/home');
+              break;
+            case 1:
+              Navigator.pushNamed(context, '/denuncias');
+              break;
+            case 2:
+              Navigator.pushNamed(context, 'balneabilidade');
+              break;
+            case 3:
+              Navigator.pushNamed(context, '/noticias');
+              break;
+          }
+        },
       ),
     );
   }
