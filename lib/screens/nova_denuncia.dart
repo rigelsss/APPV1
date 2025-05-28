@@ -8,8 +8,6 @@ import 'package:sudema_app/services/categoria_service.dart';
 import 'package:sudema_app/screens/denuncia/localizacao/aba_localizacao.dart';
 import 'package:sudema_app/screens/widgets/categoria_selector.dart';
 import 'package:sudema_app/screens/widgets/denuncia_top_bar.dart';
-import 'package:sudema_app/screens/login.dart';
-import 'package:sudema_app/screens/notificacoes.dart';
 import '../models/denuncia_data.dart';
 
 class NovaDenuncia extends StatefulWidget {
@@ -128,6 +126,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
     });
   }
 
+  // ignore: unused_element
   void _irParaLocalizacao() {
     setState(() {
       selectedIndex = 2;
@@ -144,47 +143,28 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Denunciar'),
-        actions: [
-          IconButton(
-            icon: Icon(isLoggedIn ? Icons.notifications : Icons.login),
-            tooltip: isLoggedIn ? 'Notificações' : 'Fazer login',
-            onPressed: () {
-              if (isLoggedIn) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => NotificacoesPage(token: _token!)),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LoginPage()),
-                );
-              }
-            },
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          DenunciaTopBar(
-            opcoes: opcao,
-            selectedIndex: selectedIndex,
-            podeIrParaAba: _podeIrParaAba,
-            onSelecionar: _aoSelecionarAba,
-          ),
-          if (_mensagemErro != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(
-                _mensagemErro!,
-                style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
-              ),
+    return SafeArea(
+      child: Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            DenunciaTopBar(
+              opcoes: opcao,
+              selectedIndex: selectedIndex,
+              podeIrParaAba: _podeIrParaAba,
+              onSelecionar: _aoSelecionarAba,
             ),
-          Expanded(child: _buildConteudoSelecionado()),
-        ],
+            if (_mensagemErro != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  _mensagemErro!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
+                ),
+              ),
+            Expanded(child: _buildConteudoSelecionado()),
+          ],
+        ),
       ),
     );
   }
@@ -205,16 +185,21 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   }
 
   Widget _buildCategoriaContent() {
-    if (_isLoadingCategorias) {
-      return const Center(child: CircularProgressIndicator());
-    }
+  if (_isLoadingCategorias) {
+    return const Center(child: CircularProgressIndicator());
+  }
 
-    return Column(
+  return Container(
+    color: Colors.white,
+    child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
           padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Text('Categoria da infração', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          child: Text(
+            'Categoria da infração',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
         ),
         Expanded(
           child: CategoriaSelector(
@@ -236,7 +221,7 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                 _categoriaSelecionada = texto;
                 DenunciaData().tipoDenunciaId = id.toString();
                 DenunciaData().usuarioEmail = isLoggedIn ? JwtDecoder.decode(_token!)['email'] : null;
-                DenunciaData().categoriaConfirmada = true; 
+                DenunciaData().categoriaConfirmada = true;
                 _mensagemErro = null;
               });
             },
@@ -274,6 +259,8 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
           ),
         ),
       ],
-    );
+    ),
+  );
   }
 }
+

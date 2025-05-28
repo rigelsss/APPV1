@@ -15,7 +15,7 @@ class NotificacoesPage extends StatefulWidget {
 class _NotificacoesPageState extends State<NotificacoesPage> {
   bool _ativado = false;
   List<dynamic> _notificacoes = [];
-  int _currentIndex = 2;
+  int _currentIndex = -1;
 
   @override
   void initState() {
@@ -122,7 +122,7 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
             case 2:
               break;
             case 3:
-              Navigator.pushReplacementNamed(context, '/perfil');
+              Navigator.pushReplacementNamed(context, '/noticias');
               break;
           }
         },

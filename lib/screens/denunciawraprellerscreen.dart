@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/nova_denuncia.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
+import 'package:sudema_app/screens/home_screen.dart';
+import 'package:sudema_app/screens/widgets/appbar_denuncia.dart'; 
 
 class DenunciaWrapperScreen extends StatefulWidget {
   const DenunciaWrapperScreen({super.key});
@@ -10,19 +12,23 @@ class DenunciaWrapperScreen extends StatefulWidget {
 }
 
 class _DenunciaWrapperScreenState extends State<DenunciaWrapperScreen> {
-  final int _selectedIndex = 1; // índice da aba "Denúncias"
+  final int _selectedIndex = 1;
 
   void _onNavBarTap(int index) {
-    if (index != _selectedIndex) {
-      // Se o usuário tocar em outra aba da navbar, volta para a home e troca o índice
-      Navigator.popUntil(context, (route) => route.isFirst);
-    }
+    if (index == _selectedIndex) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => HomeScreen(initialIndex: index)),
+      (route) => false,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const NovaDenuncia(), // Conteúdo com navegação interna
+      appBar: const DenunciaAppBar(), 
+      body: const NovaDenuncia(),
       bottomNavigationBar: NavBar(
         currentIndex: _selectedIndex,
         onTap: _onNavBarTap,

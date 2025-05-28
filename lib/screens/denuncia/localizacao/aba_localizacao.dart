@@ -74,35 +74,37 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
         DenunciaData().endereco!.isNotEmpty &&
         DenunciaData().endereco != 'Endereço não encontrado';
 
-    return Stack(
-      children: [
-        MapaInterativo(
-          posicaoAtual: _posicaoAtual,
-          onAtualizarPosicao: atualizarEndereco,
-          onMapCreatedExternal: (controller) {
-            _mapController = controller;
-          },
-        ),
-
-        if (_posicaoAtual == null)
-          const Center(child: CircularProgressIndicator()),
-
-        // Ícone fixo central (pino vermelho)
-        const Center(
-          child: Icon(
-            Icons.location_pin,
-            size: 40,
-            color: Colors.red,
+    return Container(
+      color: Colors.white,
+      child: Stack(
+        children: [
+          MapaInterativo(
+            posicaoAtual: _posicaoAtual,
+            onAtualizarPosicao: atualizarEndereco,
+            onMapCreatedExternal: (controller) {
+              _mapController = controller;
+            },
           ),
-        ),
 
-        PainelConfirmarEndereco(
-          controller: _buscaController,
-          enderecoValido: enderecoValido,
-          onPesquisarPress: abrirBuscaManual,
-          onConfirmarPress: confirmarEndereco,
-        ),
-      ],
+          if (_posicaoAtual == null)
+            const Center(child: CircularProgressIndicator()),
+
+          const Center(
+            child: Icon(
+              Icons.location_pin,
+              size: 40,
+              color: Colors.red,
+            ),
+          ),
+
+          PainelConfirmarEndereco(
+            controller: _buscaController,
+            enderecoValido: enderecoValido,
+            onPesquisarPress: abrirBuscaManual,
+            onConfirmarPress: confirmarEndereco,
+          ),
+        ],
+      ),
     );
   }
 }

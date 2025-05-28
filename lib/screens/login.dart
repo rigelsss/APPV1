@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/RecuperacaoSenha.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/RegistroUser.dart';
-import 'widgets/appbardenuncia.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:sudema_app/services/controllerLogin.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
 import '../screens/reativar_conta.dart';
 
 class LoginPage extends StatefulWidget {
@@ -57,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
         if (_token != null) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            MaterialPageRoute(builder: (context) => const HomeScreen(initialIndex: 0)),
           );
         }
       } else if (resultado['disabledUser'] == true) {

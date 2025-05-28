@@ -6,15 +6,17 @@ import '../services/noticiasTop5_service.dart';
 import '../models/noticia.dart';
 import 'widgets/appbar.dart';
 import '../screens/praias.dart';
-import '../screens/PageDenuncia.dart';
 import '../screens/noticias.dart';
 import 'widgets/navbar.dart';
 import 'widgets/drawer.dart';
 import 'login.dart';
 import 'package:another_flushbar/flushbar.dart';
+import '../screens/PageDenuncia.dart'; 
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final int initialIndex;
+
+  const HomeScreen({super.key, this.initialIndex = 0}); 
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -30,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.initialIndex; 
     _carregarToken();
     _carregarNoticias();
   }
@@ -81,11 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
+
   void _onDrawerItemSelected(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    Navigator.of(context).pop(); // fecha o Drawer
+    Navigator.of(context).pop(); 
   }
 
   Future<void> _carregarToken() async {
@@ -156,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
           noticias: _noticias,
           onSelecionarDenuncia: () => setState(() => _selectedIndex = 1),
           onSelecionarNoticias: () => setState(() => _selectedIndex = 3),
-          onSelecionarBalneabildiade: () => setState (() => _selectedIndex = 2),
+          onSelecionarBalneabildiade: () => setState(() => _selectedIndex = 2),
         ),
         const DenunciaPage(),
         const PraiasPage(),
