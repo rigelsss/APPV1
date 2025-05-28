@@ -11,10 +11,12 @@ import 'widgets/navbar.dart';
 import 'widgets/drawer.dart';
 import 'login.dart';
 import 'package:another_flushbar/flushbar.dart';
-import '../screens/denunciawraprellerscreen.dart'; 
+import '../screens/PageDenuncia.dart'; 
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final int initialIndex;
+
+  const HomeScreen({super.key, this.initialIndex = 0}); 
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -30,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.initialIndex; 
     _carregarToken();
     _carregarNoticias();
   }
@@ -86,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    Navigator.of(context).pop(); // fecha o Drawer
+    Navigator.of(context).pop(); 
   }
 
   Future<void> _carregarToken() async {
@@ -159,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onSelecionarNoticias: () => setState(() => _selectedIndex = 3),
           onSelecionarBalneabildiade: () => setState(() => _selectedIndex = 2),
         ),
-        const DenunciaWrapperScreen(), 
+        const DenunciaPage(),
         const PraiasPage(),
         const NoticiasPage(),
       ];

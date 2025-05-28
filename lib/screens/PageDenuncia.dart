@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'webview_screen.dart';
-import 'denunciawraprellerscreen.dart';
+import 'denunciawraprellerscreen.dart'; 
 
 class DenunciaPage extends StatelessWidget {
   const DenunciaPage({super.key});
@@ -34,7 +34,7 @@ class DenunciaPage extends StatelessWidget {
                     backgroundColor: const Color(0xFF2A2F8C),
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16), // Borda pouco arredondada
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                   child: const Text(
@@ -44,8 +44,6 @@ class DenunciaPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Seções de texto
               const Text(
                 'Por que denunciar?',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -56,7 +54,6 @@ class DenunciaPage extends StatelessWidget {
                 style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 12),
-
               const Text(
                 'O que acontece após a denúncia?',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -67,7 +64,6 @@ class DenunciaPage extends StatelessWidget {
                 style: TextStyle(fontSize: 16, color: Colors.black87),
               ),
               const SizedBox(height: 12),
-
               const Text(
                 'O que é considerado infração ambiental?',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

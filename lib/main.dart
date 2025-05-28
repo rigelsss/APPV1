@@ -5,15 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:sudema_app/screens/alterar_email.dart';
 import 'package:sudema_app/screens/deletar_conta.dart';
 import 'package:sudema_app/screens/EditSenha.dart';
-import 'package:sudema_app/screens/PageDenuncia.dart';
+import 'package:sudema_app/screens/notificacoes.dart';
 import 'package:sudema_app/screens/perfil_page.dart';
 import 'package:sudema_app/screens/contatos.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
-import 'package:sudema_app/screens/praias.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
 import 'package:sudema_app/screens/editar_perfil.dart';
-import 'package:sudema_app/screens/noticias.dart';
 import 'package:sudema_app/screens/reativar_conta.dart';
 import 'package:sudema_app/services/notification_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -54,11 +52,11 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),
-        '/home': (context) => const HomeScreen(),
+        '/home': (context) => const HomeScreen(initialIndex: 0,),
         '/login': (context) => const LoginPage(),
-        '/balneablilidade': (context) => const PraiasPage(),
-        '/noticias': (context) => const NoticiasPage(),
-        '/denuncias': (context) => const DenunciaPage(),
+        '/balneabilidade': (context) => const HomeScreen(initialIndex: 2),
+        '/noticias': (context) => const HomeScreen(initialIndex: 3),
+        '/denuncias': (context) => const HomeScreen(initialIndex: 1),
         '/editar-perfil': (context) => const EditarPerfil(nomeAtual: '', telefoneAtual: '', cpfAtual: ''),
         '/EditarEmail': (context) => const EditarEmail(),
         '/EditarSenha': (context) => const EditarSenha(),
@@ -66,6 +64,7 @@ class MyApp extends StatelessWidget {
         '/contatos' : (context) => const Contatos(),
         '/deletar-conta': (context) => const DeletarContaPage(),
         '/reativar-conta': (context) => const ReativarContaPage(email: '', senha: ''),
+        '/notificacoes': (context) => const NotificacoesPage(),
       },
     );
   }
