@@ -1,11 +1,13 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sudema_app/services/estacoes_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:sudema_app/services/marcadores_service.dart';
+import 'package:sudema_app/services/mapa_service.dart';
 import 'package:sudema_app/models/praia_marker.dart';
+import 'package:sudema_app/models/estacao_monitoramento.dart';
 import 'package:sudema_app/screens/widgets/praias_widgets.dart';
 import 'package:sudema_app/screens/widgets/estacao_info_card.dart';
-import 'package:sudema_app/services/mapa_service.dart';
-import 'package:sudema_app/services/marcadores_service.dart';
 
 class PraiasPage extends StatefulWidget {
   const PraiasPage({super.key});
@@ -38,46 +40,71 @@ class _PraiasPageState extends State<PraiasPage> {
   EstacaoMonitoramento? _estacaoSelecionada;
   Offset? _overlayPosition;
 
+  bool _mapaCriado = false;
+
   @override
   void initState() {
     super.initState();
-    _inicializarTudo();
+    _inicializarMapa();
   }
 
-  Future<void> _inicializarTudo() async {
-    try {
-      await _carregarIcones();
-      await _loadEstacoesFromJson();
-    } catch (e) {
-      print("Erro na inicialização: $e");
-      setState(() => _isLoadingEstacoes = false);
-    }
-  }
-
-  Future<void> _loadEstacoesFromJson() async {
-    try {
-      _estacoes = await EstacoesService.carregarEstacoes();
-      setState(() => _isLoadingEstacoes = false);
-    } catch (e) {
-      print("Erro: $e");
-      setState(() => _isLoadingEstacoes = false);
+  Future<void> _inicializarMapa() async {
+    await _carregarIcones();
+    await _carregarEstacoesDaAPI();
+    if (_mapaCriado) {
+      _gerarMarcadoresComSimulacao();
     }
   }
 
   Future<void> _carregarIcones() async {
     try {
       _iconePropria = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(14, 14)),
+        const ImageConfiguration(size: Size(48, 48)),
         'assets/images/propria.png',
       );
       _iconeImpropria = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(size: Size(14, 14)),
+        const ImageConfiguration(size: Size(48, 48)),
         'assets/images/impropria.png',
       );
-      print('✅ Ícones carregados com sucesso.');
     } catch (e) {
       print('❌ Erro ao carregar ícones: $e');
     }
+  }
+
+  Future<void> _carregarEstacoesDaAPI() async {
+    try {
+      final response = await http.get(Uri.parse('https://homolog.sigma.pb.gov.br/sislia/api/v1/balneabilidade/municipios-com-trechos'));
+      if (response.statusCode == 200) {
+        final dados = json.decode(utf8.decode(response.bodyBytes));
+        _estacoes = _mapearDadosDaAPI(dados);
+      } else {
+        throw Exception('Erro ao buscar dados da API: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('❌ Erro ao carregar dados da API: $e');
+    } finally {
+      setState(() => _isLoadingEstacoes = false);
+    }
+  }
+
+  List<EstacaoMonitoramento> _mapearDadosDaAPI(dynamic json) {
+    final List<EstacaoMonitoramento> estacoes = [];
+    for (var municipio in json) {
+      final String nomeMunicipio = municipio['municipio'];
+      for (var trecho in municipio['trechos']) {
+        estacoes.add(
+          EstacaoMonitoramento(
+            nome: trecho['trecho'] ?? '',
+            codigo: trecho['estacao'] ?? '',
+            endereco: trecho['trecho'] ?? '',
+            municipio: nomeMunicipio,
+            coordenadas: LatLng(trecho['latitude'], trecho['longitude']),
+            classificacao: trecho['classificacao']?.contains('Imprópria') == true ? 'Impróprias' : 'Próprias',
+          ),
+        );
+      }
+    }
+    return estacoes;
   }
 
   void _gerarMarcadoresComSimulacao() {
@@ -108,7 +135,7 @@ class _PraiasPageState extends State<PraiasPage> {
     _marcadoresVisiveis.clear();
     if (currentZoom >= minZoomToShowMarkers) {
       for (var pm in _todosMarcadores) {
-        final est = _estacoes.firstWhere((e) => e.codigo == pm.marker.markerId.value);
+        final est = _estacoes.firstWhere((e) => e.codigo == pm.marker.markerId.value, orElse: () => EstacaoMonitoramento.vazio());
         final matchMun = municipioSelecionado.isEmpty || municipioSelecionado == 'Todos' || est.municipio == municipioSelecionado;
         final matchClass = classificacoesSelecionadas.contains(pm.classificacao);
         if (matchMun && matchClass) {
@@ -180,48 +207,9 @@ class _PraiasPageState extends State<PraiasPage> {
                   child: PopupMenuButton<String>(
                     onSelected: _toggleClassificacao,
                     itemBuilder: (_) => [
-                      PopupMenuItem<String>(
-                        value: 'Mostrar tudo',
-                        child: Row(
-                          children: [
-                            Radio<String>(
-                              value: 'Mostrar tudo',
-                              groupValue: _getClassificacaoLabel(),
-                              onChanged: (_) => Navigator.pop(context, 'Mostrar tudo'),
-                            ),
-                            const SizedBox(width: 8),
-                            const Text('Mostrar tudo'),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem<String>(
-                        value: 'Mostrar apenas próprias',
-                        child: Row(
-                          children: [
-                            Radio<String>(
-                              value: 'Mostrar apenas próprias',
-                              groupValue: _getClassificacaoLabel(),
-                              onChanged: (_) => Navigator.pop(context, 'Mostrar apenas próprias'),
-                            ),
-                            const SizedBox(width: 8),
-                            const Text('Mostrar apenas próprias'),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem<String>(
-                        value: 'Mostrar apenas impróprias',
-                        child: Row(
-                          children: [
-                            Radio<String>(
-                              value: 'Mostrar apenas impróprias',
-                              groupValue: _getClassificacaoLabel(),
-                              onChanged: (_) => Navigator.pop(context, 'Mostrar apenas impróprias'),
-                            ),
-                            const SizedBox(width: 8),
-                            const Text('Mostrar apenas impróprias'),
-                          ],
-                        ),
-                      ),
+                      _radioMenuItem('Mostrar tudo'),
+                      _radioMenuItem('Mostrar apenas próprias'),
+                      _radioMenuItem('Mostrar apenas impróprias'),
                     ],
                     child: popupButton(_getClassificacaoLabel()),
                   ),
@@ -264,9 +252,9 @@ class _PraiasPageState extends State<PraiasPage> {
                     final zoomLevel = await controller.getZoomLevel();
                     setState(() {
                       currentZoom = zoomLevel;
+                      _mapaCriado = true;
                     });
-
-                    if (_estacoes.isNotEmpty && _todosMarcadores.isEmpty) {
+                    if (_estacoes.isNotEmpty) {
                       _gerarMarcadoresComSimulacao();
                     }
                   },
@@ -312,7 +300,24 @@ class _PraiasPageState extends State<PraiasPage> {
                   ),
               ],
             ),
-          )
+          ),
+        ],
+      ),
+    );
+  }
+
+  PopupMenuItem<String> _radioMenuItem(String value) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        children: [
+          Radio<String>(
+            value: value,
+            groupValue: _getClassificacaoLabel(),
+            onChanged: (_) => Navigator.pop(context, value),
+          ),
+          const SizedBox(width: 8),
+          Text(value),
         ],
       ),
     );

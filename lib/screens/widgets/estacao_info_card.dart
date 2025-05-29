@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/services/estacoes_service.dart';
+import 'package:sudema_app/models/estacao_monitoramento.dart';
 
 class EstacaoInfoCard extends StatelessWidget {
   final EstacaoMonitoramento estacao;
