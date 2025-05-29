@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
         '/contatos' : (context) => const Contatos(),
         '/deletar-conta': (context) => const DeletarContaPage(),
         '/reativar-conta': (context) => const ReativarContaPage(email: '', senha: ''),
-        '/notificacoes': (context) => const NotificacoesPage(),
+        '/notificacoes': (context) => const NotificacoesPage(token: '',),
       },
     );
   }

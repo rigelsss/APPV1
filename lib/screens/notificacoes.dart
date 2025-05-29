@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:sudema_app/screens/widgets/navbar.dart';
-import 'package:sudema_app/services/notification_service.dart';
+import 'package:http/http.dart' as http;
+import 'package:sudema_app/screens/widgets/navbar.dart';// <- certifique-se que esse caminho esteja correto
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import '../services/AuthMe.dart';
 
 class NotificacoesPage extends StatefulWidget {
-  const NotificacoesPage({super.key, this.token});
-  final String? token;
+  const NotificacoesPage({super.key, required String token});
 
   @override
   State<NotificacoesPage> createState() => _NotificacoesPageState();
@@ -25,15 +26,12 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
   }
 
   Future<void> _carregarEstado() async {
-    final ativo = await NotificationService.getNotificationsEnabled();
     setState(() {
-      _ativado = ativo;
+      _ativado = true;
     });
   }
 
   Future<void> _alternarNotificacoes(bool valor) async {
-    await NotificationService.setNotificationsEnabled(valor);
-    await NotificationService.initialize();
     setState(() {
       _ativado = valor;
     });
@@ -42,16 +40,44 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
   }
 
   Future<void> _carregarNotificacoes() async {
-    final String jsonStr = await rootBundle.loadString('assets/json/notificacoes.json');
-    final List<dynamic> dados = json.decode(jsonStr);
-    setState(() {
-      _notificacoes = dados;
-    });
+    try {
+      final token = await AuthController.getToken();
+      if (token == null) {
+        print('🔒 Usuário não autenticado.');
+        return;
+      }
+
+      final user = await AuthController.obterInformacoesUsuario(token);
+      if (user == null || user['id'] == null) {
+        print('❌ Usuário inválido ou sem ID.');
+        return;
+      }
+
+      final userId = user['id'];
+      final response = await http.get(
+        Uri.parse('${dotenv.env['URL_API']}/usuarios/$userId/notificacoes'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> dados = json.decode(utf8.decode(response.bodyBytes));
+        setState(() {
+          _notificacoes = dados;
+        });
+      } else {
+        print('❌ Erro ${response.statusCode} ao buscar notificações: ${response.body}');
+      }
+    } catch (e) {
+      print('❌ Erro ao carregar notificações: $e');
+    }
   }
 
   Widget _buildNotificacao(Map<String, dynamic> n) {
     return Card(
-      color: Colors.grey[300],
+      color: n['isRead'] == true ? Colors.grey[200] : Colors.white,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
@@ -59,21 +85,11 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (n['alerta'] == true)
-              Row(
-                children: const [
-                  Text('Alerta', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                  SizedBox(width: 6),
-                  Icon(Icons.warning_amber_rounded, color: Colors.red, size: 20),
-                ],
-              ),
-            if (n['alerta'] == true) const SizedBox(height: 4),
-            Text(n['titulo'], style: const TextStyle(color: Colors.black87, fontSize: 16)),
+            Text(n['titulo'], style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
-            Text(
-              '${n['data']} - ${n['hora']}',
-              style: const TextStyle(color: Colors.grey, fontSize: 13),
-            ),
+            Text(n['corpo'] ?? '-', style: const TextStyle(fontSize: 14)),
+            const SizedBox(height: 6),
+            Text(n['dataCriacao'] ?? '-', style: const TextStyle(color: Colors.grey, fontSize: 13)),
           ],
         ),
       ),
