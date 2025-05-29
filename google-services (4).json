@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "165089267993",
+    "project_id": "notificacoes-teste-91cd6",
+    "storage_bucket": "notificacoes-teste-91cd6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:165089267993:android:2ab76bf6e985fd08e13588",
+        "android_client_info": {
+          "package_name": "com.sudema_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUBTaEmlRQobmVmWsAO_3qf8yI9TibY8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

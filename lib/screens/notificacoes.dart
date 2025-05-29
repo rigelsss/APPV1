@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 import 'package:sudema_app/screens/widgets/navbar.dart';
-import 'package:sudema_app/services/notification_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import '../services/AuthMe.dart';
 
 class NotificacoesPage extends StatefulWidget {
-  const NotificacoesPage({super.key, this.token});
-  final String? token;
+  const NotificacoesPage({super.key, required String token});
 
   @override
   State<NotificacoesPage> createState() => _NotificacoesPageState();
@@ -20,61 +21,195 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
   @override
   void initState() {
     super.initState();
+    _solicitarPermissaoNotificacoes();
     _carregarEstado();
     _carregarNotificacoes();
   }
 
+  Future<void> _solicitarPermissaoNotificacoes() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('Permissão concedida para notificações');
+    } else {
+      print('Permissão negada para notificações');
+    }
+  }
+
   Future<void> _carregarEstado() async {
-    final ativo = await NotificationService.getNotificationsEnabled();
     setState(() {
-      _ativado = ativo;
+      _ativado = true;
     });
+  }
+
+  Future<bool> _ativarNotificacoesPush(bool ativar) async {
+    final token = await AuthController.getToken();
+    if (token == null) {
+      print('🔒 Usuário não autenticado.');
+      return false;
+    }
+
+    final user = await AuthController.obterInformacoesUsuario(token);
+    if (user == null || user['id'] == null) {
+      print('❌ Usuário inválido ou sem ID.');
+      return false;
+    }
+
+    final userId = user['id'].toString();
+
+    if (ativar) {
+      final deviceToken = await FirebaseMessaging.instance.getToken();
+      if (deviceToken == null) {
+        print('❌ Não foi possível obter deviceToken do Firebase');
+        return false;
+      }
+
+      final url = Uri.parse('${dotenv.env['URL_API']}/usuarios/mobile/$userId/notificacoes/ativar');
+      final response = await http.patch(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'deviceToken': deviceToken}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        print('✅ Notificações ativadas com sucesso');
+        return true;
+      } else {
+        print('❌ Falha ao ativar notificações: ${response.statusCode} ${response.body}');
+        return false;
+      }
+    } else {
+      print('Notificações desativadas pelo usuário.');
+      return true;
+    }
   }
 
   Future<void> _alternarNotificacoes(bool valor) async {
-    await NotificationService.setNotificationsEnabled(valor);
-    await NotificationService.initialize();
-    setState(() {
-      _ativado = valor;
-    });
-    final mensagem = valor ? 'Notificações ativadas' : 'Notificações desativadas';
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensagem)));
+    final sucesso = await _ativarNotificacoesPush(valor);
+
+    if (sucesso) {
+      setState(() {
+        _ativado = valor;
+      });
+      final mensagem = valor ? 'Notificações ativadas' : 'Notificações desativadas';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensagem)));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Falha ao atualizar o estado das notificações')),
+      );
+    }
   }
 
   Future<void> _carregarNotificacoes() async {
-    final String jsonStr = await rootBundle.loadString('assets/json/notificacoes.json');
-    final List<dynamic> dados = json.decode(jsonStr);
-    setState(() {
-      _notificacoes = dados;
-    });
+    try {
+      final token = await AuthController.getToken();
+      if (token == null) {
+        print('🔒 Usuário não autenticado.');
+        return;
+      }
+
+      final user = await AuthController.obterInformacoesUsuario(token);
+      if (user == null || user['id'] == null) {
+        print('❌ Usuário inválido ou sem ID.');
+        return;
+      }
+
+      final userId = user['id'];
+      final response = await http.get(
+        Uri.parse('${dotenv.env['URL_API']}/usuarios/mobile/$userId/notificacoes'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final String body = utf8.decode(response.bodyBytes);
+        print('🔍 Corpo da resposta: $body');
+
+        final Map<String, dynamic> decoded = json.decode(body);
+        final List<dynamic> dados = decoded['notificacoes'] ?? [];
+
+        setState(() {
+          _notificacoes = dados;
+        });
+      } else {
+        print('❌ Erro ${response.statusCode} ao buscar notificações: ${response.body}');
+      }
+    } catch (e) {
+      print('❌ Erro ao carregar notificações: $e');
+    }
   }
 
-  Widget _buildNotificacao(Map<String, dynamic> n) {
-    return Card(
-      color: Colors.grey[300],
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (n['alerta'] == true)
-              Row(
-                children: const [
-                  Text('Alerta', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
-                  SizedBox(width: 6),
-                  Icon(Icons.warning_amber_rounded, color: Colors.red, size: 20),
-                ],
-              ),
-            if (n['alerta'] == true) const SizedBox(height: 4),
-            Text(n['titulo'], style: const TextStyle(color: Colors.black87, fontSize: 16)),
-            const SizedBox(height: 6),
-            Text(
-              '${n['data']} - ${n['hora']}',
-              style: const TextStyle(color: Colors.grey, fontSize: 13),
-            ),
-          ],
+  Future<void> _marcarComoLida(String userId, String notificacaoId, int index) async {
+    try {
+      final token = await AuthController.getToken();
+      if (token == null) {
+        print('🔒 Token não encontrado.');
+        return;
+      }
+
+      final url = Uri.parse('${dotenv.env['URL_API']}/usuarios/mobile/$userId/notificacoes/$notificacaoId/marcar-como-lida');
+      final response = await http.patch(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 204) {
+        print('✅ Notificação marcada como lida.');
+
+        setState(() {
+          _notificacoes[index]['isRead'] = true;
+        });
+      } else {
+        print('❌ Erro ao marcar como lida: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('❌ Erro ao marcar notificação como lida: $e');
+    }
+  }
+
+  Widget _buildNotificacao(Map<String, dynamic> n, int index) {
+    return GestureDetector(
+      onTap: () async {
+        final token = await AuthController.getToken();
+        final user = await AuthController.obterInformacoesUsuario(token!);
+        if (user != null && user['id'] != null && n['isRead'] == false) {
+          await _marcarComoLida(user['id'].toString(), n['id'].toString(), index);
+        }
+      },
+      child: Card(
+        color: n['isRead'] == true ? Colors.grey[200] : Colors.white,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(n['titulo'], style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 6),
+              Text(n['corpo'] ?? '-', style: const TextStyle(fontSize: 14)),
+              const SizedBox(height: 6),
+              Text(n['dataCriacao'] ?? '-', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+            ],
+          ),
         ),
       ),
     );
@@ -103,7 +238,7 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
         itemCount: _notificacoes.length + 1,
         itemBuilder: (context, index) {
           if (index == 0) return const SizedBox(height: 20);
-          return _buildNotificacao(_notificacoes[index - 1]);
+          return _buildNotificacao(_notificacoes[index - 1], index - 1);
         },
       ),
       bottomNavigationBar: NavBar(

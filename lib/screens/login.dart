@@ -9,6 +9,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
 import '../screens/reativar_conta.dart';
 
+// Import para Firebase Messaging
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -22,6 +25,21 @@ class _LoginPageState extends State<LoginPage> {
   bool _checkboxValue = false;
   bool _obscureText = true;
   String? _token;
+
+  Future<void> _obterESalvarDeviceToken() async {
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('deviceToken', fcmToken);
+        print('Device Token salvo no SharedPreferences: $fcmToken');
+      } else {
+        print('Não foi possível obter o deviceToken do Firebase Messaging');
+      }
+    } catch (e) {
+      print('Erro ao obter deviceToken: $e');
+    }
+  }
 
   Future<void> realizarLogin() async {
     final email = emailController.text.trim();
@@ -43,9 +61,10 @@ class _LoginPageState extends State<LoginPage> {
           _token = token;
         });
 
-        print('Token salvo: $_token');
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
+
+        await _obterESalvarDeviceToken();
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(resultado['data']['message'] ?? 'Login realizado com sucesso')),
@@ -159,9 +178,9 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText: _obscureText,
                   decoration: InputDecoration(
                     labelText: 'Senha',
-                    labelStyle: TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black),
                     hintText: 'Digite sua senha',
-                    hintStyle: TextStyle(color: Colors.black),
+                    hintStyle: const TextStyle(color: Colors.black),
                     border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                     enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                     focusedBorder: OutlineInputBorder(
@@ -203,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         );
                       },
-                      child: const Text('Esqueceu a senha?', style: TextStyle(color: Colors.black),),
+                      child: const Text('Esqueceu a senha?', style: TextStyle(color: Colors.black)),
                     ),
                   ],
                 ),
@@ -227,58 +246,6 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                // const Row(
-                //   children: [
-                //     Expanded(
-                //       child: Divider(
-                //         thickness: 1,
-                //         endIndent: 10,
-                //         color: Colors.black87,
-                //       ),
-                //     ),
-                //     Text('ou', style: TextStyle(color: Colors.black87)),
-                //     Expanded(
-                //       child: Divider(
-                //         thickness: 1,
-                //         indent: 10,
-                //         color: Colors.black87,
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                // const SizedBox(height: 24),
-                // ElevatedButton(
-                //   onPressed: () {},
-                //   style: ElevatedButton.styleFrom(
-                //     backgroundColor: Colors.white,
-                //     padding: const EdgeInsets.symmetric(
-                //       vertical: 16,
-                //       horizontal: 24,
-                //     ),
-                //     side: const BorderSide(color: Colors.white),
-                //   ),
-                //   child: Row(
-                //     mainAxisSize: MainAxisSize.min,
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: [
-                //       Image.asset(
-                //         'assets/images/img.png',
-                //         width: 32,
-                //         height: 24,
-                //         fit: BoxFit.contain,
-                //       ),
-                //       const SizedBox(width: 8),
-                //       const Flexible(
-                //         child: Text(
-                //           'Login com Google',
-                //           style: TextStyle(color: Colors.black87, fontSize: 18),
-                //           overflow: TextOverflow.ellipsis,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
