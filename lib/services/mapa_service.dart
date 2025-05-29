@@ -1,5 +1,5 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sudema_app/services/estacoes_service.dart';
+import 'package:sudema_app/models/estacao_monitoramento.dart';
 
 class MapaService {
   static LatLng calcularCentroMunicipio(List<EstacaoMonitoramento> lista) {
