@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:firebase_messaging/firebase_messaging.dart'; // Firebase Messaging
+import 'package:firebase_messaging/firebase_messaging.dart';
 import '../services/AuthMe.dart';
 
 class NotificacoesPage extends StatefulWidget {
@@ -108,7 +108,8 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensagem)));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Falha ao atualizar o estado das notificações')));
+        const SnackBar(content: Text('Falha ao atualizar o estado das notificações')),
+      );
     }
   }
 
@@ -136,7 +137,12 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> dados = json.decode(utf8.decode(response.bodyBytes));
+        final String body = utf8.decode(response.bodyBytes);
+        print('🔍 Corpo da resposta: $body');
+
+        final Map<String, dynamic> decoded = json.decode(body);
+        final List<dynamic> dados = decoded['notificacoes'] ?? [];
+
         setState(() {
           _notificacoes = dados;
         });
