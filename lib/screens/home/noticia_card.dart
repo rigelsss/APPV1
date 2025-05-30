@@ -23,7 +23,7 @@ class NoticiaCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: 260,
+        width: double.infinity,
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade200),
@@ -37,7 +37,6 @@ class NoticiaCard extends StatelessWidget {
           ],
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // evita altura desnecessária
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
@@ -59,7 +58,6 @@ class NoticiaCard extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, // impede expansão vertical
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Align(
