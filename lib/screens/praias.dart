@@ -192,7 +192,7 @@ class _PraiasPageState extends State<PraiasPage> {
       if (municipioSelecionado.isEmpty || municipioSelecionado == 'Todos') {
         trechosFiltrados = _estacoes.map((e) => e.nome).toSet().toList();
       } else {
-        // Mostra só os trechos do município selecionado
+
         trechosFiltrados = _estacoes
             .where((e) => e.municipio == municipioSelecionado)
             .map((e) => e.nome)
@@ -201,7 +201,7 @@ class _PraiasPageState extends State<PraiasPage> {
       }
 
       trechosFiltrados.sort();
-      trechosFiltrados.insert(0, 'Todos'); // opção para mostrar todos
+      trechosFiltrados.insert(0, 'Todos');
 
       return SizedBox(
         width: 200,
