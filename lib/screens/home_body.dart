@@ -66,7 +66,7 @@ class HomeBody extends StatelessWidget {
 
   Widget _buildNoticias(BuildContext context, double screenHeight) {
     return SizedBox(
-      height: screenHeight * 0.45,
+      height: screenHeight * 0.43,
       child: NoticiasCarrossel(noticias: noticias),
     );
   }

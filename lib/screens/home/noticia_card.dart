@@ -23,12 +23,11 @@ class NoticiaCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: 260,
+        width: double.infinity,
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: Colors.grey.shade200),
           borderRadius: BorderRadius.circular(16),
-          color: const Color.fromARGB(255, 242, 241, 241),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -51,36 +50,39 @@ class NoticiaCard extends StatelessWidget {
                 errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 6, 8, 0),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  "$dataFormatada   $horaFormatada",
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
+            Container(
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 238, 238, 238),
+                borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4),
-                  Text(
-                    noticia.titulo,
-                    style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 14),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    noticia.resumo,
-                    style: const TextStyle(fontSize: 11, color: Color.fromARGB(255, 120, 120, 120)),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        "$dataFormatada   $horaFormatada",
+                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      noticia.titulo,
+                      style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 14),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      noticia.resumo,
+                      style: const TextStyle(fontSize: 11, color: Color.fromARGB(255, 120, 120, 120)),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

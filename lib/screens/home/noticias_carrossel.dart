@@ -15,42 +15,48 @@ class _NoticiasCarrosselState extends State<NoticiasCarrossel> {
   int _paginaAtual = 0;
   final PageController _controller = PageController(viewportFraction: 1.0);
 
-  void _irParaAnterior() {
-    if (_paginaAtual > 0) {
-      _controller.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
-  void _irParaProxima() {
-    if (_paginaAtual < widget.noticias.length - 1) {
-      _controller.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
+    return Column(
       children: [
-        PageView.builder(
-          controller: _controller,
-          itemCount: widget.noticias.length,
-          onPageChanged: (index) {
-            setState(() => _paginaAtual = index);
-          },
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
-              child: NoticiaCard(noticia: widget.noticias[index]),
-            );
-          },
+        Expanded(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              PageView.builder(
+                controller: _controller,
+                itemCount: widget.noticias.length,
+                onPageChanged: (index) {
+                  setState(() => _paginaAtual = index);
+                },
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: NoticiaCard(noticia: widget.noticias[index]),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(widget.noticias.length, (index) {
+            final bool ativo = index == _paginaAtual;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              width: 7,
+              height: 7,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: ativo ? const Color(0xFF2A2F8C) : Colors.grey.shade400,
+              ),
+            );
+          }),
+        ),
+        const SizedBox(height: 10),
       ],
     );
   }
