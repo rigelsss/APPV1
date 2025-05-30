@@ -42,6 +42,9 @@ class _PraiasPageState extends State<PraiasPage> {
 
   bool _mapaCriado = false;
 
+  String trechoSelecionado = '';
+
+
   @override
   void initState() {
     super.initState();
@@ -106,6 +109,12 @@ class _PraiasPageState extends State<PraiasPage> {
     }
     return estacoes;
   }
+  List<String> get trechosDisponiveis {
+    final trechos = _estacoes.map((e) => e.nome).toSet().toList();
+    trechos.sort();
+    return ['Todos'] + trechos;
+  }
+
 
   void _gerarMarcadoresComSimulacao() {
     _todosMarcadores.clear();
@@ -136,15 +145,19 @@ class _PraiasPageState extends State<PraiasPage> {
     if (currentZoom >= minZoomToShowMarkers) {
       for (var pm in _todosMarcadores) {
         final est = _estacoes.firstWhere((e) => e.codigo == pm.marker.markerId.value, orElse: () => EstacaoMonitoramento.vazio());
+
         final matchMun = municipioSelecionado.isEmpty || municipioSelecionado == 'Todos' || est.municipio == municipioSelecionado;
         final matchClass = classificacoesSelecionadas.contains(pm.classificacao);
-        if (matchMun && matchClass) {
+        final matchTrecho = trechoSelecionado.isEmpty || trechoSelecionado == 'Todos' || est.nome == trechoSelecionado;
+
+        if (matchMun && matchClass && matchTrecho) {
           _marcadoresVisiveis.add(pm.marker);
         }
       }
     }
     setState(() {});
   }
+
 
   void _toggleClassificacao(String item) {
     setState(() {
@@ -173,6 +186,76 @@ class _PraiasPageState extends State<PraiasPage> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
+    Widget buildFiltroTrecho() {
+      List<String> trechosFiltrados;
+
+      if (municipioSelecionado.isEmpty || municipioSelecionado == 'Todos') {
+        trechosFiltrados = _estacoes.map((e) => e.nome).toSet().toList();
+      } else {
+        // Mostra só os trechos do município selecionado
+        trechosFiltrados = _estacoes
+            .where((e) => e.municipio == municipioSelecionado)
+            .map((e) => e.nome)
+            .toSet()
+            .toList();
+      }
+
+      trechosFiltrados.sort();
+      trechosFiltrados.insert(0, 'Todos'); // opção para mostrar todos
+
+      return SizedBox(
+        width: 200,
+        height: 35,
+        child: PopupMenuButton<String>(
+          onSelected: (value) async {
+            setState(() {
+              praiaSelecionada = value == 'Todos' ? '' : value;
+            });
+
+            if (praiaSelecionada.isNotEmpty) {
+              final estacao = _estacoes.firstWhere(
+                    (e) => e.nome == praiaSelecionada,
+                orElse: () => EstacaoMonitoramento.vazio(),
+              );
+
+              if (estacao.codigo.isNotEmpty) {
+                await mapController.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(target: estacao.coordenadas, zoom: 15),
+                  ),
+                );
+              }
+            }
+
+            _filtrarMarcadores();
+          },
+          itemBuilder: (context) {
+            return trechosFiltrados.map((trecho) {
+              return PopupMenuItem<String>(
+                value: trecho,
+                child: Text(trecho),
+              );
+            }).toList();
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(color: Colors.grey.shade400),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            alignment: Alignment.centerLeft,
+            child: Row(
+              children: [
+                Expanded(child: Text(praiaSelecionada.isEmpty ? 'Todos' : praiaSelecionada)),
+                const Icon(Icons.arrow_drop_down),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -238,7 +321,7 @@ class _PraiasPageState extends State<PraiasPage> {
                   },
                 ),
                 const SizedBox(width: 8),
-                buildFiltroPraia(),
+                buildFiltroTrecho(),
               ],
             ),
           ),

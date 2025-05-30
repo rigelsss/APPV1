@@ -48,7 +48,7 @@ class _ContatosState extends State<Contatos> {
         Navigator.pushReplacementNamed(context, '/denuncias');
         break;
       case 2:
-        Navigator.pushReplacementNamed(context, '/balneablilidade');
+        Navigator.pushReplacementNamed(context, '/balneabilidade');
         break;
       case 3:
         Navigator.pushReplacementNamed(context, '/noticias');

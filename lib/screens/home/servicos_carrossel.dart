@@ -52,20 +52,6 @@ class _ServicosCarrosselState extends State<ServicosCarrossel> {
 
     return Row(
       children: [
-      IconButton(
-        icon: Image.asset(
-        'assets/images/seta_esquerda.png',
-          width: 24,
-          height: 24,
-        ),
-          onPressed: () {
-            _scrollController.animateTo(
-              _scrollController.offset - 300,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          },
-        ),
         Expanded(
           child: SizedBox(
             height: 130,
@@ -117,20 +103,6 @@ class _ServicosCarrosselState extends State<ServicosCarrossel> {
               },
             ),
           ),
-        ),
-        IconButton(     
-          icon: Image.asset(
-          'assets/images/seta_direita.png',
-          width: 24,
-          height: 24,
-          ),
-          onPressed: () {
-            _scrollController.animateTo(
-              _scrollController.offset + 300,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          },
         ),
       ],
     );

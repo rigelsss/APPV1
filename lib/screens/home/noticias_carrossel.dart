@@ -51,28 +51,6 @@ class _NoticiasCarrosselState extends State<NoticiasCarrossel> {
             );
           },
         ),
-        Positioned(
-          left: 0,
-          child: GestureDetector(
-            onTap: _irParaAnterior,
-            child: Image.asset(
-              'assets/images/seta_esquerda.png',
-              width: 24,
-              height: 24,
-            ),
-          ),
-        ),
-        Positioned(
-          right: 0,
-          child: GestureDetector(
-            onTap: _irParaProxima,
-            child: Image.asset(
-              'assets/images/seta_direita.png',
-              width: 24,
-              height: 24,
-            ),
-          ),
-        ),
       ],
     );
   }
