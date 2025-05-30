@@ -7,7 +7,7 @@ import 'package:sudema_app/screens/deletar_conta.dart';
 import 'package:sudema_app/screens/EditSenha.dart';
 import 'package:sudema_app/screens/notificacao/notificacoes.dart';
 import 'package:sudema_app/screens/perfil_page.dart';
-import 'package:sudema_app/screens/contatos.dart';
+import 'package:sudema_app/screens/contatos/contatos.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
