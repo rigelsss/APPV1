@@ -195,7 +195,7 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
         }
       },
       child: Card(
-        color: n['isRead'] == true ? Colors.grey[200] : Colors.white,
+        color: n['isRead'] == true ? Colors.white : Colors.grey[300],
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: Padding(
