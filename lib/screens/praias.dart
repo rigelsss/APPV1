@@ -27,6 +27,7 @@ class _PraiasPageState extends State<PraiasPage> {
   List<String> classificacoesSelecionadas = ['Próprias', 'Impróprias'];
   String municipioSelecionado = '';
   String praiaSelecionada = '';
+  String trechoSelecionado = '';
 
   double currentZoom = 11.0;
   final double minZoomToShowMarkers = 12.5;
@@ -41,9 +42,6 @@ class _PraiasPageState extends State<PraiasPage> {
   Offset? _overlayPosition;
 
   bool _mapaCriado = false;
-
-  String trechoSelecionado = '';
-
 
   @override
   void initState() {
@@ -109,12 +107,12 @@ class _PraiasPageState extends State<PraiasPage> {
     }
     return estacoes;
   }
+
   List<String> get trechosDisponiveis {
     final trechos = _estacoes.map((e) => e.nome).toSet().toList();
     trechos.sort();
     return ['Todos'] + trechos;
   }
-
 
   void _gerarMarcadoresComSimulacao() {
     _todosMarcadores.clear();
@@ -158,7 +156,6 @@ class _PraiasPageState extends State<PraiasPage> {
     setState(() {});
   }
 
-
   void _toggleClassificacao(String item) {
     setState(() {
       if (item == 'Mostrar tudo') {
@@ -178,6 +175,84 @@ class _PraiasPageState extends State<PraiasPage> {
     return 'Mostrar apenas impróprias';
   }
 
+  Widget buildFiltroTrecho() {
+    List<String> trechosFiltrados;
+
+    if (municipioSelecionado.isEmpty || municipioSelecionado == 'Todos') {
+      trechosFiltrados = _estacoes.map((e) => e.nome).toSet().toList();
+    } else {
+      trechosFiltrados = _estacoes
+          .where((e) => e.municipio == municipioSelecionado)
+          .map((e) => e.nome)
+          .toSet()
+          .toList();
+    }
+
+    trechosFiltrados.sort();
+    trechosFiltrados.insert(0, 'Trechos');
+
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("", style: TextStyle(fontSize: 12)),
+          const SizedBox(height: 8),
+          PopupMenuButton<String>(
+            onSelected: (value) async {
+              setState(() {
+                praiaSelecionada = value == 'Trechos' ? '' : value;
+                trechoSelecionado = praiaSelecionada;
+              });
+
+              if (praiaSelecionada.isNotEmpty) {
+                final estacao = _estacoes.firstWhere(
+                  (e) => e.nome == praiaSelecionada,
+                  orElse: () => EstacaoMonitoramento.vazio(),
+                );
+
+                if (estacao.codigo.isNotEmpty) {
+                  await mapController.animateCamera(
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(target: estacao.coordenadas, zoom: 15),
+                    ),
+                  );
+                }
+              }
+
+              _filtrarMarcadores();
+            },
+            itemBuilder: (context) {
+              return trechosFiltrados.map((trecho) {
+                return PopupMenuItem<String>(
+                  value: trecho,
+                  child: Text(trecho),
+                );
+              }).toList();
+            },
+            child: popupButton(praiaSelecionada.isEmpty ? 'Trechos' : praiaSelecionada),
+          ),
+        ],
+      ),
+    );
+  }
+
+  PopupMenuItem<String> _radioMenuItem(String value) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        children: [
+          Radio<String>(
+            value: value,
+            groupValue: _getClassificacaoLabel(),
+            onChanged: (_) => Navigator.pop(context, value),
+          ),
+          const SizedBox(width: 8),
+          Text(value),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoadingEstacoes) {
@@ -186,76 +261,6 @@ class _PraiasPageState extends State<PraiasPage> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
-    Widget buildFiltroTrecho() {
-      List<String> trechosFiltrados;
-
-      if (municipioSelecionado.isEmpty || municipioSelecionado == 'Todos') {
-        trechosFiltrados = _estacoes.map((e) => e.nome).toSet().toList();
-      } else {
-        // Mostra só os trechos do município selecionado
-        trechosFiltrados = _estacoes
-            .where((e) => e.municipio == municipioSelecionado)
-            .map((e) => e.nome)
-            .toSet()
-            .toList();
-      }
-
-      trechosFiltrados.sort();
-      trechosFiltrados.insert(0, 'Todos'); // opção para mostrar todos
-
-      return SizedBox(
-        width: 200,
-        height: 35,
-        child: PopupMenuButton<String>(
-          onSelected: (value) async {
-            setState(() {
-              praiaSelecionada = value == 'Todos' ? '' : value;
-            });
-
-            if (praiaSelecionada.isNotEmpty) {
-              final estacao = _estacoes.firstWhere(
-                    (e) => e.nome == praiaSelecionada,
-                orElse: () => EstacaoMonitoramento.vazio(),
-              );
-
-              if (estacao.codigo.isNotEmpty) {
-                await mapController.animateCamera(
-                  CameraUpdate.newCameraPosition(
-                    CameraPosition(target: estacao.coordenadas, zoom: 15),
-                  ),
-                );
-              }
-            }
-
-            _filtrarMarcadores();
-          },
-          itemBuilder: (context) {
-            return trechosFiltrados.map((trecho) {
-              return PopupMenuItem<String>(
-                value: trecho,
-                child: Text(trecho),
-              );
-            }).toList();
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: Colors.grey.shade400),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            alignment: Alignment.centerLeft,
-            child: Row(
-              children: [
-                Expanded(child: Text(praiaSelecionada.isEmpty ? 'Todos' : praiaSelecionada)),
-                const Icon(Icons.arrow_drop_down),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -384,23 +389,6 @@ class _PraiasPageState extends State<PraiasPage> {
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  PopupMenuItem<String> _radioMenuItem(String value) {
-    return PopupMenuItem<String>(
-      value: value,
-      child: Row(
-        children: [
-          Radio<String>(
-            value: value,
-            groupValue: _getClassificacaoLabel(),
-            onChanged: (_) => Navigator.pop(context, value),
-          ),
-          const SizedBox(width: 8),
-          Text(value),
         ],
       ),
     );
