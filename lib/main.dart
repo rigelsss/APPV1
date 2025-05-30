@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:sudema_app/screens/alterar_email.dart';
 import 'package:sudema_app/screens/deletar_conta.dart';
 import 'package:sudema_app/screens/EditSenha.dart';
-import 'package:sudema_app/screens/notificacoes.dart';
+import 'package:sudema_app/screens/notificacao/notificacoes.dart';
 import 'package:sudema_app/screens/perfil_page.dart';
 import 'package:sudema_app/screens/contatos.dart';
 import 'package:sudema_app/screens/home_screen.dart';

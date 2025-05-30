@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
 
 
-import 'notificacao/notificacao_service.dart';
-import 'notificacao/notificacao_widget.dart';
+import 'notificacao_service.dart';
+import 'notificacao_widget.dart';
 
 class NotificacoesPage extends StatefulWidget {
   const NotificacoesPage({super.key, required String token});

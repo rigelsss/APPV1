@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/notificacoes.dart';
+import 'package:sudema_app/screens/notificacao/notificacoes.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
