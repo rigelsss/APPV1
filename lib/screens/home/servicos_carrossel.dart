@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ServicosCarrossel extends StatefulWidget {
@@ -93,7 +94,7 @@ class _ServicosCarrosselState extends State<ServicosCarrossel> {
                           child: Text(
                             servico['label'],
                             textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
