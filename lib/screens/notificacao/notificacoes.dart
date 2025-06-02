@@ -91,7 +91,7 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
             notificacao: notificacao,
             index: index - 1,
             onMarcarComoLida: () async {
-              await NotificacoesService.marcarComoLida(notificacao['id'], index - 1, _notificacoes, () {
+              await NotificacoesService.marcarComoLida(notificacao['id'].toString(), index - 1, _notificacoes, () {
                 setState(() {});
               });
             },
