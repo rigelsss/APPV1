@@ -56,6 +56,12 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
         }
         return (a['isRead'] == false) ? -1 : 1;
       });
+
+      // Limitar a lista para no máximo 20 notificações
+      if (lista.length > 20) {
+        lista.removeRange(20, lista.length);
+      }
+
       setState(() {
         _notificacoes = lista;
       });
