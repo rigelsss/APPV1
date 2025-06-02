@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TituloComLinha extends StatelessWidget {
   final String titulo;
@@ -21,21 +22,21 @@ class TituloComLinha extends StatelessWidget {
         children: [
           Text(
             titulo,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.normal),
           ),
           const SizedBox(width: 8),
           const Expanded(
-            child: Divider(color: Colors.grey, thickness: 2),
+            child: Divider(color: Color(0xFFB8B8B8), thickness: 2),
           ),
           if (verTodas && onVerTodas != null)
             TextButton(
               onPressed: onVerTodas,
-              child: const Text(
+              child: Text(
                 'Ver todas',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
+                style: GoogleFonts.lato(
+                  fontSize: 13,
+                  fontWeight: FontWeight.normal,
+                  color: Color(0xFFB8B8B8)
                 ),
               ),
             ),
