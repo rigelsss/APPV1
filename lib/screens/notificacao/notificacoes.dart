@@ -48,11 +48,26 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
   Future<void> _carregarNotificacoes() async {
     final lista = await NotificacoesService.carregarNotificacoes();
     if (lista != null) {
+      lista.sort((a, b) {
+        if (a['isRead'] == b['isRead']) {
+          DateTime dataA = DateTime.tryParse(a['dataCriacao'] ?? '') ?? DateTime(0);
+          DateTime dataB = DateTime.tryParse(b['dataCriacao'] ?? '') ?? DateTime(0);
+          return dataB.compareTo(dataA);
+        }
+        return (a['isRead'] == false) ? -1 : 1;
+      });
+
+      // Limitar a lista para no máximo 20 notificações
+      if (lista.length > 20) {
+        lista.removeRange(20, lista.length);
+      }
+
       setState(() {
         _notificacoes = lista;
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +97,7 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
             notificacao: notificacao,
             index: index - 1,
             onMarcarComoLida: () async {
-              await NotificacoesService.marcarComoLida(notificacao['id'], index - 1, _notificacoes, () {
+              await NotificacoesService.marcarComoLida(notificacao['id'].toString(), index - 1, _notificacoes, () {
                 setState(() {});
               });
             },
