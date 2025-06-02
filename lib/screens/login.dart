@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/RecuperacaoSenha.dart';
 import 'package:sudema_app/screens/home_screen.dart';
-import 'package:sudema_app/screens/RegistroUser.dart';
+import 'package:sudema_app/screens/registerUser/RegistroUser.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:sudema_app/services/controllerLogin.dart';
 import 'package:another_flushbar/flushbar.dart';

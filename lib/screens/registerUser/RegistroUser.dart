@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:sudema_app/screens/TermosCondicoes.dart';
 import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
-import 'login.dart';
+import '../login.dart';
 import 'package:sudema_app/services/ControllerRegister.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+
+import 'confirmarRegistro.dart';
 
 class RegistroUser extends StatefulWidget {
   const RegistroUser({super.key});
@@ -257,7 +259,7 @@ class _RegistroUserState extends State<RegistroUser> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => LoginPage(),
+                                      builder: (context) => codigoRegistro(),
                                     ),
                                   );
                                 },
