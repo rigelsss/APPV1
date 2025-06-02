@@ -15,6 +15,7 @@ import 'package:sudema_app/screens/editar_perfil.dart';
 import 'package:sudema_app/screens/reativar_conta.dart';
 import 'package:sudema_app/services/notification_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:sudema_app/screens/registerUser/confirmarRegistro.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -65,6 +66,7 @@ class MyApp extends StatelessWidget {
         '/deletar-conta': (context) => const DeletarContaPage(),
         '/reativar-conta': (context) => const ReativarContaPage(email: '', senha: ''),
         '/notificacoes': (context) => const NotificacoesPage(token: '',),
+        '/codigoRegistro' : (context) => const codigoRegistro(),
       },
     );
   }
