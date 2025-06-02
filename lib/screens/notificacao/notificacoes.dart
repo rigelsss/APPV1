@@ -48,11 +48,20 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
   Future<void> _carregarNotificacoes() async {
     final lista = await NotificacoesService.carregarNotificacoes();
     if (lista != null) {
+      lista.sort((a, b) {
+        if (a['isRead'] == b['isRead']) {
+          DateTime dataA = DateTime.tryParse(a['dataCriacao'] ?? '') ?? DateTime(0);
+          DateTime dataB = DateTime.tryParse(b['dataCriacao'] ?? '') ?? DateTime(0);
+          return dataB.compareTo(dataA);
+        }
+        return (a['isRead'] == false) ? -1 : 1;
+      });
       setState(() {
         _notificacoes = lista;
       });
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
