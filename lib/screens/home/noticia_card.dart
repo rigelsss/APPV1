@@ -15,6 +15,8 @@ class NoticiaCard extends StatelessWidget {
     final dataFormatada = "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
     final horaFormatada = "${data.hour.toString().padLeft(2, '0')}h${data.minute.toString().padLeft(2, '0')}";
 
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -23,8 +25,8 @@ class NoticiaCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.symmetric(horizontal: 8),
+        width: screenWidth * 0.97,
+        margin: EdgeInsets.zero,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade200),
           borderRadius: BorderRadius.circular(16),
