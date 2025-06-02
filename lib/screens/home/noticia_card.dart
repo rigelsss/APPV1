@@ -15,6 +15,8 @@ class NoticiaCard extends StatelessWidget {
     final dataFormatada = "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
     final horaFormatada = "${data.hour.toString().padLeft(2, '0')}h${data.minute.toString().padLeft(2, '0')}";
 
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -23,8 +25,8 @@ class NoticiaCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.symmetric(horizontal: 8),
+        width: screenWidth * 0.97,
+        margin: EdgeInsets.zero,
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade200),
           borderRadius: BorderRadius.circular(16),
@@ -64,20 +66,20 @@ class NoticiaCard extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       child: Text(
                         "$dataFormatada   $horaFormatada",
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        style:GoogleFonts.lato(fontSize: 12, color: Colors.grey),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       noticia.titulo,
-                      style: GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 14),
-                      maxLines: 2,
+                      style: GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 14),
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       noticia.resumo,
-                      style: const TextStyle(fontSize: 11, color: Color.fromARGB(255, 120, 120, 120)),
+                      style: GoogleFonts.lato(fontSize: 12, color: Color.fromARGB(255, 120, 120, 120)),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),

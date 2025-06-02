@@ -9,13 +9,13 @@ class BannerDenuncia extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width; // ⬅️ Detecta largura da tela
-    final screenHeight = MediaQuery.of(context).size.height; // ⬅️ Detecta altura da tela
+    final screenWidth = MediaQuery.of(context).size.width; 
+    final screenHeight = MediaQuery.of(context).size.height; 
 
     return Align(
       alignment: Alignment.center,
       child: SizedBox(
-        width: screenWidth * 0.9, // ✅ Responsivo com base no tamanho da tela
+        width: screenWidth * 0.94, 
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(20),
@@ -27,13 +27,13 @@ class BannerDenuncia extends StatelessWidget {
                   'assets/images/denuncia_bg.png',
                   fit: BoxFit.cover,
                   width: double.infinity,
-                  height: screenWidth * 0.25, // ✅ Altura proporcional
+                  height: screenWidth * 0.25, 
                 ),
               ),
               Container(
                 height: screenWidth * 0.25,
                 padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth * 0.04, // ✅ Padding proporcional
+                  horizontal: screenWidth * 0.04, 
                   vertical: screenHeight * 0.015,
                 ),
                 child: Row(
@@ -47,11 +47,11 @@ class BannerDenuncia extends StatelessWidget {
                             'Identificou uma infração ambiental?',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: screenWidth * 0.040, // ✅ Tamanho do texto proporcional
+                              fontSize: screenWidth * 0.040, 
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: screenHeight * 0.01), // ✅ Espaço proporcional
+                          SizedBox(height: screenHeight * 0.01), 
                           Text(
                             'Faça uma denúncia!',
                             style: TextStyle(
@@ -65,7 +65,7 @@ class BannerDenuncia extends StatelessWidget {
                     ),
                     Image.asset(
                       'assets/images/megafone.png',
-                      width: screenWidth * 0.12, // ✅ Tamanho proporcional
+                      width: screenWidth * 0.12, 
                       height: screenWidth * 0.12,
                       color: Colors.white,
                     ),

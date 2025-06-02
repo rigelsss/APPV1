@@ -30,10 +30,7 @@ class _NoticiasCarrosselState extends State<NoticiasCarrossel> {
                   setState(() => _paginaAtual = index);
                 },
                 itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: NoticiaCard(noticia: widget.noticias[index]),
-                  );
+                  return NoticiaCard(noticia: widget.noticias[index]);
                 },
               ),
             ],

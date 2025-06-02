@@ -9,7 +9,6 @@ class CustomDrawer extends StatefulWidget {
 
   @override
   CustomDrawerState createState() => CustomDrawerState();
-
 }
 
 class CustomDrawerState extends State<CustomDrawer> {
@@ -58,6 +57,13 @@ class CustomDrawerState extends State<CustomDrawer> {
     }
   }
 
+  Widget _customDivider() {
+    return const Padding(
+      padding: EdgeInsets.only(left: 15, right: 30),
+      child: Divider(height: 1, thickness: 0.5, color: Color(0xFFB8B8B8)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -86,11 +92,15 @@ class CustomDrawerState extends State<CustomDrawer> {
                     widget.onItemSelected(1);
                   },
                 ),
+                _customDivider(),
                 ListTile(
                   leading: const Icon(Icons.beach_access),
                   title: const Text('Balneabilidade'),
-                  onTap: () {widget.onItemSelected(2);}
+                  onTap: () {
+                    widget.onItemSelected(2);
+                  },
                 ),
+                _customDivider(),
                 ListTile(
                   leading: const Icon(Icons.newspaper),
                   title: const Text('Notícias'),
@@ -98,6 +108,7 @@ class CustomDrawerState extends State<CustomDrawer> {
                     widget.onItemSelected(3);
                   },
                 ),
+                _customDivider(),
                 ListTile(
                   leading: const Icon(Icons.phone_in_talk_outlined),
                   title: const Text('Contato'),
