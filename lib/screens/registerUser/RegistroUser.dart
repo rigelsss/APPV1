@@ -8,8 +8,6 @@ import 'package:sudema_app/services/ControllerRegister.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-import 'confirmarRegistro.dart';
-
 class RegistroUser extends StatefulWidget {
   const RegistroUser({super.key});
 
@@ -259,7 +257,7 @@ class _RegistroUserState extends State<RegistroUser> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => codigoRegistro(),
+                                      builder: (context) => LoginPage(),
                                     ),
                                   );
                                 },

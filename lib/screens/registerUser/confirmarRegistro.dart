@@ -15,6 +15,11 @@ class codigoRegistro extends StatefulWidget {
 class _codigoRegistroState extends State<codigoRegistro> {
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+    final height = size.height;
+    final isSmallScreen = width < 600;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Verificar Conta'),
@@ -23,16 +28,19 @@ class _codigoRegistroState extends State<codigoRegistro> {
         foregroundColor: Colors.black,
       ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 16 : width * 0.1,
+          vertical: 16,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Um código de verificação foi enviado para o seu e-mail. Por favor, insira-o abaixo.\n\n'
                   'Caso não receba o código em sua caixa de entrada, verifique sua caixa de spam.\n\n'
                   'Este código é válido por até 2 horas.',
-              style: TextStyle(fontSize: 16),
+              style: TextStyle(fontSize: isSmallScreen ? 16 : 18),
             ),
             const SizedBox(height: 30),
             PinCodeTextField(
@@ -43,8 +51,8 @@ class _codigoRegistroState extends State<codigoRegistro> {
               pinTheme: PinTheme(
                 shape: PinCodeFieldShape.box,
                 borderRadius: BorderRadius.circular(10),
-                fieldHeight: 50,
-                fieldWidth: 40,
+                fieldHeight: isSmallScreen ? 50 : 60,
+                fieldWidth: isSmallScreen ? 40 : 50,
                 activeFillColor: Colors.white,
                 selectedFillColor: Colors.white,
                 inactiveFillColor: Colors.white,
@@ -53,6 +61,7 @@ class _codigoRegistroState extends State<codigoRegistro> {
                 inactiveColor: Colors.grey.shade400,
               ),
               enableActiveFill: false,
+              onChanged: (value) {},
             ),
             const SizedBox(height: 24),
             SizedBox(
@@ -69,37 +78,34 @@ class _codigoRegistroState extends State<codigoRegistro> {
                 onPressed: () {
                   // lógica do botão Verificar
                 },
-                child: const Text(
+                child: Text(
                   'Verificar',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                  style: TextStyle(
+                    fontSize: isSmallScreen ? 16 : 18,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 30),
             Row(
-              children: const [
-                Expanded(
-                  child: Divider(
-                    thickness: 1,
-                    color: Colors.grey,
-                  ),
+              children: [
+                const Expanded(
+                  child: Divider(thickness: 1, color: Colors.grey),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Text(
                     'Não recebeu o código?',
                     style: TextStyle(
-                      color: Color(0xFF303030),
+                      color: const Color(0xFF303030),
                       fontWeight: FontWeight.w500,
-                      fontSize: 16,
+                      fontSize: isSmallScreen ? 16 : 18,
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Divider(
-                    thickness: 1,
-                    color: Colors.grey,
-                  ),
+                const Expanded(
+                  child: Divider(thickness: 1, color: Colors.grey),
                 ),
               ],
             ),
@@ -120,13 +126,12 @@ class _codigoRegistroState extends State<codigoRegistro> {
                   elevation: 4,
                 ),
                 onPressed: () {
-                  // lógica do botão Enviar novamente
                 },
-                child: const Text(
+                child: Text(
                   'enviar novamente',
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFF2A2F8C),
+                    fontSize: isSmallScreen ? 16 : 18,
+                    color: const Color(0xFF2A2F8C),
                   ),
                 ),
               ),
