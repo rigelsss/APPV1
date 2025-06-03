@@ -86,9 +86,9 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
       case 0:
         return true;
       case 1:
-        return DenunciaData().usuarioEmail != null;
+        return DenunciaData().identificacaoConfirmada == true || DenunciaData().categoriaConfirmada == true;
       case 2:
-        return _categoriaSelecionada != null && _subcategoriaSelecionada?.isNotEmpty == true;
+        return DenunciaData().categoriaConfirmada == true;
       case 3:
         return DenunciaData().enderecoConfirmado == true;
       default:

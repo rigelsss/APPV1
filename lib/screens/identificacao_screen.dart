@@ -50,6 +50,7 @@ class _AbaIdentificacaoState extends State<Identificacao> {
     setState(() {
       _anonimo = true;
       DenunciaData().anonimo = true;
+      DenunciaData().identificacaoConfirmada = false;
     });
     widget.onAvancar();
   }
@@ -58,6 +59,7 @@ class _AbaIdentificacaoState extends State<Identificacao> {
     setState(() {
       _anonimo = false;
       DenunciaData().anonimo = false;
+      DenunciaData().identificacaoConfirmada = true;
     });
     widget.onAvancar();
   }
