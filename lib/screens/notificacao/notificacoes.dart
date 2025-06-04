@@ -57,7 +57,6 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
         return (a['isRead'] == false) ? -1 : 1;
       });
 
-      // Limitar a lista para no máximo 20 notificações
       if (lista.length > 20) {
         lista.removeRange(20, lista.length);
       }
@@ -65,6 +64,19 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
       setState(() {
         _notificacoes = lista;
       });
+
+      for (int i = 0; i < lista.length; i++) {
+        if (lista[i]['isRead'] == false) {
+          await NotificacoesService.marcarComoLida(
+            lista[i]['id'].toString(),
+            i,
+            _notificacoes,
+                () {
+              setState(() {});
+            },
+          );
+        }
+      }
     }
   }
 
