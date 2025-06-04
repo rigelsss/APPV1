@@ -50,7 +50,7 @@ class HomeBody extends StatelessWidget {
                 }
               },
             ),
-            SizedBox(height: screenHeight * 0.03),
+            SizedBox(height: screenHeight * 0.015),
             TituloComLinha(
               titulo: 'Últimas notícias',
               verTodas: true,
