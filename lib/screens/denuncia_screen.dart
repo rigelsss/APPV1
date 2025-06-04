@@ -279,20 +279,28 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Checkbox(
-                      value: _confirmacao,
-                      shape: const CircleBorder(),
-                      onChanged: (value) {
-                        setState(() => _confirmacao = value ?? false);
-                      },
-                    ),
-                    const Expanded(
-                      child: Text(
-                        'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
-                        style: TextStyle(fontSize: 16),
+                    Transform.translate(
+                      offset: const Offset(-6, 0), 
+                      child: Checkbox(
+                        value: _confirmacao,
+                        shape: const CircleBorder(),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, 
+                        visualDensity: VisualDensity.compact, 
+                        onChanged: (value) {
+                          setState(() => _confirmacao = value ?? false);
+                       },
                       ),
                     ),
-                  ],
+                  const Expanded(
+                    child: Padding(
+                     padding: EdgeInsets.only(top: 0.0),
+                     child: Text(
+                      'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
+                       style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+                  ],  
                 ),
                 const SizedBox(height: 20),
                 SizedBox(
