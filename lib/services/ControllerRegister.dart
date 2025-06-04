@@ -42,16 +42,40 @@ class RegistroController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final envioCodigoErro = await enviarCodigoConfirmacao(email);
+        if (envioCodigoErro != null) {
+          return envioCodigoErro;
+        }
         return null;
-      } else {
-        print('Erro: ${response.statusCode}');
-        print('Resposta: ${response.body}');
-        return 'Erro ao cadastrar. Verifique os dados e tente novamente.';
       }
+
     } catch (e) {
       print('Erro de conexão: $e');
       return 'Erro de conexão. Tente novamente.';
     }
 
+  }
+}
+Future<String?> enviarCodigoConfirmacao(String email) async {
+  final baseUrl = dotenv.env['URL_API'] ?? '';
+  final url = Uri.parse('$baseUrl/auth/register/resend-confirm');
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email.trim()}),
+    );
+
+    if (response.statusCode == 200) {
+      return null;
+    } else {
+      print('Erro ao enviar código: ${response.statusCode}');
+      print('Resposta: ${response.body}');
+      return 'Erro ao enviar código de confirmação.';
+    }
+  } catch (e) {
+    print('Erro de conexão no envio do código: $e');
+    return 'Erro de conexão. Tente novamente.';
   }
 }
