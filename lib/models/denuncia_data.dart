@@ -26,6 +26,8 @@ class DenunciaData {
   String? localizacao;
   String? posicao;
   bool? categoriaConfirmada = false;
+  bool identificacaoConfirmada = false;
+
 
   Map<String, dynamic> toJson() {
     return {
@@ -50,6 +52,7 @@ class DenunciaData {
       'posicao': posicao,
       'usuarioEmail': usuarioEmail,
       'categoriaConfirmada': categoriaConfirmada,
+      'identificacaoConfirmada': identificacaoConfirmada,
     };
   }
 
@@ -77,5 +80,6 @@ class DenunciaData {
     usuarioEmail = null;
     usuarioId = null;
     categoriaConfirmada = null;
+    identificacaoConfirmada = false;
   }
 }
