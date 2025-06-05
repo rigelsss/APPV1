@@ -6,13 +6,128 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class codigoRegistro extends StatefulWidget {
-  const codigoRegistro({super.key});
+  final String email;
+  const codigoRegistro({super.key, required this.email});
 
   @override
   State<codigoRegistro> createState() => _codigoRegistroState();
 }
 
 class _codigoRegistroState extends State<codigoRegistro> {
+  String _token = '';
+  bool _isLoading = false;
+
+  void _confirmarCodigo() async {
+    if (_token.length != 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, insira o código de 6 dígitos.')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final url = Uri.parse('${dotenv.env['URL_API']}/auth/register/confirm');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "email": widget.email,
+        "userType": "MOBILE",
+        "token": _token
+      }),
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (response.statusCode == 200) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+      );
+    } else if (response.statusCode == 400 || response.statusCode == 404) {
+      String errorMsg = "Erro ao confirmar o código.";
+      try {
+        final data = jsonDecode(response.body);
+        if (data is String) {
+          errorMsg = data;
+        } else if (data['message'] != null) {
+          errorMsg = data['message'];
+        } else if (data['token'] != null) {
+          errorMsg = data['token'];
+        }
+      } catch (_) {}
+      _showErrorDialog(errorMsg);
+    } else if (response.statusCode == 500) {
+      _showErrorDialog("Erro interno do servidor. Tente novamente mais tarde.");
+    } else {
+      _showErrorDialog("Erro desconhecido. Código: ${response.statusCode}");
+    }
+  }
+
+  void _reenviarCodigo() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final url = Uri.parse('${dotenv.env['URL_API']}/auth/register/resend-confirm');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "email": widget.email,
+        "userType": "MOBILE"
+      }),
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (response.statusCode == 204) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Código reenviado com sucesso! Verifique seu e-mail.')),
+      );
+    } else if (response.statusCode == 400 || response.statusCode == 404) {
+      String errorMsg = "Erro ao reenviar o código.";
+      try {
+        final data = jsonDecode(response.body);
+        if (data is String) {
+          errorMsg = data;
+        } else if (data['message'] != null) {
+          errorMsg = data['message'];
+        }
+      } catch (_) {}
+      _showErrorDialog(errorMsg);
+    } else if (response.statusCode == 500) {
+      _showErrorDialog("Erro interno do servidor. Tente novamente mais tarde.");
+    } else {
+      _showErrorDialog("Erro desconhecido. Código: ${response.statusCode}");
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Erro"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -61,7 +176,9 @@ class _codigoRegistroState extends State<codigoRegistro> {
                 inactiveColor: Colors.grey.shade400,
               ),
               enableActiveFill: false,
-              onChanged: (value) {},
+              onChanged: (value) {setState(() {
+                _token = value;
+              });},
             ),
             const SizedBox(height: 24),
             SizedBox(
@@ -76,7 +193,7 @@ class _codigoRegistroState extends State<codigoRegistro> {
                   elevation: 4,
                 ),
                 onPressed: () {
-                  // lógica do botão Verificar
+                  _confirmarCodigo();
                 },
                 child: Text(
                   'Verificar',
@@ -125,7 +242,7 @@ class _codigoRegistroState extends State<codigoRegistro> {
                   ),
                   elevation: 4,
                 ),
-                onPressed: () {
+                onPressed: () { _reenviarCodigo();
                 },
                 child: Text(
                   'enviar novamente',

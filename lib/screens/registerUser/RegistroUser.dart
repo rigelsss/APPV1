@@ -8,6 +8,8 @@ import 'package:sudema_app/services/ControllerRegister.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
+import 'confirmarRegistro.dart';
+
 class RegistroUser extends StatefulWidget {
   const RegistroUser({super.key});
 
@@ -211,7 +213,7 @@ class _RegistroUserState extends State<RegistroUser> {
                             );
                             Navigator.pushReplacement(
                               context,
-                              MaterialPageRoute(builder: (context) => LoginPage()),
+                              MaterialPageRoute(builder: (context) => codigoRegistro(email: _emailController.text)),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
