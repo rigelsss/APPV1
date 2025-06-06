@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(10),
           margin: const EdgeInsets.all(8),
         ).show(context);
-      }    
+      }
         } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -226,10 +226,7 @@ class _LoginPageState extends State<LoginPage> {
                       offset: const Offset(-20, 0),
                       child: const Text('Mantenha-me conectado'),
                     ),
-                    SizedBox(width: 8,),
-                    Transform.translate(
-                      offset: Offset(14, 0),
-                      child: TextButton(
+                     TextButton(
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -240,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                         child: const Text('Esqueceu a senha?', style: TextStyle(color: Colors.black)),
                       ),
-                    ),
+
                   ],
                 ),
                 const SizedBox(height: 8),
