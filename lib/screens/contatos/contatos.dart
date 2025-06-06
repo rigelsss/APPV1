@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import '../widgets/drawer.dart';
 import '../widgets/appbar.dart';
 import '../widgets/navbar.dart';
-import 'contatos_controller.dart'; // novo import
+import 'contatos_controller.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Contatos extends StatefulWidget {
   const Contatos({super.key});
@@ -57,9 +58,12 @@ class _ContatosState extends State<Contatos> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Contatos', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        Text('Contatos', style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w500)),
         const SizedBox(height: 28),
-        const Text('Horário de funcionamento da SUDEMA:', style: TextStyle(fontSize: 16)),
+        Text(
+          'Horário de funcionamento da SUDEMA:',
+          style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.normal),
+        ),
         const SizedBox(height: 12),
         _buildInfoBox(
           icon: Icons.access_time,
@@ -67,22 +71,28 @@ class _ContatosState extends State<Contatos> {
           subtitle: '08h às 12:00  |  13:30 às 16:00',
         ),
         const SizedBox(height: 28),
-        const Text('Telefone para denúncias:', style: TextStyle(fontSize: 16)),
+        Text(
+          'Telefone para denúncias:',
+          style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.normal),
+        ),
         const SizedBox(height: 12),
         _buildPhoneBox('+55 (83) 3690-1965'),
         const SizedBox(height: 28),
-        const Text('Telefone para contato SUDEMA:', style: TextStyle(fontSize: 16)),
+        Text(
+          'Telefone para contato SUDEMA:',
+          style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.normal),
+        ),
         const SizedBox(height: 10),
         _buildPhoneBox('+55 (83) 3218-5606'),
         const SizedBox(height: 28),
         Center(
           child: GestureDetector(
             onTap: controller.abrirSiteSudema,
-            child: const Text(
+            child: Text(
               'Lista completa de telefones para contato.',
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFF2A2F8C),
+              style: GoogleFonts.lato(
+                fontSize: 14,
+                color: const Color(0xFF2A2F8C),
                 decoration: TextDecoration.underline,
                 fontWeight: FontWeight.w500,
               ),
@@ -90,7 +100,12 @@ class _ContatosState extends State<Contatos> {
           ),
         ),
         const SizedBox(height: 28),
-        const Center(child: Text('O atendimento presencial requer agendamento prévio')),
+        Center(
+          child: Text(
+            'O atendimento presencial requer agendamento prévio',
+            style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.normal),
+          ),
+        ),
         const SizedBox(height: 10),
         Center(
           child: ElevatedButton(
@@ -101,29 +116,32 @@ class _ContatosState extends State<Contatos> {
               padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 18),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             ),
-            child: const Text('Acessar sistema de agendamento (SAAP)', style: TextStyle(fontSize: 16)),
+            child: Text(
+              'Acessar sistema de agendamento (SAAP)',
+              style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.normal),
+            ),
           ),
         ),
         const SizedBox(height: 40),
-        const Center(
+        Center(
           child: Column(
             children: [
               Text(
                 'Superintendência de Administração do Meio Ambiente - SUDEMA',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
+                style: GoogleFonts.lato(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w500),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 'Av. Monsenhor Walfredo Leal, 181 - Tambiá - João Pessoa - PB',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Colors.black),
+                style: GoogleFonts.lato(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w500),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 'CEP 58.020-540 - CGC 08.329.849/0001-15',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Colors.black),
+                style: GoogleFonts.lato(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -144,9 +162,9 @@ class _ContatosState extends State<Contatos> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontSize: 18, color: Colors.black)),
+                Text(title, style: GoogleFonts.lato(fontSize: 16, color: Colors.black)),
                 const SizedBox(height: 4),
-                Text(subtitle, style: const TextStyle(fontSize: 18)),
+                Text(subtitle, style: GoogleFonts.lato(fontSize: 16)),
               ],
             ),
           ),
@@ -163,7 +181,7 @@ class _ContatosState extends State<Contatos> {
         children: [
           const Icon(Icons.phone_in_talk_outlined),
           const SizedBox(width: 10),
-          Flexible(child: Text(number, style: const TextStyle(fontSize: 18))),
+          Flexible(child: Text(number, style: GoogleFonts.lato(fontSize: 16))),
         ],
       ),
     );
