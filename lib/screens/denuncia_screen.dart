@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class DenunciaScreen extends StatefulWidget {
   @override
@@ -291,12 +292,12 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                        },
                       ),
                     ),
-                  const Expanded(
+                  Expanded(
                     child: Padding(
                      padding: EdgeInsets.only(top: 0.0),
                      child: Text(
                       'Declaro que as informações acima prestadas são verdadeiras, e assumo a inteira responsabilidade pelas mesmas.',
-                       style: TextStyle(fontSize: 16),
+                       style: GoogleFonts.lato(fontSize: 14, color: Colors.black54, fontWeight: FontWeight.w400),
                       ),
                     ),
                   ),
