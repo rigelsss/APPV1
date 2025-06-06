@@ -32,6 +32,11 @@ class AuthController {
     return prefs.getString(_tokenKey);
   }
 
+  static Future<void> limparToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_tokenKey);
+  }
+
   static Future<Map<String, dynamic>?> obterInformacoesUsuario(String token) async {
     try {
       final response = await http.get(

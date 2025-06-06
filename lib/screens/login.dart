@@ -8,7 +8,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
 import '../screens/reativar_conta.dart';
-
+import '../screens/registerUser/confirmarRegistro.dart';
 // Import para Firebase Messaging
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -85,6 +85,15 @@ class _LoginPageState extends State<LoginPage> {
             builder: (_) => ReativarContaPage(email: email, senha: senha),
           ),
         );
+        } else if (resultado['nonVerifiedUser'] == true || resultado['statusCode'] == 423) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => codigoRegistro(
+              email: resultado['email'],
+            ),
+          ),
+        );
       } else {
         Flushbar(
           title: 'Erro',
@@ -96,8 +105,8 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(10),
           margin: const EdgeInsets.all(8),
         ).show(context);
-      }
-    } catch (e) {
+      }    
+        } catch (e) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Erro ao realizar login: $e')));
