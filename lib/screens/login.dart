@@ -212,26 +212,34 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Checkbox(
-                      value: _checkboxValue,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _checkboxValue = value ?? false;
-                        });
-                      },
+                    Transform.translate(offset:  Offset(-14, 0),
+                      child: Checkbox(
+                        value: _checkboxValue,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _checkboxValue = value ?? false;
+                          });
+                        },
+                      ),
                     ),
-                    const Text('Mantenha-me conectado'),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Recuperacaoosenha(),
-                          ),
-                        );
-                      },
-                      child: const Text('Esqueceu a senha?', style: TextStyle(color: Colors.black)),
+                    Transform.translate(
+                      offset: const Offset(-20, 0),
+                      child: const Text('Mantenha-me conectado'),
+                    ),
+                    SizedBox(width: 8,),
+                    Transform.translate(
+                      offset: Offset(14, 0),
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Recuperacaoosenha(),
+                            ),
+                          );
+                        },
+                        child: const Text('Esqueceu a senha?', style: TextStyle(color: Colors.black)),
+                      ),
                     ),
                   ],
                 ),
