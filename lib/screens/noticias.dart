@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'fullNoticia_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class NoticiasPage extends StatefulWidget {
   const NoticiasPage({super.key});
@@ -138,9 +139,9 @@ class _NoticiasPageState extends State<NoticiasPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Última notícias',
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
           ),
           const SizedBox(height: 16),
           TextField(
@@ -160,9 +161,9 @@ class _NoticiasPageState extends State<NoticiasPage> {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Categorias',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: GoogleFonts.lato(fontWeight: FontWeight.w700, fontSize: 16),
           ),
           const SizedBox(height: 8),
           SizedBox(
@@ -248,16 +249,18 @@ class _NoticiasPageState extends State<NoticiasPage> {
                               children: [
                                 Text(
                                   _removerHtml(noticia['titulo']),
-                                  style: const TextStyle(
+                                  style: GoogleFonts.lato(
                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    decoration: TextDecoration.underline,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
                                   _removerHtml(noticia['resumo']),
-                                  style: const TextStyle(fontSize: 14),
+                                  style: GoogleFonts.lato(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w300,
+                                  ),
                                 ),
                                 const SizedBox(height: 12),
                                 Wrap(
@@ -293,9 +296,9 @@ class _NoticiasPageState extends State<NoticiasPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 24),
-                      const Text(
+                      Text(
                         'Deseja visualizar notícias mais antigas?',
-                        style: TextStyle(fontSize: 16),
+                        style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black),
                       ),
                       const SizedBox(height: 12),
                       ElevatedButton(

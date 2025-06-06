@@ -1,12 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'webview_screen.dart';
-import 'denunciawraprellerscreen.dart'; 
+import 'denunciawraprellerscreen.dart';
 
 class DenunciaPage extends StatelessWidget {
   const DenunciaPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final tituloStyle = GoogleFonts.lato(
+      fontSize: 14,
+      fontWeight: FontWeight.w700,
+    );
+    final textoStyle = GoogleFonts.lato(
+      fontSize: 14,
+      fontWeight: FontWeight.w300, 
+    );
+    final botaoStyle = GoogleFonts.lato(
+      fontSize: 18,
+      fontWeight: FontWeight.w500,
+      color: Colors.white,
+    );
+    final linkStyle = GoogleFonts.lato(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      color: const Color(0xFF2A2F8C),
+      decoration: TextDecoration.underline,
+    );
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -15,9 +36,9 @@ class DenunciaPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Denúncias',
-                style: TextStyle(fontSize: 32),
+                style: tituloStyle.copyWith(fontSize: 28),
               ),
               const SizedBox(height: 20),
               SizedBox(
@@ -37,43 +58,34 @@ class DenunciaPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Realizar denúncia',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    style: botaoStyle,
                   ),
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Por que denunciar?',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              Text('Por que denunciar?', style: tituloStyle),
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 'Denunciar infrações ambientais é um ato de cidadania que contribui para a preservação do meio ambiente e para a redução dos impactos negativos na natureza. As denúncias permitem que os órgãos competentes tomem conhecimento de irregularidades ambientais e que medidas sejam adotadas para minimizar ou reverter os danos causados.',
-                style: TextStyle(fontSize: 16),
+                style: textoStyle,
               ),
               const SizedBox(height: 12),
-              const Text(
-                'O que acontece após a denúncia?',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              Text('O que acontece após a denúncia?', style: tituloStyle),
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 'A denúncia é analisada e, caso as infrações sejam confirmadas, um processo é instaurado. Dependendo da gravidade da infração, o caso pode ser encaminhado para julgamento em âmbito estadual ou federal.',
-                style: TextStyle(fontSize: 16, color: Colors.black87),
+                style: textoStyle,
               ),
               const SizedBox(height: 12),
-              const Text(
-                'O que é considerado infração ambiental?',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              Text('O que é considerado infração ambiental?', style: tituloStyle),
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 'Foi publicado, em março de 2024, no Diário Oficial do Estado da Paraíba, o Decreto Estadual n° 44.889/2024, que trata das infrações ambientais, do processo administrativo para sua apuração e suas respectivas sanções.',
-                style: TextStyle(fontSize: 16),
+                style: textoStyle,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -93,15 +105,11 @@ class DenunciaPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: const Color(0xFF2A2F8C)),
                   ),
-                  child: const FittedBox(
+                  child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
                       'Decreto Estadual nº 44.889, de 26 de março de 2024',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF2A2F8C),
-                        decoration: TextDecoration.underline,
-                      ),
+                      style: linkStyle,
                       textAlign: TextAlign.center,
                     ),
                   ),

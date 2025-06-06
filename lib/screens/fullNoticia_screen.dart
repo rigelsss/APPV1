@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 class NoticiaCompletaPage extends StatefulWidget {
@@ -66,9 +67,9 @@ class _NoticiaCompletaPageState extends State<NoticiaCompletaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        elevation: 1,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
@@ -92,9 +93,9 @@ class _NoticiaCompletaPageState extends State<NoticiaCompletaPage> {
                         children: [
                           Text(
                             _removerHtml(noticia!['titulo']),
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                            style: GoogleFonts.lato(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -103,12 +104,13 @@ class _NoticiaCompletaPageState extends State<NoticiaCompletaPage> {
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[700],
+                              fontWeight: FontWeight.w300
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Publicado: ${noticia!['data_publicacao_formatada']}',
-                            style: TextStyle(
+                            style: GoogleFonts.lato(
                               fontSize: 12,
                               color: Colors.grey[600],
                             ),
@@ -125,7 +127,10 @@ class _NoticiaCompletaPageState extends State<NoticiaCompletaPage> {
                           Html(
                             data: noticia!['conteudo'],
                             style: {
-                              "*": Style(fontSize: FontSize(16)),
+                              "body": Style(
+                                fontSize: FontSize(14),
+                                fontFamily: GoogleFonts.lato().fontFamily,
+                                ),
                             },
                           ),
                           const SizedBox(height: 24),
@@ -142,7 +147,7 @@ class _NoticiaCompletaPageState extends State<NoticiaCompletaPage> {
                                       ),
                                       child: Text(
                                         tag.toString(),
-                                        style: const TextStyle(
+                                        style: GoogleFonts.lato(
                                           color: Colors.black,
                                           fontSize: 12,
                                         ),
