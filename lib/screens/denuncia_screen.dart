@@ -182,6 +182,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
+      locale: const Locale('pt', 'BR'),
     );
 
     if (picked != null) {
