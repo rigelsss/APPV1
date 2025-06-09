@@ -13,27 +13,25 @@ class NoticiasCarrossel extends StatefulWidget {
 
 class _NoticiasCarrosselState extends State<NoticiasCarrossel> {
   int _paginaAtual = 0;
-  final PageController _controller = PageController(viewportFraction: 1.0);
+  final PageController _controller = PageController(viewportFraction: 1.0); 
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Column(
       children: [
-        Expanded(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              PageView.builder(
-                controller: _controller,
-                itemCount: widget.noticias.length,
-                onPageChanged: (index) {
-                  setState(() => _paginaAtual = index);
-                },
-                itemBuilder: (context, index) {
-                  return NoticiaCard(noticia: widget.noticias[index]);
-                },
-              ),
-            ],
+        SizedBox(
+          height: screenHeight * 0.4, 
+          child: PageView.builder(
+            controller: _controller,
+            itemCount: widget.noticias.length,
+            onPageChanged: (index) {
+              setState(() => _paginaAtual = index);
+            },
+            itemBuilder: (context, index) {
+              return NoticiaCard(noticia: widget.noticias[index]);
+            },
           ),
         ),
         const SizedBox(height: 8),
