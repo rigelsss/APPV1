@@ -10,6 +10,7 @@ class HomeBody extends StatelessWidget {
   final VoidCallback onSelecionarDenuncia;
   final VoidCallback onSelecionarNoticias;
   final VoidCallback onSelecionarBalneabildiade;
+  final VoidCallback onSelecionarContatos;
 
   const HomeBody({
     super.key,
@@ -17,6 +18,7 @@ class HomeBody extends StatelessWidget {
     required this.onSelecionarDenuncia,
     required this.onSelecionarNoticias,
     required this.onSelecionarBalneabildiade,
+    required this.onSelecionarContatos
   });
 
   @override

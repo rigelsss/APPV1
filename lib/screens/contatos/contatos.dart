@@ -6,7 +6,8 @@ import 'contatos_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Contatos extends StatefulWidget {
-  const Contatos({super.key});
+  final int initialIndex;
+  const Contatos({super.key, this.initialIndex = 4});
 
   @override
   State<Contatos> createState() => _ContatosState();

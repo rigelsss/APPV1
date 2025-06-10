@@ -3,7 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ContatosController {
   final BuildContext context;
-  int currentIndex = -1;
+  int currentIndex = 4;
 
   ContatosController(this.context);
 
@@ -47,6 +47,8 @@ class ContatosController {
       case 3:
         Navigator.pushReplacementNamed(context, '/noticias');
         break;
+      case 4:
+        Navigator.pushReplacementNamed(context, '/contatos');
     }
   }
 }

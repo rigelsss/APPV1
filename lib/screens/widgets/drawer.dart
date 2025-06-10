@@ -113,8 +113,7 @@ class CustomDrawerState extends State<CustomDrawer> {
                   leading: const Icon(Icons.phone_in_talk_outlined),
                   title: const Text('Contato'),
                   onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/contatos');
+                    widget.onItemSelected(4);
                   },
                 ),
               ],
