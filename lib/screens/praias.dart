@@ -8,6 +8,7 @@ import 'package:sudema_app/models/praia_marker.dart';
 import 'package:sudema_app/models/estacao_monitoramento.dart';
 import 'package:sudema_app/screens/widgets/praias_widgets.dart';
 import 'package:sudema_app/screens/widgets/estacao_info_card.dart';
+import 'package:geolocator/geolocator.dart';
 
 class PraiasPage extends StatefulWidget {
   const PraiasPage({super.key});
@@ -18,7 +19,6 @@ class PraiasPage extends StatefulWidget {
 
 class _PraiasPageState extends State<PraiasPage> {
   late GoogleMapController mapController;
-  final LatLng _initialPosition = const LatLng(-7.1202, -34.8802);
   final GlobalKey _mapKey = GlobalKey();
 
   List<EstacaoMonitoramento> _estacoes = [];
@@ -29,7 +29,7 @@ class _PraiasPageState extends State<PraiasPage> {
   String praiaSelecionada = '';
   String trechoSelecionado = '';
 
-  double currentZoom = 11.0;
+  double currentZoom = 14.0;
   final double minZoomToShowMarkers = 12.5;
 
   BitmapDescriptor? _iconePropria;
@@ -52,9 +52,28 @@ class _PraiasPageState extends State<PraiasPage> {
   Future<void> _inicializarMapa() async {
     await _carregarIcones();
     await _carregarEstacoesDaAPI();
-    if (_mapaCriado) {
-      _gerarMarcadoresComSimulacao();
+    await _centralizarNaLocalizacaoAtual();
+    if (_mapaCriado) _gerarMarcadoresComSimulacao();
+  }
+
+  Future<void> _centralizarNaLocalizacaoAtual() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) return;
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) return;
     }
+
+    if (permission == LocationPermission.deniedForever) return;
+
+    final position = await Geolocator.getCurrentPosition();
+    final userLatLng = LatLng(position.latitude, position.longitude);
+
+    mapController.animateCamera(CameraUpdate.newCameraPosition(
+      CameraPosition(target: userLatLng, zoom: 14.5),
+    ));
   }
 
   Future<void> _carregarIcones() async {
@@ -358,7 +377,10 @@ class _PraiasPageState extends State<PraiasPage> {
                       _filtrarMarcadores();
                     });
                   },
-                  initialCameraPosition: CameraPosition(target: _initialPosition, zoom: currentZoom),
+                  initialCameraPosition: const CameraPosition(
+                  target: LatLng(-7.1202, -34.8802), 
+                  zoom: 12.0,
+                  ),
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
                   markers: _marcadoresVisiveis,
