@@ -167,6 +167,6 @@ class _HomeScreenState extends State<HomeScreen> {
         const DenunciaPage(),
         const PraiasPage(),
         const NoticiasPage(),
-        const Contatos(),
+         Contatos(initialIndex: -1,),
       ];
 }
