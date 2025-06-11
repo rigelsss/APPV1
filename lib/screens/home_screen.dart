@@ -4,6 +4,7 @@ import '../screens/home_body.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/noticiasTop5_service.dart';
 import '../models/noticia.dart';
+import 'contatos/contatos.dart';
 import 'widgets/appbar.dart';
 import '../screens/praias.dart';
 import '../screens/noticias.dart';
@@ -161,9 +162,11 @@ class _HomeScreenState extends State<HomeScreen> {
           onSelecionarDenuncia: () => setState(() => _selectedIndex = 1),
           onSelecionarNoticias: () => setState(() => _selectedIndex = 3),
           onSelecionarBalneabildiade: () => setState(() => _selectedIndex = 2),
+          onSelecionarContatos: () => setState(() => _selectedIndex = 4),
         ),
         const DenunciaPage(),
         const PraiasPage(),
         const NoticiasPage(),
+         Contatos(initialIndex: -1,),
       ];
 }

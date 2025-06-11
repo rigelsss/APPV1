@@ -3,9 +3,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ContatosController {
   final BuildContext context;
-  int currentIndex = -1;
+  int currentIndex;
 
-  ContatosController(this.context);
+  ContatosController(this.context, {int? currentIndex})
+      : currentIndex = currentIndex ?? -1; // -1 evita highlight no NavBar
+
 
   Future<void> abrirSiteSudema() async {
     final Uri url = Uri.parse('https://sudema.pb.gov.br/contatos');
@@ -30,10 +32,6 @@ class ContatosController {
   }
 
   void onNavBarTapped(int index) {
-    if (index == currentIndex) return;
-
-    currentIndex = index;
-
     switch (index) {
       case 0:
         Navigator.pushReplacementNamed(context, '/home');
@@ -46,6 +44,24 @@ class ContatosController {
         break;
       case 3:
         Navigator.pushReplacementNamed(context, '/noticias');
+        break;
+    }
+  }
+
+// Novo método para Drawer:
+  void onDrawerItemSelected(int index) {
+    switch (index) {
+      case 1:
+        Navigator.pushReplacementNamed(context, '/denuncias');
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/balneabilidade');
+        break;
+      case 3:
+        Navigator.pushReplacementNamed(context, '/noticias');
+        break;
+      case 4:
+        Navigator.pushReplacementNamed(context, '/contatos');
         break;
     }
   }
