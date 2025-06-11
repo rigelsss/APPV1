@@ -6,7 +6,8 @@ import 'contatos_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Contatos extends StatefulWidget {
-  const Contatos({super.key});
+  final int initialIndex;
+  const Contatos({super.key, required this.initialIndex});
 
   @override
   State<Contatos> createState() => _ContatosState();
@@ -18,23 +19,17 @@ class _ContatosState extends State<Contatos> {
   @override
   void initState() {
     super.initState();
-    controller = ContatosController(context);
+    controller = ContatosController(context, currentIndex: widget.initialIndex ?? -1);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HomeAppBar(),
-      drawer: CustomDrawer(onItemSelected: (int) {}),
-      backgroundColor: Colors.white,
-      bottomNavigationBar: NavBar(
-        currentIndex: controller.currentIndex,
-        onTap: (index) {
-          setState(() {
-            controller.onNavBarTapped(index);
-          });
-        },
+      drawer: CustomDrawer(
+        onItemSelected: (index) => controller.onDrawerItemSelected(index),
       ),
+      backgroundColor: Colors.white,
+
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isWide = constraints.maxWidth > 600;
