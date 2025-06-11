@@ -21,11 +21,11 @@ class _ServicosCarrosselState extends State<ServicosCarrossel> {
       'image': 'assets/images/balneabilidade.png'
     },
     {
-      'label': 'Denuncias', 
+      'label': 'Denúncias', 
       'image': 'assets/images/denuncia.jpg'
     },
     {
-      'label': 'Transparencia',
+      'label': 'Transparência',
       'image': 'assets/images/portaltransparencia.jpg',
       'url': 'https://sigma.pb.gov.br/transparencia/'
     },

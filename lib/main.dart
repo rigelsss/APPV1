@@ -16,6 +16,7 @@ import 'package:sudema_app/screens/reativar_conta.dart';
 import 'package:sudema_app/services/notification_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sudema_app/screens/registerUser/confirmarRegistro.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -38,7 +39,6 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-
   runApp(const MyApp());
 }
 
@@ -50,10 +50,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'SUDEMA',
+
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('pt', 'BR'),
+      ],
+
       initialRoute: '/',
       routes: {
         '/': (context) => const SplashScreen(),
-        '/home': (context) => const HomeScreen(initialIndex: 0,),
+        '/home': (context) => const HomeScreen(initialIndex: 0),
         '/login': (context) => const LoginPage(),
         '/balneabilidade': (context) => const HomeScreen(initialIndex: 2),
         '/noticias': (context) => const HomeScreen(initialIndex: 3),
@@ -65,8 +75,8 @@ class MyApp extends StatelessWidget {
         '/contatos' : (context) => const Contatos(initialIndex: -1),
         '/deletar-conta': (context) => const DeletarContaPage(),
         '/reativar-conta': (context) => const ReativarContaPage(email: '', senha: ''),
-        '/notificacoes': (context) => const NotificacoesPage(token: '',),
-        '/codigoRegistro' : (context) => const codigoRegistro(email: '',),
+        '/notificacoes': (context) => const NotificacoesPage(token: ''),
+        '/codigoRegistro': (context) => const codigoRegistro(email: ''),
       },
     );
   }
