@@ -41,6 +41,34 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<Map<String, dynamic>?> obterInformacoesUsuario() async {
+    if (_token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Token não encontrado!')),
+      );
+      return null;
+    }
+
+    try {
+      final data = await AuthController.obterInformacoesUsuario(_token!);
+
+      if (data != null) {
+        print('Dados do usuário: $data');
+        return data;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao buscar dados do usuário')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao obter informações do usuário: $e')),
+      );
+    }
+
+    return null;
+  }
+
   Future<void> realizarLogin() async {
     final email = emailController.text.trim();
     final senha = passwordController.text.trim();
@@ -66,20 +94,21 @@ class _LoginPageState extends State<LoginPage> {
 
         await _obterESalvarDeviceToken();
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(resultado['data']['message'] ?? 'Login realizado com sucesso')),
-        );
+        final dadosUsuario = await obterInformacoesUsuario();
 
-        await obterInformacoesUsuario();
-
-        if (_token != null) {
+        if (dadosUsuario != null) {
           final destino = voltarPara;
           if (destino != null) {
             Navigator.pushReplacementNamed(context, destino);
-            } else {
-              Navigator.pushReplacement(
+          } else {
+            Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const HomeScreen(initialIndex: 0)),
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(
+                  initialIndex: 0,
+                  userInfo: dadosUsuario,
+                ),
+              ),
             );
           }
         }
@@ -90,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
             builder: (_) => ReativarContaPage(email: email, senha: senha),
           ),
         );
-        } else if (resultado['nonVerifiedUser'] == true || resultado['statusCode'] == 423) {
+      } else if (resultado['nonVerifiedUser'] == true || resultado['statusCode'] == 423) {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -111,48 +140,20 @@ class _LoginPageState extends State<LoginPage> {
           margin: const EdgeInsets.all(8),
         ).show(context);
       }
-        } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao realizar login: $e')));
-    }
-  }
-
-  Future<void> obterInformacoesUsuario() async {
-    if (_token == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Token não encontrado!')));
-      return;
-    }
-
-    try {
-      final data = await AuthController.obterInformacoesUsuario(_token!);
-
-      if (data != null) {
-        print('Dados do usuário: $data');
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Bem-vindo, ${data['name']}!')));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erro ao buscar dados do usuário')),
-        );
-      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao obter informações do usuário: $e')),
+        SnackBar(content: Text('Erro ao realizar login: $e')),
       );
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     if (args != null && voltarPara == null) {
       voltarPara = args['voltarPara'] as String?;
     }
-    
+
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -222,7 +223,8 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Transform.translate(offset:  Offset(-14, 0),
+                    Transform.translate(
+                      offset: const Offset(-14, 0),
                       child: Checkbox(
                         value: _checkboxValue,
                         onChanged: (bool? value) {
@@ -236,18 +238,17 @@ class _LoginPageState extends State<LoginPage> {
                       offset: const Offset(-20, 0),
                       child: const Text('Mantenha-me conectado'),
                     ),
-                     TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const Recuperacaoosenha(),
-                            ),
-                          );
-                        },
-                        child: const Text('Esqueceu a senha?', style: TextStyle(color: Colors.black)),
-                      ),
-
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Recuperacaoosenha(),
+                          ),
+                        );
+                      },
+                      child: const Text('Esqueceu a senha?', style: TextStyle(color: Colors.black)),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),

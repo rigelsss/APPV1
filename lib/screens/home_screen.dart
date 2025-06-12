@@ -12,12 +12,13 @@ import 'widgets/navbar.dart';
 import 'widgets/drawer.dart';
 import 'login.dart';
 import 'package:another_flushbar/flushbar.dart';
-import '../screens/PageDenuncia.dart'; 
+import '../screens/PageDenuncia.dart';
 
 class HomeScreen extends StatefulWidget {
   final int initialIndex;
+  final Map<String, dynamic>? userInfo;
 
-  const HomeScreen({super.key, this.initialIndex = 0}); 
+  const HomeScreen({super.key, this.initialIndex = 0, this.userInfo});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -33,9 +34,53 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.initialIndex; 
+    _selectedIndex = widget.initialIndex;
     _carregarToken();
     _carregarNoticias();
+
+    // Mensagem de boas-vindas ao usuário se retornado do login
+    if (!_flushbarExibida && widget.userInfo != null && widget.userInfo!['name'] != null) {
+      _flushbarExibida = true;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Flushbar(
+          backgroundColor: const Color(0xFFD2FDE6),
+          duration: const Duration(seconds: 4),
+          flushbarPosition: FlushbarPosition.TOP,
+          borderRadius: BorderRadius.circular(12),
+          margin: const EdgeInsets.all(8),
+          messageText: Row(
+            children: [
+              const Icon(Icons.check_circle_rounded, color: Color(0xFF1B8C00), size: 32),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Bem-vindo, ${widget.userInfo!['name']?.split(' ').first}!',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1B8C00),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'Login realizado com sucesso.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF1B8C00),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ).show(context);
+      });
+    }
   }
 
   @override
@@ -90,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    Navigator.of(context).pop(); 
+    Navigator.of(context).pop();
   }
 
   Future<void> _carregarToken() async {
@@ -167,6 +212,6 @@ class _HomeScreenState extends State<HomeScreen> {
         const DenunciaPage(),
         const PraiasPage(),
         const NoticiasPage(),
-         Contatos(initialIndex: -1,),
+        Contatos(initialIndex: -1),
       ];
 }
