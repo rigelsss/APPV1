@@ -42,8 +42,8 @@ class _NoticiasCarrosselState extends State<NoticiasCarrossel> {
             return AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               margin: const EdgeInsets.symmetric(horizontal: 4),
-              width: 7,
-              height: 7,
+              width: 6,
+              height: 6,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: ativo ? const Color(0xFF2A2F8C) : Colors.grey.shade400,

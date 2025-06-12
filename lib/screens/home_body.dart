@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/models/noticia.dart';
-import 'package:sudema_app/screens/home/banner_denuncia.dart';
+import 'package:sudema_app/screens/home/banner_carrossel.dart';
 import 'package:sudema_app/screens/home/servicos_carrossel.dart';
 import 'package:sudema_app/screens/home/titulo_com_linha.dart';
 import 'package:sudema_app/screens/home/noticias_carrossel.dart'; 
@@ -37,8 +37,8 @@ class HomeBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: screenHeight * 0.02),
-            BannerDenuncia(
-              onTap: onSelecionarDenuncia,
+            BannerCarrossel(
+              onTapDenuncia: onSelecionarDenuncia,
             ),
             SizedBox(height: screenHeight * 0.03),
             const TituloComLinha(titulo: 'Nossos serviços'),
