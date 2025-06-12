@@ -7,8 +7,8 @@ import '../login.dart';
 import 'package:sudema_app/services/ControllerRegister.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-
 import 'confirmarRegistro.dart';
+import 'package:sudema_app/utils/validarcpf.dart'; 
 
 class RegistroUser extends StatefulWidget {
   const RegistroUser({super.key});
@@ -26,7 +26,6 @@ class _RegistroUserState extends State<RegistroUser> {
   String? _erroConfirmarSenha;
   String? _erroTermos;
 
-
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
   final TextEditingController _contatoController = TextEditingController();
@@ -38,7 +37,6 @@ class _RegistroUserState extends State<RegistroUser> {
   bool _obscureText = true;
   bool _isChecked = false;
 
-  // 🧩 Máscaras
   final cpfFormatter = MaskTextInputFormatter(
     mask: '###.###.###-##',
     filter: {"#": RegExp(r'[0-9]')},
@@ -158,18 +156,24 @@ class _RegistroUserState extends State<RegistroUser> {
                     Center(
                       child: ElevatedButton(
                         onPressed: () async {
+                          final cpf = cpfFormatter.getUnmaskedText();
+
                           setState(() {
                             _erroNome = _nomeController.text.trim().split(' ').length < 2
                                 ? 'Digite o nome completo (nome e sobrenome)'
                                 : null;
-                            _erroCpf = _cpfController.text.isEmpty ? 'CPF é obrigatório' : null;
+
+                            _erroCpf = cpf.isEmpty
+                                ? 'CPF é obrigatório'
+                                : (!validarCPF(cpf) ? 'CPF inválido' : null); 
+
                             _erroContato = _contatoController.text.isEmpty ? 'Contato é obrigatório' : null;
                             _erroEmail = _emailController.text.isEmpty ? 'E-mail é obrigatório' : null;
                             _erroSenha = _senhaController.text.isEmpty
                                 ? 'Senha é obrigatória'
                                 : !validarSenhaSegura(_senhaController.text)
-                                ? 'A senha deve ter no mínimo 8 caracteres, incluir letras, números e caracteres especiais.'
-                                : null;
+                                    ? 'A senha deve ter no mínimo 8 caracteres, incluir letras, números e caracteres especiais.'
+                                    : null;
                             _erroConfirmarSenha = _confirmarSenhaController.text.isEmpty ? 'Confirmação de senha é obrigatória' : null;
                             _erroTermos = !_isChecked ? 'Você deve aceitar os termos para continuar.' : null;
                           });
@@ -200,7 +204,7 @@ class _RegistroUserState extends State<RegistroUser> {
 
                           final resultado = await _controller.validarERegistrar(
                             nome: _nomeController.text,
-                            cpf: cpfFormatter.getUnmaskedText(),
+                            cpf: cpf,
                             telefone: celularFormatter.getUnmaskedText(),
                             email: _emailController.text,
                             senha: _senhaController.text,

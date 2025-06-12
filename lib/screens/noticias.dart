@@ -123,7 +123,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Última notícias',
+            'Últimas notícias',
             style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
           ),
           const SizedBox(height: 16),
