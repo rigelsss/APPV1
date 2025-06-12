@@ -259,6 +259,60 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+                /*SizedBox(height: 12,),
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Divider(
+                        color: Colors.grey,
+                        thickness: 1,
+                        endIndent: 10,
+                      ),
+                    ),
+                    const Text(
+                      'ou',
+                      style: TextStyle(fontSize: 16, color: Colors.black),
+                    ),
+                    const Expanded(
+                      child: Divider(
+                        color: Colors.grey,
+                        thickness: 1,
+                        indent: 10,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 12,),
+                SizedBox(
+                  width: double.infinity,
+                  height: 60,
+                  child: ElevatedButton(
+                    onPressed: realizarLogin,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      minimumSize: const Size(300, 60),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: const BorderSide(color: Colors.grey, width: 1.5),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/google.png', // caminho da sua imagem
+                          height: 24,
+                          width: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'Entrar com o Google',
+                          style: TextStyle(color: Colors.black, fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),*/
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
