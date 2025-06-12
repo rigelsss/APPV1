@@ -9,7 +9,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
 import '../screens/reativar_conta.dart';
 import '../screens/registerUser/confirmarRegistro.dart';
-// Import para Firebase Messaging
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class LoginPage extends StatefulWidget {
@@ -20,6 +19,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  String? voltarPara;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool _checkboxValue = false;
@@ -73,10 +73,15 @@ class _LoginPageState extends State<LoginPage> {
         await obterInformacoesUsuario();
 
         if (_token != null) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomeScreen(initialIndex: 0)),
-          );
+          final destino = voltarPara;
+          if (destino != null) {
+            Navigator.pushReplacementNamed(context, destino);
+            } else {
+              Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen(initialIndex: 0)),
+            );
+          }
         }
       } else if (resultado['disabledUser'] == true) {
         Navigator.push(
@@ -140,9 +145,14 @@ class _LoginPageState extends State<LoginPage> {
       );
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (args != null && voltarPara == null) {
+      voltarPara = args['voltarPara'] as String?;
+    }
+    
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
