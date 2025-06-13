@@ -14,7 +14,7 @@ class BannerCarrossel extends StatefulWidget {
 }
 
 class _BannerCarrosselState extends State<BannerCarrossel> {
-  final PageController _controller = PageController(viewportFraction: 0.9);
+  final PageController _controller = PageController(viewportFraction: 1.02);
   int _paginaAtual = 0;
 
   final List<String> imagens = [
@@ -57,7 +57,6 @@ class _BannerCarrosselState extends State<BannerCarrossel> {
                     child: Image.asset(
                       imagens[index],
                       fit: BoxFit.cover,
-                      width: double.infinity,
                     ),
                   ),
                 ),
