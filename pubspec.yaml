@@ -72,7 +72,7 @@ flutter:
     - assets/images/
     - assets/json/
     - assets/env/.env
-
+    - assets/icon/
 dependency_overrides:
   google_api_headers:
     git:

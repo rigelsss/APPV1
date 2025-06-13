@@ -259,7 +259,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                /*SizedBox(height: 12,),
+                SizedBox(height: 12,),
                 Row(
                   children: [
                     const Expanded(
@@ -300,9 +300,9 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
-                          'assets/images/google.png', // caminho da sua imagem
-                          height: 24,
-                          width: 24,
+                          'assets/icon/googleicon.png',
+                          height: 25,
+                          width: 25,
                         ),
                         const SizedBox(width: 12),
                         const Text(
@@ -312,7 +312,7 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                ),*/
+                ),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
