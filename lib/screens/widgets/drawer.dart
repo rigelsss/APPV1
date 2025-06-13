@@ -76,8 +76,8 @@ class CustomDrawerState extends State<CustomDrawer> {
             child: Center(
               child: Image.asset(
                 'assets/images/logosimples.png',
-                width: 200,
-                height: 100,
+                width: 130,
+                height: 50,
                 fit: BoxFit.contain,
               ),
             ),

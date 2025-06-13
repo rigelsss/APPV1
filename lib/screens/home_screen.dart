@@ -38,7 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _carregarToken();
     _carregarNoticias();
 
-    // Mensagem de boas-vindas ao usuário se retornado do login
     if (!_flushbarExibida && widget.userInfo != null && widget.userInfo!['name'] != null) {
       _flushbarExibida = true;
 
@@ -166,9 +165,19 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+@override
+Widget build(BuildContext context) {
+  return WillPopScope(
+    onWillPop: () async {
+      if (_selectedIndex != 0) {
+        setState(() {
+          _selectedIndex = 0;
+        });
+        return false; 
+      }
+      return false; 
+    },
+    child: Scaffold(
       appBar: HomeAppBar(
         isLoggedIn: isLoggedIn,
         onLoginTap: () async {
@@ -198,8 +207,9 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
       ),
-    );
-  }
+    ),
+  );
+}
 
   List<Widget> get _pages => [
         HomeBody(
