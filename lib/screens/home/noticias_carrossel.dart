@@ -17,12 +17,10 @@ class _NoticiasCarrosselState extends State<NoticiasCarrossel> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Column(
       children: [
         SizedBox(
-          height: screenHeight * 0.4, 
+          height: 440, 
           child: PageView.builder(
             controller: _controller,
             itemCount: widget.noticias.length,
@@ -30,7 +28,14 @@ class _NoticiasCarrosselState extends State<NoticiasCarrossel> {
               setState(() => _paginaAtual = index);
             },
             itemBuilder: (context, index) {
-              return NoticiaCard(noticia: widget.noticias[index]);
+              return Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 380,
+                  ),
+                  child: NoticiaCard(noticia: widget.noticias[index]),
+                ),
+              );
             },
           ),
         ),
