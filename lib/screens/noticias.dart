@@ -18,8 +18,6 @@ class NoticiasPage extends StatefulWidget {
 class _NoticiasPageState extends State<NoticiasPage> {
   List<dynamic> noticias = [];
   List<dynamic> filtradas = [];
-  Set<String> todasTags = {};
-  String filtroTag = 'Tudo';
   String termoBusca = '';
   bool carregando = true;
   String? erro;
@@ -51,17 +49,8 @@ class _NoticiasPageState extends State<NoticiasPage> {
         final decoded = utf8.decode(resposta.bodyBytes);
         final List<dynamic> dados = json.decode(decoded);
 
-        final categorias = <String>{};
-        for (var noticia in dados) {
-          final tagList = noticia['categorias'];
-          if (tagList is List) {
-            categorias.addAll(tagList.whereType<String>());
-          }
-        }
-
         setState(() {
           noticias = dados;
-          todasTags = categorias;
           aplicarFiltro();
           carregando = false;
         });
@@ -84,14 +73,8 @@ class _NoticiasPageState extends State<NoticiasPage> {
     filtradas = noticias.where((n) {
       final titulo = _removerHtml(n['titulo']).toLowerCase();
       final resumo = _removerHtml(n['resumo']).toLowerCase();
-      final combinaBusca = titulo.contains(termoBusca.toLowerCase()) ||
+      return titulo.contains(termoBusca.toLowerCase()) ||
           resumo.contains(termoBusca.toLowerCase());
-
-      final tagList = n['categorias'];
-      final combinaTag = filtroTag == 'Tudo' ||
-          (tagList is List && tagList.contains(filtroTag));
-
-      return combinaBusca && combinaTag;
     }).toList();
     setState(() {});
   }
@@ -140,7 +123,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Última notícias',
+            'Últimas notícias',
             style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
           ),
           const SizedBox(height: 16),
@@ -158,46 +141,6 @@ class _NoticiasPageState extends State<NoticiasPage> {
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide.none,
               ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Categorias',
-            style: GoogleFonts.lato(fontWeight: FontWeight.w700, fontSize: 16),
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 40,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                ...['Tudo', ...todasTags].map((tag) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: ChoiceChip(
-                        label: Text(
-                          tag,
-                          style: TextStyle(
-                            color: filtroTag == tag ? Colors.white : Colors.black,
-                          ),
-                        ),
-                        selected: filtroTag == tag,
-                        selectedColor: const Color(0xFF2A2F8C),
-                        backgroundColor: Colors.white,
-                        shape: StadiumBorder(
-                          side: BorderSide(
-                            color: filtroTag == tag
-                                ? const Color(0xFF2A2F8C)
-                                : Colors.grey,
-                          ),
-                        ),
-                        showCheckmark: false,
-                        onSelected: (_) {
-                          filtroTag = tag;
-                          aplicarFiltro();
-                        },
-                      ),
-                    ))
-              ],
             ),
           ),
           const SizedBox(height: 16),

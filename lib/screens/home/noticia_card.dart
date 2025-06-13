@@ -45,7 +45,7 @@ class NoticiaCard extends StatelessWidget {
               borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
               child: CachedNetworkImage(
                 imageUrl: noticia.imagemUrl,
-                height: 200,
+                height: 272.48,
                 width: double.infinity,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
@@ -66,7 +66,7 @@ class NoticiaCard extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       child: Text(
                         "$dataFormatada   $horaFormatada",
-                        style:GoogleFonts.lato(fontSize: 12, color: Colors.grey),
+                        style: GoogleFonts.lato(fontSize: 12, color: Colors.grey),
                       ),
                     ),
                     const SizedBox(height: 4),

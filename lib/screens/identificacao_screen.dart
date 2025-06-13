@@ -92,7 +92,11 @@ class _AbaIdentificacaoState extends State<Identificacao> {
                   height: 52,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/login');
+                      Navigator.pushNamed(
+                        context,
+                        '/login',
+                        arguments: {'voltarPara': '/denuncia'},
+                      );;
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2A2F8C),
