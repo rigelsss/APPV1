@@ -210,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 2),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Transform.translate(offset:  Offset(-14, 0),
                       child: Checkbox(
