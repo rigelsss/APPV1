@@ -7,12 +7,10 @@ import '../../services/AuthMe.dart';
 
 class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
   final VoidCallback? onLoginTap;
-  final bool isLoggedIn;
 
   const HomeAppBar({
     super.key,
-    this.onLoginTap,
-    this.isLoggedIn = false,
+    this.onLoginTap, required bool isLoggedIn,
   });
 
   @override
@@ -24,11 +22,21 @@ class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _HomeAppBarState extends State<HomeAppBar> {
   int _unreadCount = 0;
+  bool _isLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
-    if (widget.isLoggedIn) {
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final token = await AuthController.getToken();
+    setState(() {
+      _isLoggedIn = token != null;
+    });
+
+    if (_isLoggedIn) {
       _fetchUnreadNotifications();
     }
   }
@@ -37,13 +45,11 @@ class _HomeAppBarState extends State<HomeAppBar> {
     try {
       final token = await AuthController.getToken();
       if (token == null) {
-        print('Usuário não autenticado');
         return;
       }
 
       final user = await AuthController.obterInformacoesUsuario(token);
       if (user == null || user['id'] == null) {
-        print('Usuário inválido ou sem ID');
         return;
       }
 
@@ -63,8 +69,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
         setState(() {
           _unreadCount = data['total_notificacoes_nao_lidas'] ?? 0;
         });
-      } else {
-        print('Erro ao buscar notificações: ${response.statusCode}');
       }
     } catch (e) {
       print('Erro ao buscar notificações: $e');
@@ -80,13 +84,15 @@ class _HomeAppBarState extends State<HomeAppBar> {
         height: 40,
         child: Image.asset('assets/images/logosimples.png'),
       ),
-      leading: IconButton(
-        icon: const Icon(Icons.menu),
-        onPressed: () => Scaffold.of(context).openDrawer(),
+      leading: Builder(
+        builder: (context) => IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () => Scaffold.of(context).openDrawer(),
+        ),
       ),
       actions: [
         IconButton(
-          icon: widget.isLoggedIn
+          icon: _isLoggedIn
               ? Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -117,18 +123,25 @@ class _HomeAppBarState extends State<HomeAppBar> {
             ],
           )
               : const Icon(Icons.login),
-          onPressed: widget.isLoggedIn
-              ? () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const NotificacoesPage(token: ''),
-              ),
-            ).then((_) {
-              _fetchUnreadNotifications();
-            });
-          }
-              : widget.onLoginTap,
+          onPressed: () {
+            if (_isLoggedIn) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NotificacoesPage(token: ''),
+                ),
+              ).then((_) {
+                _fetchUnreadNotifications();
+              });
+            } else {
+              if (widget.onLoginTap != null) {
+                widget.onLoginTap!();
+              } else {
+                // Caso não tenha callback, abre rota padrão de login:
+                Navigator.pushNamed(context, '/login');
+              }
+            }
+          },
         ),
       ],
     );

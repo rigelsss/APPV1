@@ -16,7 +16,12 @@ class _MonumentosState extends State<Monumentos> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HomeAppBar(),
+      appBar: HomeAppBar(
+        isLoggedIn: false,
+        onLoginTap: () {
+          Navigator.pushNamed(context, '/login');
+        },
+      ),
       bottomNavigationBar: NavBar(
         currentIndex: -1,
         onTap: (index) {
