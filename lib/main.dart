@@ -10,6 +10,7 @@ import 'package:sudema_app/screens/perfil_page.dart';
 import 'package:sudema_app/screens/contatos/contatos.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
+import 'package:sudema_app/screens/praias.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
 import 'package:sudema_app/screens/editar_perfil.dart';
 import 'package:sudema_app/screens/reativar_conta.dart';
@@ -78,7 +79,8 @@ class MyApp extends StatelessWidget {
         '/reativar-conta': (context) => const ReativarContaPage(email: '', senha: ''),
         '/notificacoes': (context) => const NotificacoesPage(token: ''),
         '/codigoRegistro': (context) => const codigoRegistro(email: ''),
-        '/denuncia': (context) => DenunciaWrapperScreen(), 
+        '/denuncia': (context) => DenunciaWrapperScreen(),
+        '/praias': (context) => PraiasPage(),
 
       },
     );

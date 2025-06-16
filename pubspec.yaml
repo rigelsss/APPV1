@@ -61,7 +61,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 flutter_launcher_icons:
-  image_path: "assets/icon/launch.png"
+  image_path: "assets/icon/LOGOSUDEMA3D.png"
   android: true
   ios: true
 
