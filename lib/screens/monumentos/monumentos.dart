@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sudema_app/screens/widgets/appbar.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
+import 'package:sudema_app/screens/widgets/drawer.dart';
+
 
 class Monumentos extends StatefulWidget {
   const Monumentos({super.key});
@@ -29,6 +31,26 @@ class _MonumentosState extends State<Monumentos> {
           }
         },
       ),
+      drawer: CustomDrawer(
+        onItemSelected: (index) {
+          Navigator.pop(context);
+          switch (index) {
+            case 1:
+              Navigator.pushReplacementNamed(context, '/denuncias');
+              break;
+            case 2:
+              Navigator.pushReplacementNamed(context, '/praias');
+              break;
+            case 3:
+              Navigator.pushReplacementNamed(context, '/noticias');
+              break;
+            case 4:
+              Navigator.pushReplacementNamed(context, '/contatos');
+              break;
+          }
+        },
+      ),
+
       backgroundColor: Colors.white,
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -112,7 +134,7 @@ class _MonumentosState extends State<Monumentos> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title, style: GoogleFonts.lato(fontSize: 16, color: Colors.black)),
-                const SizedBox(height: 4),
+                const SizedBox(height: 10),
                 Text(subtitle, style: GoogleFonts.lato(fontSize: 16)),
               ],
             ),
@@ -137,7 +159,7 @@ class _MonumentosState extends State<Monumentos> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title, style: GoogleFonts.lato(fontSize: 16, color: Colors.black)),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           Text(subtitle, style: GoogleFonts.lato(fontSize: 16)),
         ],
       ),
