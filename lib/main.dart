@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:sudema_app/screens/alterar_email.dart';
+import 'package:sudema_app/screens/contatos/contatoss.dart';
 import 'package:sudema_app/screens/deletar_conta.dart';
 import 'package:sudema_app/screens/EditSenha.dart';
 import 'package:sudema_app/screens/notificacao/notificacoes.dart';
@@ -81,6 +82,7 @@ class MyApp extends StatelessWidget {
         '/codigoRegistro': (context) => const codigoRegistro(email: ''),
         '/denuncia': (context) => DenunciaWrapperScreen(),
         '/praias': (context) => PraiasPage(),
+        '/contatoss': (context) => Contatoss(),
 
       },
     );
