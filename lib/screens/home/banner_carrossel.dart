@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:sudema_app/screens/monumentos/monumentos.dart';
 import 'package:sudema_app/screens/jardim/jardim.dart';
 
