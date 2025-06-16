@@ -80,6 +80,13 @@ class _MonumentosState extends State<Monumentos> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(Icons.arrow_back, size: 24),
+          ],
+        ),
+        SizedBox(height: 8,),
         Text(
           'Monumento Natural Vale dos Dinossauros (MONA)',
           style: TextStyle(fontSize: 22),
