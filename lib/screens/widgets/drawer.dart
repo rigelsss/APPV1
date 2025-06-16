@@ -3,6 +3,8 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sudema_app/screens/perfil_page.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 
+import '../contatos/contatoss.dart';
+
 class CustomDrawer extends StatefulWidget {
   final Function(int) onItemSelected;
   const CustomDrawer({super.key, required this.onItemSelected});
@@ -113,7 +115,10 @@ class CustomDrawerState extends State<CustomDrawer> {
                   leading: const Icon(Icons.phone_in_talk_outlined),
                   title: const Text('Contato'),
                   onTap: () {
-                    widget.onItemSelected(4);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Contatoss()),
+                    );
                   },
                 ),
               ],

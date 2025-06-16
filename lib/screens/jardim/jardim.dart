@@ -78,6 +78,21 @@ class _JardimState extends State<Jardim> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 0),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              icon: const Icon(Icons.arrow_back, size: 24),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        ),
+        SizedBox(height: 8,),
         Text('Jardim Botânico Benjamim Maranhão',
           style: TextStyle(fontSize: 22),
         ),
