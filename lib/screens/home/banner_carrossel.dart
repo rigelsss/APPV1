@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:sudema_app/screens/monumentos/monumentos.dart';
+
 
 class BannerCarrossel extends StatefulWidget {
   final VoidCallback onTapDenuncia;
@@ -26,11 +28,17 @@ class _BannerCarrosselState extends State<BannerCarrossel> {
   void _handleTap(int index) {
     if (index == 0) {
       widget.onTapDenuncia();
+    } else if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const Monumentos()),
+      );
     } else {
-      final urls = ['https://www.google.com', 'https://www.google.com'];
-      launchUrl(Uri.parse(urls[index - 1]), mode: LaunchMode.externalApplication);
+      final urls = ['https://www.google.com'];
+      launchUrl(Uri.parse(urls[index - 2]), mode: LaunchMode.externalApplication);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
