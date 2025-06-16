@@ -36,25 +36,75 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
 
     if (sucesso) {
       setState(() => _ativado = valor);
-      final mensagem = valor ? 'Notificações ativadas' : 'Notificações desativadas';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensagem)));
+
+      final cor = valor ? const Color(0xFF1B8C00) : const Color(0xFFD32F2F); // verde ou vermelho
+      final titulo = valor ? 'Notificações ativadas!' : 'Notificações desativadas!';
+      final subtitulo = valor
+          ? 'Agora você receberá alertas e novidades da SUDEMA.'
+          : 'Você não receberá mais notificações do app.';
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.white,
+          elevation: 6,
+          behavior: SnackBarBehavior.floating,
+          content: Row(
+            children: [
+              Icon(
+                valor ? Icons.check_circle_rounded : Icons.notifications_off_rounded,
+                color: cor,
+                size: 32,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      titulo,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: cor,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitulo,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: cor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          duration: const Duration(seconds: 4),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Falha ao atualizar o estado das notificações')),
+        const SnackBar(
+          content: Text('Falha ao atualizar as notificações. Tente novamente.'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 4),
+        ),
       );
     }
   }
+
 
   Future<void> _carregarNotificacoes() async {
     final lista = await NotificacoesService.carregarNotificacoes();
     if (lista != null) {
       lista.sort((a, b) {
-        if (a['isRead'] == b['isRead']) {
-          DateTime dataA = DateTime.tryParse(a['dataCriacao'] ?? '') ?? DateTime(0);
-          DateTime dataB = DateTime.tryParse(b['dataCriacao'] ?? '') ?? DateTime(0);
-          return dataB.compareTo(dataA);
-        }
-        return (a['isRead'] == false) ? -1 : 1;
+        int idA = int.tryParse(a['id'].toString()) ?? 0;
+        int idB = int.tryParse(b['id'].toString()) ?? 0;
+        return idB.compareTo(idA);
       });
 
       if (lista.length > 20) {
