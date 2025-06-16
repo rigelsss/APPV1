@@ -49,12 +49,9 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
     final lista = await NotificacoesService.carregarNotificacoes();
     if (lista != null) {
       lista.sort((a, b) {
-        if (a['isRead'] == b['isRead']) {
-          DateTime dataA = DateTime.tryParse(a['dataCriacao'] ?? '') ?? DateTime(0);
-          DateTime dataB = DateTime.tryParse(b['dataCriacao'] ?? '') ?? DateTime(0);
-          return dataB.compareTo(dataA);
-        }
-        return (a['isRead'] == false) ? -1 : 1;
+        int idA = int.tryParse(a['id'].toString()) ?? 0;
+        int idB = int.tryParse(b['id'].toString()) ?? 0;
+        return idB.compareTo(idA);
       });
 
       if (lista.length > 20) {
