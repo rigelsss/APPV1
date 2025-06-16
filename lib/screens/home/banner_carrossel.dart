@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:sudema_app/screens/monumentos/monumentos.dart';
+import 'package:sudema_app/screens/jardim/jardim.dart';
 
 
 class BannerCarrossel extends StatefulWidget {
@@ -33,9 +34,11 @@ class _BannerCarrosselState extends State<BannerCarrossel> {
         context,
         MaterialPageRoute(builder: (context) => const Monumentos()),
       );
-    } else {
-      final urls = ['https://www.google.com'];
-      launchUrl(Uri.parse(urls[index - 2]), mode: LaunchMode.externalApplication);
+    } else if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const Jardim()),
+      );
     }
   }
 
