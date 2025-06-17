@@ -59,7 +59,7 @@ class NavBar extends StatelessWidget {
                       child: Text(
                         item.label,
                         style: GoogleFonts.lato(
-                          fontSize: 14,
+                          fontSize: 12,
                           color: Color(0xFF2A2F8C),
                           fontWeight: FontWeight.normal,
                         ),
