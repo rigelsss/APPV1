@@ -25,7 +25,7 @@ class NavBar extends StatelessWidget {
 
     return Container(
       color: const Color(0xFFF5F5F5),
-      height: 60,
+      height: 55,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: List.generate(items.length, (index) {
@@ -46,10 +46,10 @@ class NavBar extends StatelessWidget {
                   const SizedBox(height: 4),
                   SvgPicture.asset(
                     item.iconPath,
-                    width: 24,
-                    height: 24,
+                    width: 20,
+                    height: 20,
                     colorFilter: ColorFilter.mode(
-                      selected ? const Color(0xFF2A2F8C) : Colors.black,
+                      selected ? const Color(0xFF2A2F8C) : const Color(0xFF3B3B3B),
                       BlendMode.srcIn,
                     ),
                   ),
@@ -59,7 +59,7 @@ class NavBar extends StatelessWidget {
                       child: Text(
                         item.label,
                         style: GoogleFonts.lato(
-                          fontSize: 14,
+                          fontSize: 12,
                           color: Color(0xFF2A2F8C),
                           fontWeight: FontWeight.normal,
                         ),

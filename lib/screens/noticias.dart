@@ -248,7 +248,7 @@ class _NoticiasPageState extends State<NoticiasPage> {
                         onPressed: abrirMaisNoticias,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF2A2F8C),
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),

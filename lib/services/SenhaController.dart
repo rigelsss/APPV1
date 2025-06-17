@@ -13,7 +13,7 @@ class UsuarioController {
 
     if (token == null) return 'Token não encontrado';
 
-    final url = 'http://10.0.2.2:9000/api/v1/usuarios/mobile/$userId/alterar-senha';
+    final url = 'https://homolog.sigma.pb.gov.br/sislia/api/v1/usuarios/mobile/$userId/alterar-senha';
 
     try {
       final response = await http.put(

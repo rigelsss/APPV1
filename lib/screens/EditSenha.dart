@@ -161,7 +161,7 @@ class _EditarSenhaState extends State<EditarSenha> {
 
                 try {
                   final userInfo = await AuthController.obterInformacoesUsuario(token);
-                  final userId = userInfo?['user']?['id'];
+                  final userId = userInfo?['id'];
 
                   if (userId == null) {
                     ScaffoldMessenger.of(context).showSnackBar(

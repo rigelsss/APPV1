@@ -20,6 +20,9 @@ class PraiasPage extends StatefulWidget {
 class _PraiasPageState extends State<PraiasPage> {
   late GoogleMapController mapController;
   final GlobalKey _mapKey = GlobalKey();
+  LatLng? _posicaoAtualUsuario;
+  Marker? _marcadorUsuario;
+  BitmapDescriptor? _iconeUsuario;
 
   List<EstacaoMonitoramento> _estacoes = [];
   bool _isLoadingEstacoes = true;
@@ -57,24 +60,34 @@ class _PraiasPageState extends State<PraiasPage> {
   }
 
   Future<void> _centralizarNaLocalizacaoAtual() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) return;
+  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) return;
 
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) return;
-    }
-
-    if (permission == LocationPermission.deniedForever) return;
-
-    final position = await Geolocator.getCurrentPosition();
-    final userLatLng = LatLng(position.latitude, position.longitude);
-
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: userLatLng, zoom: 14.5),
-    ));
+  LocationPermission permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
+    if (permission == LocationPermission.denied) return;
   }
+
+  if (permission == LocationPermission.deniedForever) return;
+
+  final position = await Geolocator.getCurrentPosition();
+  final userLatLng = LatLng(position.latitude, position.longitude);
+
+  setState(() {
+    _posicaoAtualUsuario = userLatLng;
+    _marcadorUsuario = Marker(
+      markerId: const MarkerId('usuario'),
+      position: userLatLng,
+      icon: _iconeUsuario ?? BitmapDescriptor.defaultMarker,
+      infoWindow: const InfoWindow(title: 'Sua localização'),
+    );
+  });
+
+  mapController.animateCamera(CameraUpdate.newCameraPosition(
+    CameraPosition(target: userLatLng, zoom: 14.5),
+  ));
+}
 
   Future<void> _carregarIcones() async {
     try {
@@ -85,6 +98,10 @@ class _PraiasPageState extends State<PraiasPage> {
       _iconeImpropria = await BitmapDescriptor.fromAssetImage(
         const ImageConfiguration(size: Size(48, 48)),
         'assets/images/impropria.png',
+      );
+      _iconeUsuario = await BitmapDescriptor.fromAssetImage(
+        const ImageConfiguration(devicePixelRatio: 3.0),
+        'assets/images/circle_user_location.png',
       );
     } catch (e) {
       print('❌ Erro ao carregar ícones: $e');
@@ -175,18 +192,34 @@ class _PraiasPageState extends State<PraiasPage> {
     setState(() {});
   }
 
-  void _toggleClassificacao(String item) {
-    setState(() {
-      if (item == 'Mostrar tudo') {
-        classificacoesSelecionadas = ['Próprias', 'Impróprias'];
-      } else if (item == 'Mostrar apenas próprias') {
-        classificacoesSelecionadas = ['Próprias'];
-      } else if (item == 'Mostrar apenas impróprias') {
-        classificacoesSelecionadas = ['Impróprias'];
-      }
-      _filtrarMarcadores();
-    });
+  void _toggleClassificacao(String item) async {
+  setState(() {
+    if (item == 'Mostrar tudo') {
+      classificacoesSelecionadas = ['Próprias', 'Impróprias'];
+    } else if (item == 'Mostrar apenas próprias') {
+      classificacoesSelecionadas = ['Próprias'];
+    } else if (item == 'Mostrar apenas impróprias') {
+      classificacoesSelecionadas = ['Impróprias'];
+    }
+
+    // Limpa os filtros de município e trecho
+    municipioSelecionado = '';
+    praiaSelecionada = '';
+    trechoSelecionado = '';
+  });
+
+  // Move a câmera para a localização atual do usuário, se disponível
+  if (_posicaoAtualUsuario != null) {
+    await mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(target: _posicaoAtualUsuario!, zoom: 14.5),
+      ),
+    );
   }
+
+  _filtrarMarcadores();
+}
+
 
   String _getClassificacaoLabel() {
     if (classificacoesSelecionadas.length == 2) return 'Mostrar tudo';
@@ -378,12 +411,15 @@ class _PraiasPageState extends State<PraiasPage> {
                     });
                   },
                   initialCameraPosition: const CameraPosition(
-                  target: LatLng(-7.1202, -34.8802), 
-                  zoom: 12.0,
+                    target: LatLng(-7.1202, -34.8802),
+                    zoom: 12.0,
                   ),
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
-                  markers: _marcadoresVisiveis,
+                  markers: {
+                    ..._marcadoresVisiveis,
+                    if (_marcadorUsuario != null && currentZoom >= 14.5) _marcadorUsuario!,
+                  },
                 ),
                 if (_estacaoSelecionada != null && _overlayPosition != null)
                   Builder(
