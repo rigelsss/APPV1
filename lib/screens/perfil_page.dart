@@ -281,7 +281,32 @@ class PerfiluserState extends State<Perfiluser> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: _logout,
+                  onPressed: () async {
+                    final confirmar = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor: Colors.white,
+                        title: Center(
+                          child: const Text('Deseja mesmo sair?',style: TextStyle(fontSize: 22),),
+                        ),
+                        actionsAlignment: MainAxisAlignment.center,
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text('Cancelar', style: TextStyle(fontSize: 16),),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text('Sair',style: TextStyle(fontSize: 16),),
+                          ),
+                        ],
+                      )
+                    );
+
+                    if (confirmar == true) {
+                      _logout();
+                    }
+                  },
                   icon: const Icon(Icons.logout, color: Colors.white),
                   label: const Text(
                     'Sair',
@@ -309,6 +334,7 @@ class PerfiluserState extends State<Perfiluser> {
               ),
             ],
           ),
+
         ],
       ),
     );
@@ -342,6 +368,8 @@ class PerfiluserState extends State<Perfiluser> {
       ),
     );
   }
+
+
 
   String formatarCpf(String cpf) {
     final digitsOnly = cpf.replaceAll(RegExp(r'\D'), '');
