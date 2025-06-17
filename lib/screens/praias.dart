@@ -100,7 +100,7 @@ class _PraiasPageState extends State<PraiasPage> {
         'assets/images/impropria.png',
       );
       _iconeUsuario = await BitmapDescriptor.fromAssetImage(
-        const ImageConfiguration(devicePixelRatio: 2.5),
+        const ImageConfiguration(devicePixelRatio: 3.0),
         'assets/images/circle_user_location.png',
       );
     } catch (e) {
