@@ -285,6 +285,7 @@ class PerfiluserState extends State<Perfiluser> {
                     final confirmar = await showDialog<bool>(
                       context: context,
                       builder: (context) => AlertDialog(
+                        backgroundColor: Colors.white,
                         title: Center(
                           child: const Text('Deseja mesmo sair?',style: TextStyle(fontSize: 22),),
                         ),
