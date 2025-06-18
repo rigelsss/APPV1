@@ -80,7 +80,7 @@ class NoticiaCard extends StatelessWidget {
                     Text(
                       noticia.resumo,
                       style: GoogleFonts.lato(fontSize: 12, color: Color.fromARGB(255, 120, 120, 120)),
-                      maxLines: 3,
+                      maxLines: 4,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],

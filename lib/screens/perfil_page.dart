@@ -4,6 +4,7 @@ import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/screens/editar_perfil.dart';
+import 'package:sudema_app/utils/logout_helper.dart';
 
 class Perfiluser extends StatefulWidget {
   final String? token;
@@ -82,7 +83,6 @@ class PerfiluserState extends State<Perfiluser> {
     if (!mounted) return;
     Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -236,11 +236,11 @@ class PerfiluserState extends State<Perfiluser> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => EditarPerfil(
-                      nomeAtual: _userData['name'] ?? '',
-                      telefoneAtual: _userData['phone'] ?? '',
-                      cpfAtual: _userData['cpf'] ?? '',
+                        nomeAtual: _userData['name'] ?? '',
+                        telefoneAtual: _userData['phone'] ?? '',
+                        cpfAtual: _userData['cpf'] ?? '',
+                      ),
                     ),
-                   ),
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -281,37 +281,11 @@ class PerfiluserState extends State<Perfiluser> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () async {
-                    final confirmar = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        backgroundColor: Colors.white,
-                        title: Center(
-                          child: const Text('Deseja mesmo sair?',style: TextStyle(fontSize: 22),),
-                        ),
-                        actionsAlignment: MainAxisAlignment.center,
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(false),
-                            child: const Text('Cancelar', style: TextStyle(fontSize: 16),),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(true),
-                            child: const Text('Sair',style: TextStyle(fontSize: 16),),
-                          ),
-                        ],
-                      )
-                    );
-
-                    if (confirmar == true) {
-                      _logout();
-                    }
-                  },
+                onPressed: () {
+                  confirmarLogout(context, onLogout: _logout);
+},
                   icon: const Icon(Icons.logout, color: Colors.white),
-                  label: const Text(
-                    'Sair',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  label: const Text('Sair', style: TextStyle(color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2A2F8C),
                     shape: RoundedRectangleBorder(
@@ -334,7 +308,6 @@ class PerfiluserState extends State<Perfiluser> {
               ),
             ],
           ),
-
         ],
       ),
     );
@@ -368,8 +341,6 @@ class PerfiluserState extends State<Perfiluser> {
       ),
     );
   }
-
-
 
   String formatarCpf(String cpf) {
     final digitsOnly = cpf.replaceAll(RegExp(r'\D'), '');

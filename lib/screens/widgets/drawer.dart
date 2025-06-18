@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sudema_app/screens/perfil_page.dart';
 import 'package:sudema_app/services/AuthMe.dart';
-
 import '../contatos/contatoss.dart';
+import '../../utils/logout_helper.dart';
 
 class CustomDrawer extends StatefulWidget {
   final Function(int) onItemSelected;
@@ -90,25 +90,19 @@ class CustomDrawerState extends State<CustomDrawer> {
                 ListTile(
                   leading: const Icon(Icons.campaign),
                   title: const Text('Denúncias'),
-                  onTap: () {
-                    widget.onItemSelected(1);
-                  },
+                  onTap: () => widget.onItemSelected(1),
                 ),
                 _customDivider(),
                 ListTile(
                   leading: const Icon(Icons.beach_access),
                   title: const Text('Balneabilidade'),
-                  onTap: () {
-                    widget.onItemSelected(2);
-                  },
+                  onTap: () => widget.onItemSelected(2),
                 ),
                 _customDivider(),
                 ListTile(
                   leading: const Icon(Icons.newspaper),
                   title: const Text('Notícias'),
-                  onTap: () {
-                    widget.onItemSelected(3);
-                  },
+                  onTap: () => widget.onItemSelected(3),
                 ),
                 _customDivider(),
                 ListTile(
@@ -157,13 +151,17 @@ class CustomDrawerState extends State<CustomDrawer> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () async {
+                      onTap: () {
                         if (isLoggedIn) {
-                          await AuthController.logout();
-                          Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-                          setState(() {
-                            _token = null;
-                            username = 'Acessar';
+                          confirmarLogout(context, onLogout: () async {
+                            await AuthController.logout();
+                            if (context.mounted) {
+                              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                              setState(() {
+                                _token = null;
+                                username = 'Acessar';
+                              });
+                            }
                           });
                         } else {
                           Navigator.pushNamed(context, '/login');
