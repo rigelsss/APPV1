@@ -25,7 +25,7 @@ class RegistroController {
 
     final baseUrl = dotenv.env['URL_API'] ?? '';
     final url = Uri.parse('$baseUrl/auth/register');
-    
+
     try {
       final response = await http.post(
         url,
@@ -40,6 +40,8 @@ class RegistroController {
           'userType': 'MOBILE'
         }),
       );
+      print('Status: ${response.statusCode}');
+      print('Corpo da resposta: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final envioCodigoErro = await enviarCodigoConfirmacao(email);
@@ -64,10 +66,12 @@ Future<String?> enviarCodigoConfirmacao(String email) async {
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
-      body: json.encode({'email': email.trim()}),
+      body: json.encode({'email': email.trim(),
+        'userType': 'MOBILE'
+      }),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 204) {
       return null;
     } else {
       print('Erro ao enviar código: ${response.statusCode}');
