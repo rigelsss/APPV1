@@ -62,7 +62,9 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
       final destino = resultado['latLng'] as LatLng;
       final endereco = resultado['endereco'];
 
-      _mapController.animateCamera(CameraUpdate.newLatLng(destino));
+      final ajustado = LatLng(destino.latitude + 0.0015, destino.longitude);
+      _mapController.animateCamera(CameraUpdate.newLatLng(ajustado));
+
 
       atualizarEndereco(destino, endereco);
     }
