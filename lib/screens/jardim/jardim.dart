@@ -96,6 +96,14 @@ class _JardimState extends State<Jardim> {
         Text('Jardim Botânico Benjamim Maranhão',
           style: TextStyle(fontSize: 22),
         ),
+        SizedBox(height: 12,),
+        Center(
+          child: Image.asset(
+            'assets/images/jardim.png',
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
+        ),
         SizedBox(height: 24,),
         Text('O Jardim Botânico Benjamin Maranhão (JBBM) está localizado na Avenida Dom Pedro II, Bairro da Torre, João Pessoa-PB. Antes conhecido como Mata do Buraquinho, considerada um dos maiores remanescentes de Mata Atlântica natural em área urbana do Brasil.',
           style: GoogleFonts.lato(fontSize: 14),

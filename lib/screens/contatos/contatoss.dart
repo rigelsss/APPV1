@@ -105,20 +105,6 @@ class _ContatossState extends State<Contatoss> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 0),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              icon: const Icon(Icons.arrow_back, size: 24),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-        ),
         SizedBox(height: 8,),
         Text('Contatos', style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w500)),
         const SizedBox(height: 28),
