@@ -67,14 +67,17 @@ Future<void> confirmarLogout(BuildContext context, {VoidCallback? onLogout}) asy
     },
   );
 
-  if (confirmar == true) {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
+if (confirmar == true) {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('token');
 
-    if (onLogout != null) {
-      onLogout(); 
-    } else if (context.mounted) {
-      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-    }
+  await prefs.setBool('logoutRealizado', true);
+
+  if (onLogout != null) {
+    onLogout(); 
+  } else if (context.mounted) {
+    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
   }
+}
+
 }

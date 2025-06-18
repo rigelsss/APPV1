@@ -5,7 +5,6 @@ import 'package:sudema_app/services/AuthMe.dart';
 import '../contatos/contatoss.dart';
 import '../../utils/logout_helper.dart';
 
-
 class CustomDrawer extends StatefulWidget {
   final Function(int) onItemSelected;
   const CustomDrawer({super.key, required this.onItemSelected});
@@ -152,19 +151,22 @@ class CustomDrawerState extends State<CustomDrawer> {
                       ),
                     ),
                     GestureDetector(
-onTap: () {
-  confirmarLogout(context, onLogout: () async {
-    await AuthController.logout();
-    if (context.mounted) {
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-      setState(() {
-        _token = null;
-        username = 'Acessar';
-      });
-    }
-  });
-},
-
+                      onTap: () {
+                        if (isLoggedIn) {
+                          confirmarLogout(context, onLogout: () async {
+                            await AuthController.logout();
+                            if (context.mounted) {
+                              Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+                              setState(() {
+                                _token = null;
+                                username = 'Acessar';
+                              });
+                            }
+                          });
+                        } else {
+                          Navigator.pushNamed(context, '/login');
+                        }
+                      },
                       child: Icon(
                         isLoggedIn ? Icons.logout_outlined : Icons.login,
                         size: 18,

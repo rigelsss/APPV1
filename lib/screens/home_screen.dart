@@ -37,6 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _selectedIndex = widget.initialIndex;
     _carregarToken();
     _carregarNoticias();
+    _verificarLogoutRecentemente();
+
 
     if (!_flushbarExibida && widget.userInfo != null && widget.userInfo!['name'] != null) {
       _flushbarExibida = true;
@@ -224,4 +226,54 @@ Widget build(BuildContext context) {
         const NoticiasPage(),
         Contatos(initialIndex: -1),
       ];
+
+  void _verificarLogoutRecentemente() async {
+    final prefs = await SharedPreferences.getInstance();
+    final logoutRealizado = prefs.getBool('logoutRealizado') ?? false;
+
+    if (logoutRealizado && !_flushbarExibida) {
+      _flushbarExibida = true;
+      await prefs.setBool('logoutRealizado', false); 
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Flushbar(
+        backgroundColor: const Color(0xFFD2FDE6),
+        duration: const Duration(seconds: 4),
+        flushbarPosition: FlushbarPosition.TOP,
+        borderRadius: BorderRadius.circular(12),
+        margin: const EdgeInsets.all(8),
+        messageText: Row(
+          children: [
+            const Icon(Icons.check_circle_rounded, color: Color(0xFF1B8C00), size: 32),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    'Logout realizado com sucesso.',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1B8C00),
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Você foi desconectado com sucesso da sua  conta.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF1B8C00),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ).show(context);
+    });
+  }
+}
+
 }
