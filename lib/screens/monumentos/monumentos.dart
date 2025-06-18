@@ -79,24 +79,19 @@ class _MonumentosState extends State<Monumentos> {
   Widget _buildMonumentosBody() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [Padding(
-        padding: const EdgeInsets.only(left: 0),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            icon: const Icon(Icons.arrow_back, size: 24),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-      ),
+      children: [
         SizedBox(height: 8,),
         Text(
           'Monumento Natural Vale dos Dinossauros (MONA)',
           style: TextStyle(fontSize: 22),
+        ),
+        SizedBox(height: 12,),
+        Center(
+          child: Image.asset(
+            'assets/images/imagevale.png',
+            width: double.infinity,
+            fit: BoxFit.cover,
+          ),
         ),
         SizedBox(height: 24),
         Text(
