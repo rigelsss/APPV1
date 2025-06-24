@@ -81,7 +81,7 @@ class MyApp extends StatelessWidget {
         '/notificacoes': (context) => const NotificacoesPage(token: ''),
         '/codigoRegistro': (context) => const codigoRegistro(email: ''),
         '/denuncia': (context) => DenunciaWrapperScreen(),
-        '/praias': (context) => PraiasPage(),
+        '/praias': (context) => const HomeScreen(initialIndex: 2),
         '/contatoss': (context) => Contatoss(),
 
       },
