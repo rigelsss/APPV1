@@ -8,7 +8,6 @@ import 'package:sudema_app/screens/deletar_conta.dart';
 import 'package:sudema_app/screens/EditSenha.dart';
 import 'package:sudema_app/screens/notificacao/notificacoes.dart';
 import 'package:sudema_app/screens/perfil_page.dart';
-import 'package:sudema_app/screens/contatos/contatos.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
 import 'package:sudema_app/screens/praias.dart';
@@ -75,7 +74,6 @@ class MyApp extends StatelessWidget {
         '/EditarEmail': (context) => const EditarEmail(),
         '/EditarSenha': (context) => const EditarSenha(),
         '/perfil': (context) => const Perfiluser(),
-        '/contatos' : (context) => const Contatos(initialIndex: -1),
         '/deletar-conta': (context) => const DeletarContaPage(),
         '/reativar-conta': (context) => const ReativarContaPage(email: '', senha: ''),
         '/notificacoes': (context) => const NotificacoesPage(token: ''),
