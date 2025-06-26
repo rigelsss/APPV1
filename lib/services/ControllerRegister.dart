@@ -31,12 +31,12 @@ class RegistroController {
         url,
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'name': nome.trim(),
+          'nome': nome.trim(),
           'cpf': cpf.trim(),
           'email': email.trim(),
-          'phone': telefone.trim(),
-          'password': senha.trim(),
-          'passwordConfirmation': senha.trim(),
+          'telefone': telefone.trim(),
+          'senha': senha.trim(),
+          'senhaConfirmacao': senha.trim(),
           'userType': 'MOBILE'
         }),
       );
