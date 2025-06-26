@@ -12,7 +12,7 @@ class LoginController {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           "login": email,
-          "password": senha,
+          "senha": senha,
           "userType": "MOBILE",
         }),
       );

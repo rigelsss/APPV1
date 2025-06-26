@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'widgets/navbar.dart';
 import '../screens/PageDenuncia.dart';
-import '../screens/praias.dart';
+import 'balneabilidade/balneabilidade.dart';
 import '../screens/noticias.dart';
 
 class MainScreen extends StatefulWidget {
@@ -17,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     const HomeScreen(),
-    const PraiasPage(),
+    const Balneabilidade(),
     const NoticiasPage(),
     DenunciaPage(),
   ];

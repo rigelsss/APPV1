@@ -10,7 +10,6 @@ import 'package:sudema_app/screens/notificacao/notificacoes.dart';
 import 'package:sudema_app/screens/perfil_page.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
-import 'package:sudema_app/screens/praias.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
 import 'package:sudema_app/screens/editar_perfil.dart';
 import 'package:sudema_app/screens/reativar_conta.dart';

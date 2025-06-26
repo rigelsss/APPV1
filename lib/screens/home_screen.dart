@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/noticiasTop5_service.dart';
 import '../models/noticia.dart';
 import 'widgets/appbar.dart';
-import '../screens/praias.dart';
+import 'balneabilidade/balneabilidade.dart';
 import '../screens/noticias.dart';
 import 'widgets/navbar.dart';
 import 'widgets/drawer.dart';
@@ -222,7 +222,7 @@ Widget build(BuildContext context) {
           onSelecionarContatos: () => setState(() => _selectedIndex = 4),
         ),
         const DenunciaPage(),
-        const PraiasPage(),
+        const Balneabilidade(),
         const NoticiasPage(),
       ];
 
