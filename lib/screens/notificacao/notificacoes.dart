@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'notificacao_service.dart';
 import 'notificacao_widget.dart';
@@ -26,8 +26,10 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
   }
 
   Future<void> _carregarEstado() async {
+    final prefs = await SharedPreferences.getInstance();
+    final valor = prefs.getBool('notificacoes_ativadas') ?? true;
     setState(() {
-      _ativado = true;
+      _ativado = valor;
     });
   }
 
@@ -35,9 +37,12 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
     final sucesso = await NotificacoesService.ativarNotificacoesPush(valor);
 
     if (sucesso) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('notificacoes_ativadas', valor);
+
       setState(() => _ativado = valor);
 
-      final cor = valor ? const Color(0xFF1B8C00) : const Color(0xFFD32F2F); // verde ou vermelho
+      final cor = valor ? const Color(0xFF1B8C00) : const Color(0xFFD32F2F);
       final titulo = valor ? 'Notificações ativadas!' : 'Notificações desativadas!';
       final subtitulo = valor
           ? 'Agora você receberá alertas e novidades da SUDEMA.'
@@ -97,7 +102,6 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
     }
   }
 
-
   Future<void> _carregarNotificacoes() async {
     final lista = await NotificacoesService.carregarNotificacoes();
     if (lista != null) {
@@ -130,7 +134,6 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,9 +162,14 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
             notificacao: notificacao,
             index: index - 1,
             onMarcarComoLida: () async {
-              await NotificacoesService.marcarComoLida(notificacao['id'].toString(), index - 1, _notificacoes, () {
-                setState(() {});
-              });
+              await NotificacoesService.marcarComoLida(
+                notificacao['id'].toString(),
+                index - 1,
+                _notificacoes,
+                    () {
+                  setState(() {});
+                },
+              );
             },
           );
         },
