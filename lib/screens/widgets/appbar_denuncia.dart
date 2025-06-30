@@ -39,7 +39,7 @@ class _DenunciaAppBarState extends State<DenunciaAppBar> {
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       title:  Text(
         'Denúncia',
-        style: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold),
+        style: GoogleFonts.lato(fontSize: 24),
       ),
       actions: _logado
           ? [
