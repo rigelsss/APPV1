@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:sudema_app/models/noticia.dart';
-import 'package:sudema_app/screens/fullNoticia_screen.dart';
+import 'package:sudema_app/screens/noticias/fullNoticia_screen.dart';
 
 class NoticiaCard extends StatelessWidget {
   final Noticia noticia;

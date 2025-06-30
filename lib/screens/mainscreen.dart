@@ -3,7 +3,7 @@ import 'package:sudema_app/screens/home_screen.dart';
 import 'widgets/navbar.dart';
 import '../screens/PageDenuncia.dart';
 import 'balneabilidade/balneabilidade.dart';
-import '../screens/noticias.dart';
+import 'noticias/noticias.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
