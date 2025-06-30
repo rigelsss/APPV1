@@ -7,7 +7,7 @@ import '../services/noticiasTop5_service.dart';
 import '../models/noticia.dart';
 import 'widgets/appbar.dart';
 import 'balneabilidade/balneabilidade.dart';
-import '../screens/noticias.dart';
+import 'noticias/noticias.dart';
 import 'widgets/navbar.dart';
 import 'widgets/drawer.dart';
 import 'login.dart';
