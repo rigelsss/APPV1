@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sudema_app/screens/balneabilidade/controller/balneabilidade_controller.dart';
 import 'package:sudema_app/screens/balneabilidade/widgets/filtros_widgets.dart';
@@ -16,9 +17,9 @@ class PraiasHeader extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           color: Colors.white,
           alignment: Alignment.centerLeft,
-          child: const Text(
+          child: Text(
             "Balneabilidade",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
           ),
         ),
         Container(

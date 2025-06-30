@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -138,7 +139,10 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notificações'),
+        backgroundColor: Colors.white,
+        titleSpacing: 0,
+        title: Text('Notificações',
+          style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),),
         actions: [
           Row(
             children: [
@@ -151,6 +155,7 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
           ),
         ],
       ),
+      backgroundColor: Colors.white,
       body: _notificacoes.isEmpty
           ? const Center(child: Text('Você ainda não possui notificações.', style: TextStyle(fontSize: 18)))
           : ListView.builder(

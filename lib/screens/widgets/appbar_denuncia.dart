@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
@@ -36,9 +37,9 @@ class _DenunciaAppBarState extends State<DenunciaAppBar> {
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      title: const Text(
+      title:  Text(
         'Denúncia',
-        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        style: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold),
       ),
       actions: _logado
           ? [

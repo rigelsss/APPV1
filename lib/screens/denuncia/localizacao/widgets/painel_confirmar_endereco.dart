@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PainelConfirmarEndereco extends StatelessWidget {
   final TextEditingController controller;
@@ -31,9 +32,9 @@ class PainelConfirmarEndereco extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Localização da Infração',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
             const Text(

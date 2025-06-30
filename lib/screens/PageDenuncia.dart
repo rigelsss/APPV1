@@ -38,7 +38,7 @@ class DenunciaPage extends StatelessWidget {
             children: [
               Text(
                 'Denúncias',
-                style: tituloStyle.copyWith(fontSize: 28),
+                  style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
               ),
               const SizedBox(height: 20),
               SizedBox(

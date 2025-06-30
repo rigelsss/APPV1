@@ -13,6 +13,7 @@ class _TermoscondicoesState extends State<Termoscondicoes> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBarDenuncia(title: 'Termos e Condições'),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
