@@ -83,7 +83,7 @@ class _JardimState extends State<Jardim> {
         ),
         SizedBox(height: 8,),
         Text('Jardim Botânico Benjamim Maranhão',
-          style: TextStyle(fontSize: 22),
+        style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
         ),
         SizedBox(height: 12,),
         Center(

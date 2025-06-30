@@ -83,7 +83,7 @@ class _MonumentosState extends State<Monumentos> {
         SizedBox(height: 8,),
         Text(
           'Monumento Natural Vale dos Dinossauros (MONA)',
-          style: TextStyle(fontSize: 22),
+        style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
         ),
         SizedBox(height: 12,),
         Center(

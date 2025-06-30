@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
@@ -69,12 +70,9 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Denúncias',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 30),
                   Center(

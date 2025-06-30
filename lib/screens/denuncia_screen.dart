@@ -212,10 +212,10 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
               children: [
                 Row(
                   children: [
-                    const Expanded(
+                     Expanded(
                       child: Text(
                         'Denúncia',
-                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                        style: GoogleFonts.lato(fontSize: 24),
                       ),
                     ),
                     Text(
