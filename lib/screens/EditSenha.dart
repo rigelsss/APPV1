@@ -135,8 +135,9 @@ class _EditarSenhaState extends State<EditarSenha> {
             ),
           ),
           const SizedBox(height: 20),
-          Center(
-            child: ElevatedButton.icon(
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
               onPressed: () async {
                 final senhaAtual = _senhaAtualController.text.trim();
                 final novaSenha = _novaSenhaController.text.trim();
@@ -194,18 +195,26 @@ class _EditarSenhaState extends State<EditarSenha> {
                   );
                 }
               },
-              icon: const Icon(Icons.logout, color: Colors.white),
-              label: const Text(
-                'Confirmar alteração',
-                style: TextStyle(color: Colors.white),
-              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF1B8C00),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                padding: const EdgeInsets.symmetric(
-                    vertical: 22, horizontal: 128),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 18),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.logout, color: Colors.white),
+                    SizedBox(width: 8),
+                    Text(
+                      'Confirmar alteração de senha',
+                      style: TextStyle(color: Colors.white, fontSize: 14),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

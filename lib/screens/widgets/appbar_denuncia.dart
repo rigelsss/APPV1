@@ -38,7 +38,7 @@ class _DenunciaAppBarState extends State<DenunciaAppBar> {
       automaticallyImplyLeading: false,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       title:  Text(
-        'Denúncia',
+        'Denúnciar',
         style: GoogleFonts.lato(fontSize: 24),
       ),
       actions: _logado
