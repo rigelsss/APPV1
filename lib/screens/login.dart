@@ -270,8 +270,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 12,),
-                Row(
+                /*SizedBox(height: 12,),*/
+                /*Row(
                   children: [
                     const Expanded(
                       child: Divider(
@@ -323,8 +323,8 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
+                ),*/
+                /*const SizedBox(height: 12),*/
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
