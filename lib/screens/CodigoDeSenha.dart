@@ -17,6 +17,7 @@ class Codigodesenha extends StatefulWidget {
 
 class _CodigodesenhaState extends State<Codigodesenha> {
   String _codigo = '';
+  bool _reenviando = false;
 
   Future<void> _verificarCodigo() async {
     if (_codigo.length != 6) {
@@ -42,7 +43,9 @@ class _CodigodesenhaState extends State<Codigodesenha> {
       if (response.statusCode == 204) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Novasenha(email: widget.email, token: _codigo)),
+          MaterialPageRoute(
+            builder: (context) => Novasenha(email: widget.email, token: _codigo),
+          ),
         );
       } else {
         final error = jsonDecode(response.body)['message'] ?? 'Código inválido.';
@@ -56,6 +59,52 @@ class _CodigodesenhaState extends State<Codigodesenha> {
       );
     }
   }
+
+  Future<void> _reenviarCodigo() async {
+    setState(() {
+      _reenviando = true;
+    });
+
+    final url = Uri.parse('${dotenv.env['URL_API']}/password-reset/forgot-password');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': widget.email,
+          'userType': 'MOBILE',
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Código reenviado com sucesso.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        final json = jsonDecode(response.body);
+        final error = json['message'] ?? 'Erro ao reenviar código.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error), backgroundColor: Colors.red),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao conectar com o servidor.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() {
+        _reenviando = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,7 +177,7 @@ class _CodigodesenhaState extends State<Codigodesenha> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: _reenviando ? null : _reenviarCodigo,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -138,7 +187,13 @@ class _CodigodesenhaState extends State<Codigodesenha> {
                   ),
                   elevation: 4,
                 ),
-                child: const Text('Enviar novamente', style: TextStyle(fontSize: 16)),
+                child: _reenviando
+                    ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+                    : const Text('Enviar novamente', style: TextStyle(fontSize: 16)),
               ),
             ),
           ],
