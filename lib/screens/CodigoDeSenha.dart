@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sudema_app/screens/NovaSenha.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -41,7 +42,7 @@ class _CodigodesenhaState extends State<Codigodesenha> {
       if (response.statusCode == 204) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Novasenha(email: widget.email,token: _codigo,)),
+          MaterialPageRoute(builder: (context) => Novasenha(email: widget.email, token: _codigo)),
         );
       } else {
         final error = jsonDecode(response.body)['message'] ?? 'Código inválido.';
@@ -55,7 +56,6 @@ class _CodigodesenhaState extends State<Codigodesenha> {
       );
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,21 +99,46 @@ class _CodigodesenhaState extends State<Codigodesenha> {
               enableActiveFill: false,
             ),
             const SizedBox(height: 24),
-            Center(
+            SizedBox(
+              width: double.infinity,
               child: ElevatedButton(
                 onPressed: _verificarCodigo,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF2A2F8C),
-                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 60),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
                   elevation: 4,
                 ),
-                child: const Text(
+                child: Text(
                   'Verificar',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+                  style: GoogleFonts.lato(fontSize: 14, color: Colors.white),
                 ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Center(
+              child: Text(
+                'Não recebeu o código?',
+                style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.normal),
+              ),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: const BorderSide(color: Color(0xFF2A2F8C), width: 2),
+                  ),
+                  elevation: 4,
+                ),
+                child: const Text('Enviar novamente', style: TextStyle(fontSize: 16)),
               ),
             ),
           ],

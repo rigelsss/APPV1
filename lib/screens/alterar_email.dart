@@ -248,7 +248,7 @@ class _EditarEmailState extends State<EditarEmail> {
                     padding: EdgeInsets.symmetric(vertical: 18),
                     child: Text(
                       'Confirmar alteração de e-mail',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      style: TextStyle(color: Colors.white, fontSize: 14),
                     ),
                   ),
                 ),
