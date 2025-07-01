@@ -46,6 +46,12 @@ class _NovasenhaState extends State<Novasenha> {
     });
 
     final url = Uri.parse('${dotenv.env['URL_API']}/password-reset/reset-password');
+    debugPrint('🔐 Enviando solicitação para redefinir senha...');
+    debugPrint('📧 Email: ${widget.email}');
+    debugPrint('🔑 Token: ${widget.token}');
+    debugPrint('🔒 Nova senha: $novaSenha');
+    debugPrint('🌐 URL: $url');
+
 
     try {
       final response = await http.post(
@@ -73,6 +79,8 @@ class _NovasenhaState extends State<Novasenha> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(error), backgroundColor: Colors.red),
         );
+        debugPrint('❗ Status inesperado: ${response.statusCode}');
+        debugPrint('❗ Corpo da resposta: ${response.body}');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -143,16 +151,17 @@ class _NovasenhaState extends State<Novasenha> {
               ),
             ),
             const SizedBox(height: 20),
-            Center(
+            SizedBox(
+              width: double.infinity,
               child: _isLoading
-                  ? const CircularProgressIndicator()
+                  ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton(
                 onPressed: _resetarSenha,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1B8C00),
-                  padding: const EdgeInsets.symmetric(horizontal: 160, vertical: 12),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                 ),
                 child: const Text(
