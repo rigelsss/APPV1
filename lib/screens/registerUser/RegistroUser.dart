@@ -220,6 +220,13 @@ class _RegistroUserState extends State<RegistroUser> {
                               MaterialPageRoute(builder: (context) => codigoRegistro(email: _emailController.text)),
                             );
                           } else {
+                            setState(() {
+                              if (resultado.toLowerCase().contains('cpf')) {
+                                _erroCpf = resultado;
+                              }else {
+                                _erroEmail = resultado;
+                              }
+                            });
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(resultado)),
                             );

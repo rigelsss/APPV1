@@ -22,7 +22,7 @@ class NoticiaConteudo extends StatelessWidget {
             _removerHtml(noticia['titulo']),
             style: GoogleFonts.lato(
               fontSize: 18,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),

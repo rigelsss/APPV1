@@ -58,9 +58,21 @@ class DenunciaPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: Text(
-                    'Realizar denúncia',
-                    style: botaoStyle,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Realizar denúncia',
+                        style: botaoStyle,
+                      ),
+                      SizedBox(width: 10,),
+                      Image.asset(
+                        'assets/icon/img_1.png', // caminho da sua imagem
+                        width: 28,
+                        height: 28,
+                        color: Colors.white,
+                      ),
+                    ],
                   ),
                 ),
               ),

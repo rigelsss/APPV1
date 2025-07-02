@@ -105,7 +105,7 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBarDenuncia(title: 'Recuperação de Senha'),
+      appBar: AppBarDenuncia(title: 'Recuperação de senha'),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -169,7 +169,7 @@ class _RecuperacaoosenhaState extends State<Recuperacaoosenha> {
                         ),
                       ),
                       child: Text(
-                        'Enviar Código de Verificação',
+                        'Enviar código de verificação',
                         style: GoogleFonts.lato(color: Colors.white, fontSize: 16),
                       ),
                     ),
