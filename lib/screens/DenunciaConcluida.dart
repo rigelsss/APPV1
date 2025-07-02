@@ -95,18 +95,17 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
                               size: 32,
                             ),
                             SizedBox(width: 8),
-                            Expanded(
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerLeft,
                               child: Text(
                                 'Denúncia realizada com sucesso!',
                                 style: TextStyle(
                                   fontSize: 18,
                                   color: Color(0xFF1B8C00),
                                 ),
-                                maxLines: 1,
-                                softWrap: false,
-                                // sem overflow, para não mostrar "..."
                               ),
-                            ),
+                            )
                           ],
                         ),
                       ),
