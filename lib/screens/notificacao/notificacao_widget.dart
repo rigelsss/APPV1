@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../noticias/fullNoticia_screen.dart';
+import '../noticias/pagina_noticiaCompleta/noticiaCompleta_screen.dart';
 
 class NotificacaoWidget extends StatelessWidget {
   final Map<String, dynamic> notificacao;

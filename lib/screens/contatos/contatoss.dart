@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:sudema_app/screens/widgets/appbar.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:sudema_app/screens/widgets/drawer.dart';
-import 'package:sudema_app/screens/contatos/controller_contatos.dart' as controller;
+import 'package:sudema_app/screens/contatos/controler/controller_contatos.dart' as controller;
 
 
 class Contatoss extends StatefulWidget {
