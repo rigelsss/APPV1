@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sudema_app/screens/login.dart';
@@ -104,15 +105,15 @@ class _NovasenhaState extends State<Novasenha> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBarDenuncia(title: 'Crie uma nova Senha'),
+      appBar: AppBarDenuncia(title: 'Crie uma nova senha'),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Crie uma senha forte com, no mínimo, oito caracteres.',
-              style: TextStyle(fontSize: 16),
+             Text(
+              'Crie uma senha forte com, no mínimo, oito caracteres, contendo uma combinação de letras, números e símbolos.',
+              style: GoogleFonts.lato(fontSize: 16,),
             ),
             const SizedBox(height: 20),
             const Text('Nova senha', style: TextStyle(fontSize: 16)),
