@@ -18,7 +18,7 @@ class _EditarSenhaState extends State<EditarSenha> {
   bool _obscureCurrent = true;
   bool _obscureNew = true;
   bool _obscureConfirm = true;
-  int _currentIndex = 0;
+  int _currentIndex = -1;
 
   void _onNavBarTap(int index) {
     setState(() {

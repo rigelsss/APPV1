@@ -72,7 +72,7 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
                 children: [
                   Text(
                     'Denúncias',
-                    style: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.lato(fontSize: 24,),
                   ),
                   const SizedBox(height: 30),
                   Center(
