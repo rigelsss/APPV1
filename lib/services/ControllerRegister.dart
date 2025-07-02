@@ -49,6 +49,13 @@ class RegistroController {
           return envioCodigoErro;
         }
         return null;
+      }else if (response.statusCode == 400) {
+        final body = json.decode(response.body);
+        if (body['errors'] != null && body['errors'] is List && body['errors'].isNotEmpty){
+          final mensagemErro = body['errors'][0]['message']?.toString() ?? 'Erro desconhecido';
+          return mensagemErro;
+        }
+        return 'Erro na solicitação. verifique os dados';
       }
 
     } catch (e) {
