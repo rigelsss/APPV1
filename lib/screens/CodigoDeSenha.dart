@@ -120,11 +120,11 @@ class _CodigodesenhaState extends State<Codigodesenha> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+             Text(
               'Um código de verificação foi enviado para o seu e-mail. Por favor, insira-o abaixo.\n\n'
                   'Caso não receba o código em sua caixa de entrada, verifique sua caixa de spam.\n\n'
                   'Este código é válido por até 2 horas.',
-              style: TextStyle(fontSize: 16),
+          style: GoogleFonts.lato(fontSize: 14,),
             ),
             const SizedBox(height: 30),
             PinCodeTextField(
