@@ -44,10 +44,10 @@ class HomeBody extends StatelessWidget {
             const TituloComLinha(titulo: 'Nossos serviços'),
             SizedBox(height: screenHeight * 0.02),
             ServicosCarrossel(
-              onSelecionar: (label) {
-                if (label == 'Balneabilidade') {
+              onSelecionar: (key) {
+                if (key == 'balneabilidade') {
                   onSelecionarBalneabildiade();
-                } else if (label == 'Denuncias') {
+                } else if (key == 'denuncias') {
                   onSelecionarDenuncia();
                 }
               },
