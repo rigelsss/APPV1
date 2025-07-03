@@ -28,11 +28,6 @@ class _MapaInterativoState extends State<MapaInterativo> {
   Timer? _debounce;
   LatLng? _posicaoCentral;
 
-  LatLng _ajustarCameraParaCima(LatLng original) {
-    const deslocamentoLat = 0.0012;
-    return LatLng(original.latitude + deslocamentoLat, original.longitude);
-  }
-
   static const String _googleApiKey = 'AIzaSyD-XTfAdL3WxwtBeKfvPhiu1m3niVn1CaM';
 
   @override
@@ -121,7 +116,7 @@ class _MapaInterativoState extends State<MapaInterativo> {
 
     return GoogleMap(
       initialCameraPosition: CameraPosition(
-        target: _ajustarCameraParaCima(_posicaoCentral!),
+        target: _posicaoCentral!,
         zoom: 17,
       ),
       onMapCreated: (controller) {

@@ -18,24 +18,29 @@ class _ServicosCarrosselState extends State<ServicosCarrossel> {
   final List<Map<String, dynamic>> servicos = [
     {
       'label': 'Balneabilidade', 
+      'key' : 'balneabilidade',
       'image': 'assets/images/balneabilidade.png'
     },
     {
       'label': 'Denúncias', 
+      'key' : 'denuncias',
       'image': 'assets/images/denuncia.jpg'
     },
     {
       'label': 'Transparência',
+      'key' : 'transparencia',
       'image': 'assets/images/portaltransparencia.jpg',
       'url': 'https://sigma.pb.gov.br/transparencia/'
     },
     {
       'label': 'Licenciamento',
+      'key' : 'licenciamento',
       'image': 'assets/images/licenciamento.jpg',
       'url': 'https://sigma.pb.gov.br/index/'
     },
     {
       'label': 'CTE',
+      'key' : 'cte',
       'image': 'assets/images/CTE.jpg',
       'url': 'https://cte.sigma.pb.gov.br/'
     },
@@ -90,7 +95,7 @@ class _ServicosCarrosselState extends State<ServicosCarrossel> {
                         if (servico.containsKey('url')) {
                           _abrirUrl(servico['url']);
                         } else {
-                          widget.onSelecionar(servico['label']);
+                          widget.onSelecionar(servico['key'] ?? servico['label']);
                         }
                       },
                       child: Container(
