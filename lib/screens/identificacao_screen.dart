@@ -104,9 +104,9 @@ class _AbaIdentificacaoState extends State<Identificacao> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Fazer login',
-                      style: TextStyle(color: Colors.white),
+                    child:  Text(
+                      'Acessar o sistema',
+                      style: GoogleFonts.lato(fontSize: 16, color:Colors.white),
                     ),
                   ),
                 ),

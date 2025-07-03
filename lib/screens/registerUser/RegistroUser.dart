@@ -134,7 +134,7 @@ class _RegistroUserState extends State<RegistroUser> {
                             TextSpan(
                               text: ' Termos e Condições',
                               style: TextStyle(
-                                color: Colors.blue,
+                                color: Color(0xFF2A2F8C),
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -233,7 +233,7 @@ class _RegistroUserState extends State<RegistroUser> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: Color(0xFF1B8C00),
                           padding: EdgeInsets.symmetric(vertical: 15, horizontal: 140),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),

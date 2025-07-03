@@ -159,7 +159,7 @@ class _NovasenhaState extends State<Novasenha> {
                   : ElevatedButton(
                 onPressed: _resetarSenha,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1B8C00),
+                  backgroundColor: const Color(0xFF11B8C00),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
