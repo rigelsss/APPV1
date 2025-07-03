@@ -89,9 +89,7 @@ class BalneabilidadeController extends ChangeNotifier {
     try {
       estacoes = await BalneabilidadeService.carregarEstacoes();
     } on ApiException catch (e) {
-      // Aqui você pode usar um logger, mostrar dialog ou Flushbar com e.message
       print('Erro API: ${e.message}');
-      // Opcional: manter lista vazia ou tentar nova tentativa
     } finally {
       isLoadingEstacoes = false;
       notifyListeners();
