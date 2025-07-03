@@ -123,8 +123,8 @@ class _CodigodesenhaState extends State<Codigodesenha> {
              Text(
               'Um código de verificação foi enviado para o seu e-mail. Por favor, insira-o abaixo.\n\n'
                   'Caso não receba o código em sua caixa de entrada, verifique sua caixa de spam.\n\n'
-                  'Este código é válido por até 2 horas.',
-          style: GoogleFonts.lato(fontSize: 14,),
+                  'Este código é válido por até 5 minutos.',
+          style: GoogleFonts.lato(fontSize: 16,),
             ),
             const SizedBox(height: 30),
             PinCodeTextField(
@@ -167,11 +167,29 @@ class _CodigodesenhaState extends State<Codigodesenha> {
               ),
             ),
             const SizedBox(height: 24),
-            Center(
-              child: Text(
-                'Não recebeu o código?',
-                style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.normal),
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: Divider(
+                    color: Colors.grey,
+                    thickness: 1,
+                    endIndent: 10,
+                  ),),
+                SizedBox(width: 10),
+                Center(
+                  child: Text(
+                    'Não recebeu o código?',
+                    style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.normal),
+                  ),
+                ),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Divider(
+                    color: Colors.grey,
+                    thickness: 1,
+                    endIndent: 10,
+                  ),),
+              ],
             ),
             const SizedBox(height: 24),
             SizedBox(

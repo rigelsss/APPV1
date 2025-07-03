@@ -67,7 +67,7 @@ class DenunciaPage extends StatelessWidget {
                       ),
                       SizedBox(width: 10,),
                       Image.asset(
-                        'assets/icon/img_1.png', // caminho da sua imagem
+                        'assets/icon/img_1.png',
                         width: 28,
                         height: 28,
                         color: Colors.white,
