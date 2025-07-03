@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sudema_app/screens/notificacao/notificacoes.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:sudema_app/services/AuthMe.dart';
@@ -92,15 +94,23 @@ class PerfiluserState extends State<Perfiluser> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Perfil'),
+        centerTitle: false,
+        titleSpacing: 0,
+        title: Text(
+          'Olá, ${(_userData['name'] ?? 'Nome não encontrado').split(' ').first}',
+          style: GoogleFonts.lato(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
         elevation: 1,
         leading: Navigator.canPop(context)
             ? IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.pop(context),
-              )
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        )
             : null,
       ),
       backgroundColor: Colors.white,
@@ -216,7 +226,10 @@ class PerfiluserState extends State<Perfiluser> {
               children: [
                 _buildMenuItem(
                   context,
-                  icon: Icons.notifications_none,
+                  icon: SvgPicture.asset('assets/icon/bell.svg',
+                    width: 24,
+                    height: 24,
+                    color: Color(0xFF747474),),
                   title: 'Notificações',
                   onTap: () => Navigator.push(
                     context,
@@ -230,7 +243,12 @@ class PerfiluserState extends State<Perfiluser> {
                 const SizedBox(height: 10),
                 _buildMenuItem(
                   context,
-                  icon: Icons.edit,
+                  icon: SvgPicture.asset(
+                    'assets/icon/user-edit.svg',
+                    width: 24,
+                    height: 24,
+                    color: Color(0xFF747474),
+                  ),
                   title: 'Editar Perfil',
                   onTap: () => Navigator.push(
                     context,
@@ -248,7 +266,12 @@ class PerfiluserState extends State<Perfiluser> {
                 const SizedBox(height: 10),
                 _buildMenuItem(
                   context,
-                  icon: Icons.alternate_email,
+                  icon: SvgPicture.asset(
+                    'assets/icon/at-signp.svg',
+                    width: 24,
+                    height: 24,
+                    color: Color(0xFF747474),
+                  ),
                   title: 'Alterar E-mail',
                   onTap: () => Navigator.pushNamed(context, '/EditarEmail'),
                 ),
@@ -257,7 +280,12 @@ class PerfiluserState extends State<Perfiluser> {
                 const SizedBox(height: 10),
                 _buildMenuItem(
                   context,
-                  icon: Icons.lock_outline,
+                  icon: SvgPicture.asset(
+                    'assets/icon/lock.svg',
+                    width: 24,
+                    height: 24,
+                    color: Color(0xFF747474),
+                  ),
                   title: 'Alterar Senha',
                   onTap: () async {
                     final novoToken = await Navigator.pushNamed(context, '/EditarSenha');
@@ -285,7 +313,7 @@ class PerfiluserState extends State<Perfiluser> {
                   confirmarLogout(context, onLogout: _logout);
 },
                   icon: const Icon(Icons.logout, color: Colors.white),
-                  label: const Text('Sair', style: TextStyle(color: Colors.white)),
+                  label: Text('Sair', style: GoogleFonts.lato(color: Colors.white, fontSize: 16)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2A2F8C),
                     shape: RoundedRectangleBorder(
@@ -300,10 +328,14 @@ class PerfiluserState extends State<Perfiluser> {
                 onPressed: () {
                   Navigator.pushNamed(context, '/deletar-conta');
                 },
-                icon: const Icon(Icons.delete, color: Colors.red),
-                label: const Text(
+                icon: SvgPicture.asset(
+                  'assets/icon/lixo.svg',
+                  width: 22,
+                  height: 22,
+                ),
+                label:  Text(
                   'Desativar Conta',
-                  style: TextStyle(color: Colors.red),
+                    style:GoogleFonts.lato(fontSize:14, color: Colors.red)
                 ),
               ),
             ],
@@ -314,9 +346,9 @@ class PerfiluserState extends State<Perfiluser> {
   }
 
   Widget _buildMenuItem(BuildContext context,
-      {required IconData icon, required String title, required VoidCallback onTap}) {
+      {required Widget icon, required String title, required VoidCallback onTap}) {
     return ListTile(
-      leading: Icon(icon),
+      leading: icon,
       title: Text(title),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
