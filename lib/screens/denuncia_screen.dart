@@ -225,7 +225,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                _buildLabel('Data do ocorrido *'),
+                Text('Dato do ocorrido *', style:  GoogleFonts.lato(fontSize: 16),),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _dataController,
@@ -234,7 +234,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                   decoration: _dataInputDecoration(),
                 ),
                 const SizedBox(height: 24),
-                _buildLabel('Descrição *'),
+                Text('Descrição *', style:  GoogleFonts.lato(fontSize: 16),),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _descricaoController,
@@ -245,7 +245,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildLabel('Ponto de referência *'),
+                Text('Ponto de referência *', style: GoogleFonts.lato(fontSize: 16,),),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _referenciaController,
@@ -265,7 +265,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildLabel('Adicionar arquivos'),
+                Text('Adicionar arquivos', style:  GoogleFonts.lato(fontSize: 16),),
                 const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () async {
@@ -316,9 +316,9 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: const Text(
+                    child:  Text(
                       'Concluir denúncia',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style:  GoogleFonts.lato(fontSize: 18, color: Colors.white),
                     ),
                   ),
                 ),

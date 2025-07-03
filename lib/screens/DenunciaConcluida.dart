@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sudema_app/screens/widgets/appbar.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
@@ -88,7 +88,7 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: const [
+                          children:  [
                             Icon(
                               Icons.check_circle_outline,
                               color: Color(0xFF1B8C00),
@@ -100,7 +100,7 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 'Denúncia realizada com sucesso!',
-                                style: TextStyle(
+                                style: GoogleFonts.lato(
                                   fontSize: 18,
                                   color: Color(0xFF1B8C00),
                                 ),
@@ -133,9 +133,9 @@ class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                           ),
-                          child: const Text(
-                            'Voltar à página inicial!',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          child:  Text(
+                            'Voltar à página inicial',
+                            style: GoogleFonts.lato(fontSize: 18, color: Colors.white),
                             textAlign: TextAlign.center,
                           ),
                         ),

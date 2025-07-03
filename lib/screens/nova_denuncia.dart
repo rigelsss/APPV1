@@ -251,10 +251,10 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                     _subcategoriaSelecionada!.isNotEmpty)
                 ? () => _aoSelecionarAba(2)
                 : null,
-            child: const Center(
+            child: Center(
               child: Text(
                 'Selecionar Categoria',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: GoogleFonts.lato(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),
