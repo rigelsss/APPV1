@@ -181,6 +181,8 @@ class BalneabilidadeController extends ChangeNotifier {
 
   void alterarMunicipio(String novoMunicipio, VoidCallback onMarcadoresAtualizados) {
     municipioSelecionado = novoMunicipio;
+    trechoSelecionado = '';
+    praiaSelecionada = '';
     notifyListeners();
 
     if (novoMunicipio.isNotEmpty && novoMunicipio != 'Todos') {
