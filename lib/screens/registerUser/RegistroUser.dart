@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:sudema_app/screens/TermosCondicoes.dart';
 import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
 import '../login.dart';
@@ -186,11 +187,22 @@ class _RegistroUserState extends State<RegistroUser> {
                               _erroConfirmarSenha != null ||
                               _erroTermos != null) {
                             Flushbar(
-                              message: 'Preencha todos os campos obrigatórios.',
-                              duration: Duration(seconds: 3),
-                              backgroundColor: Colors.red,
                               flushbarPosition: FlushbarPosition.TOP,
-                              icon: Icon(Icons.error, color: Colors.white),
+                              duration: Duration(seconds: 3),
+                              backgroundColor: Color(0xFFF8DFDD),
+                              icon: SvgPicture.asset(
+                                'assets/icon/x-circle.svg',
+                                width: 28,
+                                height: 28,
+                                color: Colors.red,
+                              ),
+                              messageText: Text(
+                                'Preencha todos os campos obrigatórios.',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 16,
+                                ),
+                              ),
                             ).show(context);
                             return;
                           }
