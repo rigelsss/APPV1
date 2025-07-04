@@ -267,7 +267,7 @@ class PerfiluserState extends State<Perfiluser> {
                 _buildMenuItem(
                   context,
                   icon: SvgPicture.asset(
-                    'assets/icon/at-signp.svg',
+                    'assets/icon/at-sign.svg',
                     width: 24,
                     height: 24,
                     color: Color(0xFF747474),

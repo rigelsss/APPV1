@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -44,7 +45,12 @@ class _DenunciaAppBarState extends State<DenunciaAppBar> {
       actions: _logado
           ? [
               IconButton(
-                icon: const Icon(Icons.notifications),
+                icon: SvgPicture.asset(
+                  'assets/icon/notificacao.svg',
+                  width: 24,
+                  height: 24,
+                  color: Colors.black, // ou qualquer cor desejada
+                ),
                 onPressed: () {
                   Navigator.pushNamed(context, '/notificacoes');
                 },

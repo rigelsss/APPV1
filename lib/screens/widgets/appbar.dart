@@ -119,7 +119,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                 ),
                 const SizedBox(width: 4),
               ],
-              const Icon(Icons.notifications),
+              const Icon(Icons.notifications_none, color: Color(0xFF3B3B3B),),
             ],
           )
               : const Icon(Icons.login),
