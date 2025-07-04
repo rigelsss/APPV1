@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sudema_app/screens/perfil_page.dart';
 import 'package:sudema_app/services/AuthMe.dart';
@@ -88,26 +90,46 @@ class CustomDrawerState extends State<CustomDrawer> {
             child: ListView(
               children: [
                 ListTile(
-                  leading: const Icon(Icons.campaign),
-                  title: const Text('Denúncias'),
+                  leading: SvgPicture.asset(
+                    'assets/icon/bullhorn.svg', // caminho do seu arquivo SVG
+                    width: 22,
+                    height: 22,
+                    color: Color(0xFF3B3B3B), // se quiser aplicar cor
+                  ),
+                  title:  Text('Denúncias', style: GoogleFonts.lato(fontSize: 18, color: Colors.black),),
                   onTap: () => widget.onItemSelected(1),
                 ),
                 _customDivider(),
                 ListTile(
-                  leading: const Icon(Icons.beach_access),
-                  title: const Text('Balneabilidade'),
+                  leading: SvgPicture.asset(
+                    'assets/icon/umbrella-beach.svg',
+                    width: 22,
+                    height: 22,
+                    color: Color(0xFF3B3B3B),
+                  ),
+                  title: Text('Balneabilidade', style: GoogleFonts.lato(fontSize: 18, color: Colors.black),),
                   onTap: () => widget.onItemSelected(2),
                 ),
                 _customDivider(),
                 ListTile(
-                  leading: const Icon(Icons.newspaper),
-                  title: const Text('Notícias'),
+                  leading: SvgPicture.asset(
+                    'assets/icon/newspaper.svg',
+                    width: 22,
+                    height: 22,
+                    color: Color(0xFF3B3B3B),
+                  ),
+                  title: Text('Notícias', style: GoogleFonts.lato(fontSize: 18, color: Colors.black),),
                   onTap: () => widget.onItemSelected(3),
                 ),
                 _customDivider(),
                 ListTile(
-                  leading: const Icon(Icons.phone_in_talk_outlined),
-                  title: const Text('Contato'),
+                  leading:SvgPicture.asset(
+                  'assets/icon/phone-call.svg',
+                  width: 22,
+                  height: 22,
+                  color: Color(0xFF3B3B3B),
+                ),
+                  title: Text('Contato', style: GoogleFonts.lato(fontSize: 18, color: Colors.black),),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -130,7 +152,12 @@ class CustomDrawerState extends State<CustomDrawer> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    const Icon(Icons.account_circle_outlined, color: Colors.black54, size: 26),
+                    SvgPicture.asset(
+                      'assets/icon/user.svg',
+                      width: 26,
+                      height: 26,
+                      color: Color(0xFF3B3B3B),
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: GestureDetector(
@@ -146,7 +173,7 @@ class CustomDrawerState extends State<CustomDrawer> {
                         },
                         child: Text(
                           isLoading ? 'Carregando...' : username,
-                          style: const TextStyle(fontSize: 18),
+                          style: GoogleFonts.lato(fontSize: 18),
                         ),
                       ),
                     ),
@@ -167,9 +194,11 @@ class CustomDrawerState extends State<CustomDrawer> {
                           Navigator.pushNamed(context, '/login');
                         }
                       },
-                      child: Icon(
-                        isLoggedIn ? Icons.logout_outlined : Icons.login,
-                        size: 18,
+                      child: SvgPicture.asset(
+                        isLoggedIn ? 'assets/icon/log-out.svg' : 'assets/icon/log-out.svg',
+                        width: 22,
+                        height: 22,
+                        color: Color(0xFF3B3B3B),
                       ),
                     ),
                   ],

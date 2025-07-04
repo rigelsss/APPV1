@@ -127,117 +127,119 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
           style: TextStyle(color: Colors.black),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 12),
-            Image.asset(
-              'assets/images/warning.jpg',
-              height: 120,
-            ),
-            const SizedBox(height: 24),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Tem certeza que deseja desativar sua conta do sistema?',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Image.asset(
+                'assets/images/warning.jpg',
+                height: 120,
               ),
-            ),
-            const SizedBox(height: 40),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Para prosseguir, insira a sua senha',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _senhaController,
-              obscureText: _obscureText,
-              decoration: InputDecoration(
-                hintText: 'Senha',
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    width: 1.5,
-                    color: Colors.grey[500]!,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    width: 1.5,
-                    color: Colors.grey[500]!,
-                  ),
-                ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscureText ? Icons.visibility_off : Icons.visibility,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscureText = !_obscureText;
-                    });
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              height: 56,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _desativarConta,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[200],
-                  side: const BorderSide(color: Color(0xFF3C9C25), width: 1.5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                child: const Text(
-                  'Confirmar',
+              const SizedBox(height: 24),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Tem certeza que deseja desativar sua conta do sistema?',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.left,
                   style: TextStyle(
-                    color: Color(0xFF3C9C25),
+                    fontSize: 13,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              height: 56, 
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[200],
-                  side: const BorderSide(color: Color(0xFFAC5A5A), width: 1.5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
+              const SizedBox(height: 40),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Para prosseguir, insira a sua senha',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                 ),
-                child: const Text(
-                  'Cancelar',
-                  style: TextStyle(
-                    color: Color(0xFFAC5A5A),
-                    fontWeight: FontWeight.bold,
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _senhaController,
+                obscureText: _obscureText,
+                decoration: InputDecoration(
+                  hintText: 'Senha',
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      width: 1.5,
+                      color: Colors.grey[500]!,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      width: 1.5,
+                      color: Colors.grey[500]!,
+                    ),
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
                   ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _desativarConta,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[200],
+                    side: const BorderSide(color: Color(0xFF3C9C25), width: 1.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: const Text(
+                    'Confirmar',
+                    style: TextStyle(
+                      color: Color(0xFF3C9C25),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 56, 
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[200],
+                    side: const BorderSide(color: Color(0xFFAC5A5A), width: 1.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: const Text(
+                    'Cancelar',
+                    style: TextStyle(
+                      color: Color(0xFFAC5A5A),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
