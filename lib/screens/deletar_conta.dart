@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:another_flushbar/flushbar.dart';
@@ -116,15 +117,16 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        titleSpacing: 0,
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Deletar conta',
-          style: TextStyle(color: Colors.black),
+            style: GoogleFonts.lato(color: Colors.black, fontSize: 22),
         ),
       ),
       body: SingleChildScrollView(
@@ -138,16 +140,16 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
                 height: 120,
               ),
               const SizedBox(height: 24),
-              const Align(
+               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Tem certeza que deseja desativar sua conta do sistema?',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
+                  style: GoogleFonts.lato(
+                    fontSize: 14,
+                    color: Colors.black
                   ),
                 ),
               ),
@@ -156,7 +158,7 @@ class _DeletarContaPageState extends State<DeletarContaPage> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Para prosseguir, insira a sua senha',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(height: 12),
