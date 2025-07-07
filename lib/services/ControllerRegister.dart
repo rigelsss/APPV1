@@ -44,10 +44,10 @@ class RegistroController {
       print('Corpo da resposta: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final envioCodigoErro = await enviarCodigoConfirmacao(email);
+       /* final envioCodigoErro = await enviarCodigoConfirmacao(email);
         if (envioCodigoErro != null) {
           return envioCodigoErro;
-        }
+        }*/
         return null;
       }else if (response.statusCode == 400) {
         final body = json.decode(response.body);
