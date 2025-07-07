@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sudema_app/screens/login.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:another_flushbar/flushbar.dart';
 
 class codigoRegistro extends StatefulWidget {
   final String email;
@@ -28,6 +30,31 @@ class _codigoRegistroState extends State<codigoRegistro> {
     setState(() {
       _isLoading = true;
     });
+    void _mostrarErroFlushbar(String mensagem) {
+      Flushbar(
+        duration: const Duration(seconds: 4),
+        backgroundColor: const Color(0xFFF8DFDD),
+        flushbarPosition: FlushbarPosition.TOP,
+        borderRadius: BorderRadius.circular(12),
+        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
+        icon: SvgPicture.asset(
+          'assets/icon/x-circle.svg',
+          width: 28,
+          height: 28,
+          color: Color(0xFFAC5A5A),
+        ),
+        messageText: Text(
+          mensagem,
+          style: const TextStyle(
+            color: Color(0xFFAC5A5A),
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ).show(context);
+    }
+
 
     final url = Uri.parse('${dotenv.env['URL_API']}/auth/register/confirm');
     final response = await http.post(
@@ -61,11 +88,11 @@ class _codigoRegistroState extends State<codigoRegistro> {
           errorMsg = data['token'];
         }
       } catch (_) {}
-      _showErrorDialog(errorMsg);
+      _mostrarErroFlushbar(errorMsg);
     } else if (response.statusCode == 500) {
-      _showErrorDialog("Erro interno do servidor. Tente novamente mais tarde.");
+      _mostrarErroFlushbar("Erro interno do servidor. Tente novamente mais tarde.");
     } else {
-      _showErrorDialog("Erro desconhecido. Código: ${response.statusCode}");
+      _mostrarErroFlushbar("Erro desconhecido. Código: ${response.statusCode}");
     }
   }
 
