@@ -7,15 +7,15 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:another_flushbar/flushbar.dart';
 
-class codigoRegistro extends StatefulWidget {
+class CodigoRegistro extends StatefulWidget {
   final String email;
-  const codigoRegistro({super.key, required this.email});
+  const CodigoRegistro({super.key, required this.email});
 
   @override
-  State<codigoRegistro> createState() => _codigoRegistroState();
+  State<CodigoRegistro> createState() => _CodigoRegistroState();
 }
 
-class _codigoRegistroState extends State<codigoRegistro> {
+class _CodigoRegistroState extends State<CodigoRegistro> {
   String _token = '';
   bool _isLoading = false;
 
