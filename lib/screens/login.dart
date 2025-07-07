@@ -123,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => codigoRegistro(
+            builder: (_) => CodigoRegistro(
               email: resultado['email'],
             ),
           ),
