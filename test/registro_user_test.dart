@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:sudema_app/screens/registerUser/confirmarRegistro.dart';
+import 'package:sudema_app/screens/registerUser/ConfirmarRegistro.dart';
 import 'package:sudema_app/screens/registerUser/RegistroUser.dart';
 
 void main() {
@@ -192,4 +192,24 @@ void main() {
     expect(find.text('Você deve aceitar os termos para continuar.'), findsOneWidget);
   });
 
+  // testWidgets('Cadastro com sucesso', (WidgetTester tester) async{
+  //   await tester.pumpWidget(MaterialApp(home: RegistroUser()));
+  //
+  //   await tester.enterText(find.byType(TextField).at(0), 'User Test');
+  //   await tester.enterText(find.byType(TextField).at(1), '123.456.789-09');
+  //   await tester.enterText(find.byType(TextField).at(2), '(99) 99999-9999');
+  //   await tester.enterText(find.byType(TextField).at(3), 'UserTest@example.com');
+  //   await tester.enterText(find.byType(TextField).at(4), 'Senha@123');
+  //   await tester.enterText(find.byType(TextField).at(5), 'Senha@123');
+  //
+  //   final criarConta = find.text('Criar Conta');
+  //   await tester.ensureVisible(criarConta);
+  //   await tester.tap(criarConta);
+  //
+  //   await tester.pumpAndSettle();
+  //
+  //   expect(find.byType(CodigoRegistro), findsOneWidget);
+  //   expect(find.textContaining('verificação'), findsOneWidget);
+  //
+  // });
 }
