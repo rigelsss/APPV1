@@ -4,8 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/screens/RecuperacaoSenha.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
 
-import '../services/AuthMe.dart';
-import '../services/SenhaController.dart';
+import '../../../../services/AuthMe.dart';
+import '../../../../services/SenhaController.dart';
 
 class EditarSenha extends StatefulWidget {
   const EditarSenha({super.key});

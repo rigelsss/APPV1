@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:sudema_app/screens/perfil_page.dart';
+import 'package:sudema_app/screens/perfil/perfil/perfil_page.dart';
 import 'package:sudema_app/services/AuthMe.dart';
 import '../contatos/contatoss.dart';
 import '../../utils/logout_helper.dart';
@@ -91,10 +91,10 @@ class CustomDrawerState extends State<CustomDrawer> {
               children: [
                 ListTile(
                   leading: SvgPicture.asset(
-                    'assets/icon/bullhorn.svg', // caminho do seu arquivo SVG
+                    'assets/icon/bullhorn.svg', 
                     width: 22,
                     height: 22,
-                    color: Color(0xFF3B3B3B), // se quiser aplicar cor
+                    color: Color(0xFF3B3B3B), 
                   ),
                   title:  Text('Denúncias', style: GoogleFonts.lato(fontSize: 18, color: Colors.black),),
                   onTap: () => widget.onItemSelected(1),
@@ -195,7 +195,7 @@ class CustomDrawerState extends State<CustomDrawer> {
                         }
                       },
                       child: SvgPicture.asset(
-                        isLoggedIn ? 'assets/icon/log-out.svg' : 'assets/icon/log-out.svg',
+                        isLoggedIn ? 'assets/icon/log-out.svg' : 'assets/icon/log-in.svg',
                         width: 22,
                         height: 22,
                         color: Color(0xFF3B3B3B),

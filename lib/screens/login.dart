@@ -7,7 +7,7 @@ import 'package:sudema_app/services/controllerLogin.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
-import '../screens/reativar_conta.dart';
+import 'reativar_conta.dart';
 import '../screens/registerUser/confirmarRegistro.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
