@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/RecuperacaoSenha.dart';
+import 'package:sudema_app/screens/perfil/menu/RecuperacaoSenha.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/registerUser/RegistroUser.dart';
 import 'package:sudema_app/services/AuthMe.dart';
@@ -7,7 +7,7 @@ import 'package:sudema_app/services/controllerLogin.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
-import '../screens/reativar_conta.dart';
+import 'perfil/menu/reativar_conta.dart';
 import '../screens/registerUser/confirmarRegistro.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 

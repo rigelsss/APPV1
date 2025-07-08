@@ -5,7 +5,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import 'package:sudema_app/screens/widgets/navbar.dart';
-import 'package:sudema_app/screens/perfil_page.dart';
+import 'package:sudema_app/screens/perfil/perfil/perfil_page.dart';
 import 'package:sudema_app/services/editarPerfil_service.dart';
 import 'package:sudema_app/utils/validarCPF.dart';
 import 'package:sudema_app/screens/widgets/custom_form_field.dart';
@@ -38,7 +38,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
   final TextEditingController _telefoneController = TextEditingController();
 
   final cpfMask = MaskTextInputFormatter(mask: '###.###.###-##', filter: {"#": RegExp(r'\d')});
-  final telMask = MaskTextInputFormatter(mask: '(##) #####-####', filter: {"#": RegExp(r'\d')});
+  final telMask = MaskTextInputFormatter(mask: '(##) ##### - ####', filter: {"#": RegExp(r'\d')});
 
   @override
   void initState() {
@@ -132,7 +132,7 @@ class _EditarPerfilState extends State<EditarPerfil> {
         ),
         title: const Text('Editar perfil', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
-        elevation: 1,
+        elevation: 0,
         centerTitle: false,
       ),
       body: id == null
