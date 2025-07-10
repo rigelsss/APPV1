@@ -11,7 +11,7 @@ import 'package:sudema_app/screens/perfil/perfil/perfil_page.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
-import 'package:sudema_app/screens/perfil/menu/alterarPerfil/editar_perfil.dart';
+import 'package:sudema_app/screens/perfil/menu/alterarperfil/editar_perfil.dart';
 import 'package:sudema_app/screens/reativar_conta.dart';
 import 'package:sudema_app/services/notification_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
