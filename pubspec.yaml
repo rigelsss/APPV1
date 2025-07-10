@@ -55,11 +55,14 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   mockito: ^5.4.6
+  mocktail: ^1.0.4
+  http_mock_adapter: ^0.6.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  build_runner: ^2.4.14
 
 flutter_launcher_icons:
   image_path: "assets/icon/LOGOSUDEMA3D.png"
