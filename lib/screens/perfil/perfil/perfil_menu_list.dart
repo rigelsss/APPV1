@@ -11,11 +11,13 @@ class PerfilMenuList extends StatelessWidget {
   final String token;
   final Map<String, dynamic> userData;
   final Function(String novoToken) onSenhaAlterada;
+  final bool isTest;
 
   const PerfilMenuList({
     required this.token,
     required this.userData,
     required this.onSenhaAlterada,
+    this.isTest = false,
     super.key,
   });
 
