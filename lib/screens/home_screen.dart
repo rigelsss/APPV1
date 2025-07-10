@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:sudema_app/screens/contatos/contatoss.dart';
 import '../screens/home_body.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/noticiasTop5_service.dart';
