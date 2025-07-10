@@ -8,8 +8,9 @@ import 'package:sudema_app/screens/perfil/perfil/perfil_footer_botoes.dart';
 
 class Perfiluser extends StatefulWidget {
   final String? token;
+  //final PerfilController? controller;
 
-  const Perfiluser({super.key, this.token});
+  const Perfiluser({super.key, this.token,});
 
   @override
   PerfiluserState createState() => PerfiluserState();
@@ -17,11 +18,13 @@ class Perfiluser extends StatefulWidget {
 
 class PerfiluserState extends State<Perfiluser> {
   final controller = PerfilController();
+  //late final PerfilController controller; 'teste de funcao'
   int _currentIndex = -1;
 
   @override
   void initState() {
     super.initState();
+    //controller = widget.controller ?? PerfilController(); 'teste de funcao'
     controller.addListener(_updateState);
     controller.prepararToken(tokenExterno: widget.token);
   }
