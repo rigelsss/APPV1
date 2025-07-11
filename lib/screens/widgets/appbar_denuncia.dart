@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 class DenunciaAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const DenunciaAppBar({super.key});
+  final bool Function(String)? isTokenExpired;
+  const DenunciaAppBar({super.key, this.isTokenExpired});
 
   @override
   _DenunciaAppBarState createState() => _DenunciaAppBarState();
@@ -26,10 +27,14 @@ class _DenunciaAppBarState extends State<DenunciaAppBar> {
   Future<void> _verificarLogin() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    if (token != null && !JwtDecoder.isExpired(token)) {
-      setState(() {
-        _logado = true;
-      });
+    if (token != null) {
+      // Usa a função injetada, se existir, senão a padrão do JwtDecoder
+      final isExpired = widget.isTokenExpired?.call(token) ?? JwtDecoder.isExpired(token);
+      if (!isExpired) {
+        setState(() {
+          _logado = true;
+        });
+      }
     }
   }
 
