@@ -11,7 +11,7 @@ import 'widgets/navbar.dart';
 import 'widgets/drawer.dart';
 import 'login.dart';
 import 'package:another_flushbar/flushbar.dart';
-import '../screens/PageDenuncia.dart';
+import 'denuncia/PageDenuncia.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 

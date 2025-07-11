@@ -17,7 +17,7 @@ import 'package:sudema_app/services/notification_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sudema_app/screens/registerUser/confirmarRegistro.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:sudema_app/screens/denunciawraprellerscreen.dart';
+import 'package:sudema_app/screens/denuncia/denunciawraprellerscreen.dart';
 import 'package:sudema_app/utils/no_glow_scroll_configuracao.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {

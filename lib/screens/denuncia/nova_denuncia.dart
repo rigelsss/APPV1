@@ -3,13 +3,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-import 'package:sudema_app/screens/identificacao_screen.dart';
-import 'package:sudema_app/screens/denuncia_screen.dart';
+import 'package:sudema_app/screens/denuncia/identificacao/denuncia_identificacao.dart';
+import 'package:sudema_app/screens/denuncia/denuncia_screen.dart';
 import 'package:sudema_app/services/categoria_service.dart';
 import 'package:sudema_app/screens/denuncia/localizacao/aba_localizacao.dart';
 import 'package:sudema_app/screens/widgets/categoria_selector.dart';
 import 'package:sudema_app/screens/widgets/denuncia_top_bar.dart';
-import '../models/denuncia_data.dart';
+import '../../models/denuncia_data.dart';
 
 class NovaDenuncia extends StatefulWidget {
   const NovaDenuncia({super.key});
