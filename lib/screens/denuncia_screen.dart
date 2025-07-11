@@ -70,7 +70,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
           dados.usuarioId = info['id'];
           dados.tokenUsuario = token;
           dados.usuarioEmail = info['email'];
-          print('✅ Token recuperado na denúncia: ${dados.usuarioId}, ${dados.tokenUsuario}');
+          print('✅ Token recuperado na denúncia: ${dados.usuarioId}, ${dados.tokenUsuario}, ${dados.usuarioEmail}');
         }
       }
     }
@@ -225,7 +225,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                Text('Dato do ocorrido *', style:  GoogleFonts.lato(fontSize: 16),),
+                Text('Data do ocorrido *', style:  GoogleFonts.lato(fontSize: 16),),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _dataController,

@@ -78,11 +78,16 @@ class _HomeAppBarState extends State<HomeAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      elevation: 0,
       backgroundColor: Colors.white,
+      surfaceTintColor: Colors.white, 
       centerTitle: true,
-      title: SizedBox(
-        height: 40,
-        child: Image.asset('assets/images/logosimples.png'),
+      title: Center(
+        child: Image.asset(
+        'assets/images/logosimples.png',
+        height: kToolbarHeight - 8, 
+        fit: BoxFit.contain,
+        ),
       ),
       leading: Builder(
         builder: (context) => IconButton(

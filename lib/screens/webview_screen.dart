@@ -27,6 +27,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('DOE-PB 26/03/2024'),
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
       ),
       body: WebViewWidget(controller: _controller),
     );

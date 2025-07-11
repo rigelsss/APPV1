@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sudema_app/screens/registerUser/RegistroUser.dart';
-import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
+import 'package:sudema_app/screens/widgets/appbar_login.dart';
 
 class Termoscondicoes extends StatefulWidget {
   const Termoscondicoes({super.key});
