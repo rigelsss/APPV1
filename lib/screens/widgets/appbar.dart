@@ -92,6 +92,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
       ),
       actions: [
         IconButton(
+          key: const Key('login_button'),
           icon: _isLoggedIn
               ? Row(
             mainAxisSize: MainAxisSize.min,

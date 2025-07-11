@@ -32,6 +32,7 @@ class NavBar extends StatelessWidget {
           final selected = currentIndex == index;
           final item = items[index];
           return Expanded(
+            key: Key('navbar_item_$index'),
             child: GestureDetector(
               onTap: enabled ? () => onTap(index) : null,
               behavior: HitTestBehavior.opaque,
