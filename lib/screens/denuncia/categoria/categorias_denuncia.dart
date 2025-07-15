@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-
 import 'package:sudema_app/screens/denuncia/identificacao/denuncia_identificacao.dart';
 import 'package:sudema_app/screens/denuncia/denuncia/denuncia_screen.dart';
-import 'package:sudema_app/services/categoria_service.dart';
 import 'package:sudema_app/screens/denuncia/localizacao/aba_localizacao.dart';
-import 'package:sudema_app/screens/widgets/categoria_selector.dart';
+import 'package:sudema_app/screens/denuncia/categoria/widgets/categoria_content.dart';
+import 'package:sudema_app/screens/denuncia/categoria/controller/categorias_controller.dart';
 import 'package:sudema_app/screens/widgets/denuncia_top_bar.dart';
-import '../../../models/denuncia_data.dart';
 
 class NovaDenuncia extends StatefulWidget {
   const NovaDenuncia({super.key});
@@ -20,125 +15,38 @@ class NovaDenuncia extends StatefulWidget {
 
 class _NovaDenunciaState extends State<NovaDenuncia> {
   final List<String> opcao = ['Identificação', 'Categoria', 'Localização', 'Denúncia'];
-
-  int selectedIndex = 0;
-  String? _categoriaSelecionada;
-  String? _subcategoriaSelecionada;
-  final Set<int> _categoriasExpandidas = {};
-
-  List<dynamic> categorias = [];
-  bool _isLoadingCategorias = true;
-  String? _mensagemErro;
-  String? _token;
-
-  final Map<int, String> iconesPorCategoria = {
-    1: 'assets/images/fauna.png',
-    2: 'assets/images/flora.png',
-    3: 'assets/images/poluicao.png',
-    4: 'assets/images/areas_protegidas.png',
-    5: 'assets/images/residuos.png',
-    6: 'assets/images/recursoshidricos.png',
-    7: 'assets/images/outra.png',
-  };
+  final CategoriasController controller = CategoriasController();
 
   @override
   void initState() {
     super.initState();
-    DenunciaData().limpar();
-    _carregarCategorias();
-    _carregarToken();
-  }
-
-  Future<void> _carregarCategorias() async {
-    try {
-      final resultado = await CategoriaService.buscarCategoriasComTipos();
-      setState(() {
-        categorias = resultado;
-        _isLoadingCategorias = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoadingCategorias = false;
-      });
-    }
-  }
-
-  Future<void> _carregarToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedToken = prefs.getString('token');
-    if (savedToken != null && savedToken.isNotEmpty) {
-      setState(() {
-        _token = savedToken;
-      });
-    }
-  }
-
-  bool get isLoggedIn {
-    if (_token == null) return false;
-    try {
-      return !JwtDecoder.isExpired(_token!);
-    } catch (_) {
-      return false;
-    }
-  }
-
-  bool _podeIrParaAba(int index) {
-    switch (index) {
-      case 0:
-        return true;
-      case 1:
-        return DenunciaData().identificacaoConfirmada == true || DenunciaData().categoriaConfirmada == true;
-      case 2:
-        return DenunciaData().categoriaConfirmada == true;
-      case 3:
-        return DenunciaData().enderecoConfirmado == true;
-      default:
-        return false;
-    }
+    controller.init(() => setState(() {}));
   }
 
   void _aoSelecionarAba(int index) {
-    if (!_podeIrParaAba(index)) {
+    if (!controller.podeIrParaAba(index)) {
       setState(() {
-        switch (index) {
-          case 1:
-            _mensagemErro = 'Preencha os dados de identificação antes de continuar.';
-            break;
-          case 2:
-            _mensagemErro = 'Selecione uma categoria e subcategoria antes de continuar.';
-            break;
-          case 3:
-            _mensagemErro = 'Confirme o endereço antes de continuar.';
-            break;
-        }
+        controller.definirMensagemErro(index);
       });
       return;
     }
     setState(() {
-      selectedIndex = index;
-      _mensagemErro = null;
+      controller.selectedIndex = index;
+      controller.mensagemErro = null;
     });
   }
 
   void _irParaCategoria() {
     setState(() {
-      selectedIndex = 1;
-      _mensagemErro = null;
-    });
-  }
-
-  // ignore: unused_element
-  void _irParaLocalizacao() {
-    setState(() {
-      selectedIndex = 2;
-      _mensagemErro = null;
+      controller.selectedIndex = 1;
+      controller.mensagemErro = null;
     });
   }
 
   void _irParaDenuncia() {
     setState(() {
-      selectedIndex = 3;
-      _mensagemErro = null;
+      controller.selectedIndex = 3;
+      controller.mensagemErro = null;
     });
   }
 
@@ -151,16 +59,20 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
           children: [
             DenunciaTopBar(
               opcoes: opcao,
-              selectedIndex: selectedIndex,
-              podeIrParaAba: _podeIrParaAba,
+              selectedIndex: controller.selectedIndex,
+              podeIrParaAba: controller.podeIrParaAba,
               onSelecionar: _aoSelecionarAba,
             ),
-            if (_mensagemErro != null)
+            if (controller.mensagemErro != null)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  _mensagemErro!,
-                  style: const TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.w500),
+                  controller.mensagemErro!,
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             Expanded(child: _buildConteudoSelecionado()),
@@ -171,11 +83,15 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
   }
 
   Widget _buildConteudoSelecionado() {
-    switch (selectedIndex) {
+    switch (controller.selectedIndex) {
       case 0:
         return Identificacao(onAvancar: _irParaCategoria);
       case 1:
-        return _buildCategoriaContent();
+        return CategoriaContent(
+          controller: controller,
+          onAvancar: () => _aoSelecionarAba(2),
+          onRebuild: () => setState(() {}),
+        );
       case 2:
         return AbaLocalizacao(onEnderecoConfirmado: _irParaDenuncia);
       case 3:
@@ -184,86 +100,4 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
         return const SizedBox();
     }
   }
-
-  Widget _buildCategoriaContent() {
-  if (_isLoadingCategorias) {
-    return const Center(child: CircularProgressIndicator());
-  }
-
-  return Container(
-    color: Colors.white,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Text(
-            'Categoria da infração',
-            style: GoogleFonts.lato(fontSize: 24,),
-          ),
-        ),
-        Expanded(
-          child: CategoriaSelector(
-            categorias: categorias,
-            iconesPorCategoria: iconesPorCategoria,
-            categoriaSelecionada: _categoriaSelecionada,
-            subcategoriaSelecionada: _subcategoriaSelecionada,
-            categoriasExpandidas: _categoriasExpandidas,
-            onCategoriaSelecionada: (texto) {
-              setState(() {
-                _categoriaSelecionada = texto;
-                _subcategoriaSelecionada = null;
-                _mensagemErro = null;
-              });
-            },
-            onSubcategoriaSelecionada: (nome, id, texto) {
-              setState(() {
-                _subcategoriaSelecionada = nome;
-                _categoriaSelecionada = texto;
-                DenunciaData().tipoDenunciaId = id.toString();
-                DenunciaData().usuarioEmail = isLoggedIn ? JwtDecoder.decode(_token!)['email'] : null;
-                DenunciaData().categoriaConfirmada = true;
-                DenunciaData().nomeCategoriaSelecionada = _categoriaSelecionada;
-                DenunciaData().nomeSubcategoriaSelecionada = _subcategoriaSelecionada;
-                _mensagemErro = null;
-              });
-            },
-            onToggleExpand: (index) {
-              setState(() {
-                if (_categoriasExpandidas.contains(index)) {
-                  _categoriasExpandidas.remove(index);
-                } else {
-                  _categoriasExpandidas.add(index);
-                }
-              });
-            },
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2A2F8C),
-              disabledBackgroundColor: Colors.grey[500],
-              minimumSize: const Size.fromHeight(52.8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            ),
-            onPressed: (_categoriaSelecionada != null &&
-                    _subcategoriaSelecionada != null &&
-                    _subcategoriaSelecionada!.isNotEmpty)
-                ? () => _aoSelecionarAba(2)
-                : null,
-            child: Center(
-              child: Text(
-                'Selecionar Categoria',
-                style: GoogleFonts.lato(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
-  }
 }
-
