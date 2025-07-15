@@ -26,6 +26,7 @@ class _AlterarEmailFormState extends State<AlterarEmailForm> {
           const Text('Senha', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           TextFormField(
+            key: const Key('senhaField'),
             controller: _senhaController,
             obscureText: _obscureText,
             decoration: inputDecoration().copyWith(
@@ -48,6 +49,7 @@ class _AlterarEmailFormState extends State<AlterarEmailForm> {
           const Text('Novo e-mail', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           TextFormField(
+            key: const Key('novoEmailField'),
             controller: _novoEmailController,
             keyboardType: TextInputType.emailAddress,
             decoration: inputDecoration(),
@@ -59,6 +61,7 @@ class _AlterarEmailFormState extends State<AlterarEmailForm> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           TextFormField(
+            key: const Key('confirmarEmailField'),
             controller: _confirmarEmailController,
             keyboardType: TextInputType.emailAddress,
             decoration: inputDecoration(),
@@ -72,6 +75,7 @@ class _AlterarEmailFormState extends State<AlterarEmailForm> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
+              key: const Key('submitButton'),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   AlterarEmailController.confirmarAlteracao(
