@@ -10,7 +10,7 @@ import 'package:sudema_app/services/AuthMe.dart';
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../denuncia/denuncia_resumo.dart';
+import '../resumo/denuncia_resumo.dart';
 
 class DenunciaScreen extends StatefulWidget {
   const DenunciaScreen({super.key});

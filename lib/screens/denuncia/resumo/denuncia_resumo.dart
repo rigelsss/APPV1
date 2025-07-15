@@ -5,7 +5,7 @@ import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:sudema_app/screens/widgets/appbar_denuncia.dart';
 import 'package:sudema_app/services/denuncia_service.dart';
 import 'package:sudema_app/screens/denuncia/DenunciaConcluida.dart';
-import 'package:sudema_app/screens/denuncia/denuncia_menu_superior.dart';
+import 'package:sudema_app/screens/denuncia/resumo/denuncia_menu_superior.dart';
 
 class ResumoDenunciaScreen extends StatefulWidget {
   const ResumoDenunciaScreen({super.key});

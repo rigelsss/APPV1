@@ -132,7 +132,6 @@ class _EnderecoModalSheetState extends State<EnderecoModalSheet> {
                           final loc = details.result!.geometry!.location!;
                           final enderecoCompleto = p.description ?? "Endereço não disponível";
 
-                          // Fecha o teclado
                           FocusScope.of(context).unfocus();
 
                           Navigator.pop(context, {
