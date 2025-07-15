@@ -26,7 +26,7 @@ class DenunciaMenuSuperior extends StatelessWidget {
               border: Border(
                 bottom: BorderSide(
                   color: selecionado ? const Color(0xFF1B8C00) : Colors.grey.shade300,
-                  width: 2.5,
+                  width: 1.5,
                 ),
               ),
             ),

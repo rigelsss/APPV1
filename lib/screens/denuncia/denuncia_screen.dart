@@ -32,6 +32,7 @@ class HttpExceptionWithStatus implements Exception {
 class _DenunciaScreenState extends State<DenunciaScreen> {
   List<XFile> _imagens = [];
   bool _confirmacao = false;
+  bool _erroConfirmacao = false;
   // ignore: unused_field
   bool _enviando = false;
 
@@ -114,6 +115,8 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
       _erroDenunciado = !denunciadoValido;
       _dataValida = dataValida;
       _exibirErroData = true;
+      _erroConfirmacao = !_confirmacao;
+
     });
 
     return descricaoValida &&
@@ -307,6 +310,14 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                   ),
                   ],  
                 ),
+                if (_erroConfirmacao)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8, top: 4),
+                    child: Text(
+                      'Você deve aceitar os termos para continuar.',
+                      style: GoogleFonts.lato(fontSize: 12, color: Colors.red),
+                    ),
+                  ),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
