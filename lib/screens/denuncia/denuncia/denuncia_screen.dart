@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sudema_app/services/denuncia_service.dart';
+import 'package:sudema_app/screens/denuncia/service/denuncia_service.dart';
 import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:sudema_app/screens/denuncia/DenunciaConcluida.dart';
 import 'package:intl/intl.dart';

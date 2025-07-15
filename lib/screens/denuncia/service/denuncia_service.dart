@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
 import 'package:sudema_app/models/denuncia_data.dart';
-import '../screens/widgets/custom_snackbar.dart';
+import '../../widgets/custom_snackbar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class DenunciaService {

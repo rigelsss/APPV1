@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:sudema_app/screens/widgets/appbar_denuncia.dart';
-import 'package:sudema_app/services/denuncia_service.dart';
+import 'package:sudema_app/screens/denuncia/service/denuncia_service.dart';
 import 'package:sudema_app/screens/denuncia/DenunciaConcluida.dart';
 import 'package:sudema_app/screens/denuncia/resumo/denuncia_menu_superior.dart';
 
