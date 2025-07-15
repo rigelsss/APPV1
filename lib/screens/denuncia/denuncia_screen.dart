@@ -10,8 +10,11 @@ import 'package:sudema_app/services/AuthMe.dart';
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../denuncia/denuncia_resumo.dart';
 
 class DenunciaScreen extends StatefulWidget {
+  const DenunciaScreen({super.key});
+
   @override
   _DenunciaScreenState createState() => _DenunciaScreenState();
 }
@@ -149,7 +152,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const conclusao_de_denuncia()),
+          MaterialPageRoute(builder: (context) => const DenunciaConcluida()),
         );
       } else {
         _mostrarErro('❌ Erro inesperado: o envio falhou, mas sem detalhes do servidor.');
@@ -309,7 +312,21 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: _enviar,
+                    onPressed: () {
+                      final dados = DenunciaData()
+                      ..dataOcorrencia = _dataController.text
+                      ..descricao = _descricaoController.text
+                      ..referencia = _referenciaController.text
+                      ..informacaoDenunciado = _denunciadoController.text
+                      ..imagemPaths = _imagens.map((file) => file.path).toList();
+
+                       if (_validateFields()) {
+                        Navigator.push(
+                         context,
+                        MaterialPageRoute(builder: (_) => const ResumoDenunciaScreen()),
+                      );
+                     }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1B8C00),
                       shape: RoundedRectangleBorder(
@@ -317,7 +334,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                       ),
                     ),
                     child:  Text(
-                      'Concluir denúncia',
+                      'Revisar informações',
                       style:  GoogleFonts.lato(fontSize: 18, color: Colors.white),
                     ),
                   ),

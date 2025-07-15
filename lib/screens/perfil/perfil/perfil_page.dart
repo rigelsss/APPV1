@@ -85,7 +85,7 @@ class PerfiluserState extends State<Perfiluser> {
               Navigator.pushNamed(context, '/denuncias');
               break;
             case 2:
-              Navigator.pushNamed(context, 'balneabilidade');
+              Navigator.pushNamed(context, '/balneabilidade');
               break;
             case 3:
               Navigator.pushNamed(context, '/noticias');

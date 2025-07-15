@@ -33,7 +33,7 @@ class CategoriaSelector extends StatelessWidget {
       itemBuilder: (context, index) {
         final categoria = categorias[index];
         final int id = categoria['id'];
-        final String texto = categoria['nome'] ?? 'Sem nome';
+        final String texto = categoria['nome'] ?? 'Cateoria sem nome';
         final String imagem = iconesPorCategoria[id] ?? 'assets/images/image-break.png';
         final List<dynamic> tiposDenuncia = categoria['tiposDenuncia'] ?? [];
         final isExpanded = categoriasExpandidas.contains(index);

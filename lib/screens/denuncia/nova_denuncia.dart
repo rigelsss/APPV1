@@ -223,6 +223,8 @@ class _NovaDenunciaState extends State<NovaDenuncia> {
                 DenunciaData().tipoDenunciaId = id.toString();
                 DenunciaData().usuarioEmail = isLoggedIn ? JwtDecoder.decode(_token!)['email'] : null;
                 DenunciaData().categoriaConfirmada = true;
+                DenunciaData().nomeCategoriaSelecionada = _categoriaSelecionada;
+                DenunciaData().nomeSubcategoriaSelecionada = _subcategoriaSelecionada;
                 _mensagemErro = null;
               });
             },

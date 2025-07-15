@@ -3,13 +3,17 @@ class DenunciaData {
   factory DenunciaData() => _instance;
   DenunciaData._internal();
 
-  String? tipoDenunciaId;
-  String? descricao;
-  String? informacaoDenunciado;
-  String? dataOcorrencia;
-  String? referencia;
-  List<String> imagemPaths = [];
   bool? anonimo;
+
+  String? tipoDenunciaId;
+  String? nomeCategoriaSelecionada;
+  String? nomeSubcategoriaSelecionada;
+
+  String? dataOcorrencia;
+  String? descricao;
+  String? referencia;
+  String? informacaoDenunciado;
+  List<String> imagemPaths = [];
 
   String? usuarioEmail;
   String? usuarioId;
@@ -53,6 +57,8 @@ class DenunciaData {
       'usuarioEmail': usuarioEmail,
       'categoriaConfirmada': categoriaConfirmada,
       'identificacaoConfirmada': identificacaoConfirmada,
+      'nomeCategoriaSelecionada': nomeCategoriaSelecionada,
+      'nomeSubcategoriaSelecionada': nomeSubcategoriaSelecionada,
     };
   }
 
@@ -81,5 +87,8 @@ class DenunciaData {
     usuarioId = null;
     categoriaConfirmada = null;
     identificacaoConfirmada = false;
+
+    nomeCategoriaSelecionada = null;
+    nomeSubcategoriaSelecionada = null;
   }
 }
