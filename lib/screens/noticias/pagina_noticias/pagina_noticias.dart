@@ -67,68 +67,69 @@ class _NoticiasPageState extends State<NoticiasPage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (carregando) {
-      return const Center(child: CircularProgressIndicator());
-    }
+@override
+Widget build(BuildContext context) {
+  if (carregando) {
+    return const Center(child: CircularProgressIndicator());
+  }
 
-    if (erro != null) {
-      return Center(
-        child: Text(
-          erro!,
-          style: const TextStyle(color: Colors.red),
-          textAlign: TextAlign.center,
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Últimas notícias',
-            style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            onChanged: (valor) {
-              termoBusca = valor;
-              aplicarFiltro();
-            },
-            decoration: InputDecoration(
-              hintText: 'Pesquisar',
-              filled: true,
-              fillColor: Colors.grey[100],
-              suffixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide.none,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: ListView.builder(
-              itemCount: filtradas.length + 1,
-              itemBuilder: (context, index) {
-                if (index < filtradas.length) {
-                  final noticia = filtradas[index];
-                  return NoticiaCard(
-                    noticia: noticia,
-                    onTap: () => abrirNoticiaCompleta(noticia['id']),
-                    removerHtml: _removerHtml,
-                  );
-                } else {
-                  return const NoticiasMaisAntigas();
-                }
-              },
-            ),
-          ),
-        ],
+  if (erro != null) {
+    return Center(
+      child: Text(
+        erro!,
+        style: const TextStyle(color: Colors.red),
+        textAlign: TextAlign.center,
       ),
     );
   }
+
+  return Container(
+  color: Colors.white,
+  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Últimas notícias',
+        style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
+      ),
+      const SizedBox(height: 16),
+      TextField(
+        onChanged: (valor) {
+          termoBusca = valor;
+          aplicarFiltro();
+        },
+        decoration: InputDecoration(
+          hintText: 'Pesquisar',
+          filled: true,
+          fillColor: Colors.grey[100],
+          suffixIcon: const Icon(Icons.search),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+      const SizedBox(height: 16),
+      Expanded(
+        child: ListView.builder(
+          itemCount: filtradas.length + 1,
+          itemBuilder: (context, index) {
+            if (index < filtradas.length) {
+              final noticia = filtradas[index];
+              return NoticiaCard(
+                noticia: noticia,
+                onTap: () => abrirNoticiaCompleta(noticia['id']),
+                removerHtml: _removerHtml,
+              );
+            } else {
+              return const NoticiasMaisAntigas();
+            }
+          },
+        ),
+      ),
+    ],
+  ),
+);
+}
 }

@@ -1,6 +1,3 @@
-// This widget is used to display the header of the user profile screen.
-// It greets the user with their first name and provides a back button if applicable.
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

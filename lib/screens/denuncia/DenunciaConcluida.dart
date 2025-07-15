@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:sudema_app/screens/widgets/appbar.dart';
 import 'package:sudema_app/screens/home_screen.dart';
 import 'package:sudema_app/screens/login.dart';
 
-class conclusao_de_denuncia extends StatefulWidget {
-  const conclusao_de_denuncia({super.key});
+class DenunciaConcluida extends StatefulWidget {
+  const DenunciaConcluida({super.key});
 
   @override
-  State<conclusao_de_denuncia> createState() => _conclusao_de_denunciaState();
+  State<DenunciaConcluida> createState() => _DenunciaConcluida();
 }
 
-class _conclusao_de_denunciaState extends State<conclusao_de_denuncia> {
+class _DenunciaConcluida extends State<DenunciaConcluida> {
   String? _token;
 
   @override

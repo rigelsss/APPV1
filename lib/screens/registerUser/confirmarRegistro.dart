@@ -17,6 +17,7 @@ class CodigoRegistro extends StatefulWidget {
 
 class _CodigoRegistroState extends State<CodigoRegistro> {
   String _token = '';
+  // ignore: unused_field
   bool _isLoading = false;
 
   void _confirmarCodigo() async {
@@ -159,6 +160,7 @@ class _CodigoRegistroState extends State<CodigoRegistro> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final width = size.width;
+    // ignore: unused_local_variable
     final height = size.height;
     final isSmallScreen = width < 600;
 

@@ -43,6 +43,7 @@ class _DenunciaAppBarState extends State<DenunciaAppBar> {
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      surfaceTintColor: const Color.fromARGB(255, 255, 255, 255),
       title:  Text(
         'Denunciar',
         style: GoogleFonts.lato(fontSize: 24),
@@ -54,7 +55,7 @@ class _DenunciaAppBarState extends State<DenunciaAppBar> {
                   'assets/icon/notificacao.svg',
                   width: 24,
                   height: 24,
-                  color: Colors.black, // ou qualquer cor desejada
+                  color: Colors.black, 
                 ),
                 onPressed: () {
                   Navigator.pushNamed(context, '/notificacoes');

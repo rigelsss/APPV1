@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sudema_app/services/denuncia_service.dart';
 import 'package:sudema_app/models/denuncia_data.dart';
-import 'package:sudema_app/screens/denunciaconcluida.dart';
+import 'package:sudema_app/screens/denuncia/DenunciaConcluida.dart';
 import 'package:intl/intl.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,8 +10,11 @@ import 'package:sudema_app/services/AuthMe.dart';
 import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../resumo/denuncia_resumo.dart';
 
 class DenunciaScreen extends StatefulWidget {
+  const DenunciaScreen({super.key});
+
   @override
   _DenunciaScreenState createState() => _DenunciaScreenState();
 }
@@ -29,6 +32,7 @@ class HttpExceptionWithStatus implements Exception {
 class _DenunciaScreenState extends State<DenunciaScreen> {
   List<XFile> _imagens = [];
   bool _confirmacao = false;
+  bool _erroConfirmacao = false;
   // ignore: unused_field
   bool _enviando = false;
 
@@ -70,7 +74,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
           dados.usuarioId = info['id'];
           dados.tokenUsuario = token;
           dados.usuarioEmail = info['email'];
-          print('✅ Token recuperado na denúncia: ${dados.usuarioId}, ${dados.tokenUsuario}');
+          print('✅ Token recuperado na denúncia: ${dados.usuarioId}, ${dados.tokenUsuario}, ${dados.usuarioEmail}');
         }
       }
     }
@@ -111,6 +115,8 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
       _erroDenunciado = !denunciadoValido;
       _dataValida = dataValida;
       _exibirErroData = true;
+      _erroConfirmacao = !_confirmacao;
+
     });
 
     return descricaoValida &&
@@ -149,7 +155,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const conclusao_de_denuncia()),
+          MaterialPageRoute(builder: (context) => const DenunciaConcluida()),
         );
       } else {
         _mostrarErro('❌ Erro inesperado: o envio falhou, mas sem detalhes do servidor.');
@@ -225,7 +231,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                   ],
                 ),
                 const SizedBox(height: 24),
-                Text('Dato do ocorrido *', style:  GoogleFonts.lato(fontSize: 16),),
+                Text('Data do ocorrido *', style:  GoogleFonts.lato(fontSize: 16),),
                 const SizedBox(height: 10),
                 TextField(
                   controller: _dataController,
@@ -304,12 +310,34 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                   ),
                   ],  
                 ),
+                if (_erroConfirmacao)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8, top: 4),
+                    child: Text(
+                      'Você deve aceitar os termos para continuar.',
+                      style: GoogleFonts.lato(fontSize: 12, color: Colors.red),
+                    ),
+                  ),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: _enviar,
+                    onPressed: () {
+                      final dados = DenunciaData()
+                      ..dataOcorrencia = _dataController.text
+                      ..descricao = _descricaoController.text
+                      ..referencia = _referenciaController.text
+                      ..informacaoDenunciado = _denunciadoController.text
+                      ..imagemPaths = _imagens.map((file) => file.path).toList();
+
+                       if (_validateFields()) {
+                        Navigator.push(
+                         context,
+                        MaterialPageRoute(builder: (_) => const ResumoDenunciaScreen()),
+                      );
+                     }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1B8C00),
                       shape: RoundedRectangleBorder(
@@ -317,7 +345,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                       ),
                     ),
                     child:  Text(
-                      'Concluir denúncia',
+                      'Revisar informações',
                       style:  GoogleFonts.lato(fontSize: 18, color: Colors.white),
                     ),
                   ),

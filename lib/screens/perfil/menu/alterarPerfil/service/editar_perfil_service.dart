@@ -7,7 +7,9 @@ class UsuarioService {
     required String id,
     required String token,
     required Map<String, dynamic> dados,
-  }) async {
+  }) 
+  
+  async {
     final baseUrl = dotenv.env['URL_API'];
     final url = Uri.parse('$baseUrl/usuarios/mobile/$id');
 

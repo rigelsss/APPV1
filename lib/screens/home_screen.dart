@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:sudema_app/screens/contatos/contatoss.dart';
 import '../screens/home_body.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/noticiasTop5_service.dart';
@@ -12,7 +11,10 @@ import 'widgets/navbar.dart';
 import 'widgets/drawer.dart';
 import 'login.dart';
 import 'package:another_flushbar/flushbar.dart';
-import '../screens/PageDenuncia.dart';
+import 'denuncia/PageDenuncia.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+
 
 class HomeScreen extends StatefulWidget {
   final int initialIndex;
@@ -169,45 +171,51 @@ class _HomeScreenState extends State<HomeScreen> {
 
 @override
 Widget build(BuildContext context) {
-  return WillPopScope(
-    onWillPop: () async {
-      if (_selectedIndex != 0) {
-        setState(() {
-          _selectedIndex = 0;
-        });
-        return false; 
-      }
-      return false; 
-    },
-    child: Scaffold(
-      appBar: HomeAppBar(
-        isLoggedIn: isLoggedIn,
-        onLoginTap: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const LoginPage()),
-          );
-
-          if (result != null && result is String) {
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setString('token', result);
-            setState(() {
-              token = result;
-              isLoggedIn = !JwtDecoder.isExpired(result);
-            });
-          }
-        },
-      ),
-      drawer: CustomDrawer(onItemSelected: _onDrawerItemSelected),
-      backgroundColor: Colors.white,
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: NavBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
+  return AnnotatedRegion<SystemUiOverlayStyle>(
+    value: const SystemUiOverlayStyle(
+      statusBarColor: Colors.white, 
+      statusBarIconBrightness: Brightness.dark, 
+    ),
+    child: WillPopScope(
+      onWillPop: () async {
+        if (_selectedIndex != 0) {
           setState(() {
-            _selectedIndex = index;
+            _selectedIndex = 0;
           });
-        },
+          return false;
+        }
+        return false;
+      },
+      child: Scaffold(
+        appBar: HomeAppBar(
+          isLoggedIn: isLoggedIn,
+          onLoginTap: () async {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const LoginPage()),
+            );
+
+            if (result != null && result is String) {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setString('token', result);
+              setState(() {
+                token = result;
+                isLoggedIn = !JwtDecoder.isExpired(result);
+              });
+            }
+          },
+        ),
+        drawer: CustomDrawer(onItemSelected: _onDrawerItemSelected),
+        backgroundColor: Colors.white,
+        body: _pages[_selectedIndex],
+        bottomNavigationBar: NavBar(
+          currentIndex: _selectedIndex,
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+        ),
       ),
     ),
   );

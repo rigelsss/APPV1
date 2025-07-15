@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:sudema_app/screens/TermosCondicoes.dart';
-import 'package:sudema_app/screens/widgets/appbardenuncia.dart';
+import 'package:sudema_app/screens/widgets/appbar_login.dart';
 import '../login.dart';
 import 'package:sudema_app/services/ControllerRegister.dart';
 import 'package:another_flushbar/flushbar.dart';

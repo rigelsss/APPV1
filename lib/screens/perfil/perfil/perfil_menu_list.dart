@@ -1,10 +1,7 @@
-// This widget is used to display a list of menu items in the user profile section.
-// It includes options for notifications, editing profile, changing email, and changing password.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:sudema_app/screens/notificacao/notificacoes.dart';
-import 'package:sudema_app/screens/perfil/menu/alterarPerfil/editar_perfil.dart';
+import 'package:sudema_app/screens/perfil/menu/alterarperfil/editar_perfil.dart';
 import 'package:sudema_app/screens/perfil/perfil/perfil_menu_item.dart';
 
 class PerfilMenuList extends StatelessWidget {

@@ -8,9 +8,9 @@ String formatarCpf(String cpf) {
 String formatarTelefone(String telefone) {
   final digitsOnly = telefone.replaceAll(RegExp(r'\D'), '');
   if (digitsOnly.length == 11) {
-    return '+55 (${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 7)} - ${digitsOnly.substring(7)}';
+    return '+55 (${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 7)}-${digitsOnly.substring(7)}';
   } else if (digitsOnly.length == 10) {
-    return '+55 (${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 6)} - ${digitsOnly.substring(6)}';
+    return '+55 (${digitsOnly.substring(0, 2)}) ${digitsOnly.substring(2, 6)}-${digitsOnly.substring(6)}';
   }
   return telefone;
 }

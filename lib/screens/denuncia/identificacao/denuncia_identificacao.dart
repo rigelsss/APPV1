@@ -15,7 +15,7 @@ class Identificacao extends StatefulWidget {
 }
 
 class _AbaIdentificacaoState extends State<Identificacao> {
-  String? usuarioEmail = '';
+  String? usuarioEmail;
   bool _logado = false;
   bool _anonimo = false;
 

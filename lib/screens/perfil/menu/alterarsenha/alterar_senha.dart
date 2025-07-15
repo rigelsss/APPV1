@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
-import 'package:sudema_app/screens/widgets/drawer.dart';
+import 'package:sudema_app/screens/perfil/menu/alterarsenha/form/alterar_senha_form.dart';
 
-import 'form/alterar_email_form.dart';
-
-class EditarEmail extends StatefulWidget {
-  const EditarEmail({super.key});
+class EditarSenha extends StatefulWidget {
+  const EditarSenha({super.key});
 
   @override
-  State<EditarEmail> createState() => _EditarEmailState();
+  State<EditarSenha> createState() => _EditarSenhaState();
 }
 
-class _EditarEmailState extends State<EditarEmail> {
+class _EditarSenhaState extends State<EditarSenha> {
   int _currentIndex = -1;
 
   void _onNavBarTap(int index) {
@@ -40,18 +38,15 @@ class _EditarEmailState extends State<EditarEmail> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Alterar e-mail', style: TextStyle(color: Colors.black)),
+        title: const Text('Alterar senha'),
         backgroundColor: Colors.white,
-        leading: BackButton(
-          onPressed: () => Navigator.pop(context),
-          color: Colors.black,
-        ),
-        elevation: 0,
+        leading: BackButton(onPressed: () {
+          Navigator.pop(context);
+        }),
       ),
-      drawer: CustomDrawer(onItemSelected: (int index) {}),
       body: const Padding(
         padding: EdgeInsets.all(16.0),
-        child: AlterarEmailForm(),
+        child: AlterarSenhaForm(),
       ),
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,

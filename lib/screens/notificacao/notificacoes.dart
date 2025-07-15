@@ -140,6 +140,7 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
         titleSpacing: 0,
         title: Text('Notificações',
           style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),),

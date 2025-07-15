@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'webview_screen.dart';
+import '../webview_screen.dart';
 import 'denunciawraprellerscreen.dart';
 
 class DenunciaPage extends StatelessWidget {
