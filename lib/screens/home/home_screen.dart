@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import '../screens/home_body.dart';
+import 'home_body.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../services/noticiasTop5_service.dart';
-import '../models/noticia.dart';
-import 'widgets/appbar.dart';
-import 'balneabilidade/balneabilidade.dart';
-import 'noticias/pagina_noticias/pagina_noticias.dart';
-import 'widgets/navbar.dart';
-import 'widgets/drawer.dart';
-import 'login.dart';
+import '../../services/noticiasTop5_service.dart';
+import '../../models/noticia.dart';
+import '../widgets/appbar.dart';
+import '../balneabilidade/balneabilidade.dart';
+import '../noticias/pagina_noticias/pagina_noticias.dart';
+import '../widgets/navbar.dart';
+import '../widgets/drawer.dart';
+import '/screens/login/login.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'denuncia/PageDenuncia.dart';
+import '../denuncia/PageDenuncia.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 

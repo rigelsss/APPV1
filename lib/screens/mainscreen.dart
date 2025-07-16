@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/home_screen.dart';
+import 'package:sudema_app/screens/home/home_screen.dart';
 import 'widgets/navbar.dart';
 import 'denuncia/PageDenuncia.dart';
 import 'balneabilidade/balneabilidade.dart';

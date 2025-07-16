@@ -8,8 +8,8 @@ import 'package:sudema_app/screens/perfil/menu/desativarConta/deletar_conta.dart
 import 'package:sudema_app/screens/perfil/menu/alterarsenha/alterar_senha.dart';
 import 'package:sudema_app/screens/notificacao/notificacoes.dart';
 import 'package:sudema_app/screens/perfil/perfil/perfil_page.dart';
-import 'package:sudema_app/screens/home_screen.dart';
-import 'package:sudema_app/screens/login.dart';
+import 'package:sudema_app/screens/home/home_screen.dart';
+import 'package:sudema_app/screens/login/login.dart';
 import 'package:sudema_app/screens/splash_screen.dart';
 import 'package:sudema_app/screens/perfil/menu/alterarperfil/editar_perfil.dart';
 import 'package:sudema_app/screens/reativar_conta.dart';

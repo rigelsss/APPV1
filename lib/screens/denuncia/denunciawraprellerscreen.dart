@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/denuncia/categoria/categorias_denuncia.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
-import 'package:sudema_app/screens/home_screen.dart';
+import 'package:sudema_app/screens/home/home_screen.dart';
 import 'package:sudema_app/screens/widgets/appbar_denuncia.dart'; 
 
 class DenunciaWrapperScreen extends StatefulWidget {

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:sudema_app/screens/login.dart';
+import 'package:sudema_app/screens/login/login.dart';
 import 'package:sudema_app/screens/widgets/appbar_login.dart';
 
 class Novasenha extends StatefulWidget {
