@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:sudema_app/screens/noticias/pagina_noticias/service/noticias_service.dart';
 import 'package:sudema_app/screens/noticias/pagina_noticias/model/noticia_card.dart';
-import 'package:sudema_app/screens/noticias/pagina_noticias/widget/widget_textoBotao.dart';
+import 'package:sudema_app/screens/noticias/pagina_noticias/widget/widget_maisnotiias.dart';
 
 import '../pagina_noticiaCompleta/noticiaCompleta_screen.dart';
 

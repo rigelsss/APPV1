@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:sudema_app/screens/TermosCondicoes.dart';
 import 'package:sudema_app/screens/widgets/appbar_login.dart';
-import '../login.dart';
+import '../login/login.dart';
 import 'package:sudema_app/services/ControllerRegister.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';

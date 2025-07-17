@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:sudema_app/screens/widgets/appbar.dart';
-import 'package:sudema_app/screens/home_screen.dart';
-import 'package:sudema_app/screens/login.dart';
+import 'package:sudema_app/screens/home/home_screen.dart';
+import 'package:sudema_app/screens/login/login.dart';
 
 class DenunciaConcluida extends StatefulWidget {
   const DenunciaConcluida({super.key});

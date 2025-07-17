@@ -45,7 +45,9 @@ class LoginController {
       } else {
         return {
           'success': false, 
-          'message': responseData['message'] ?? 'Erro desconhecido'
+          'message': responseData['message'].toString().isNotEmpty == true 
+          ? responseData['message']
+          : 'E-mail ou senha inválidos.'
         };
       }
     } catch (e) {
