@@ -9,11 +9,13 @@ class UsuarioService {
     required String senhaAtual,
     required String novoEmail,
     required String confirmacaoEmail,
+    http.Client? client,
   }) async {
     final baseUrl = dotenv.env['URL_API'];
     final url = Uri.parse('$baseUrl/usuarios/mobile/$id/alterar-email');
+    client ??= http.Client();
 
-    return await http.put(
+    return await client.put(
       url,
       headers: {
         'Content-Type': 'application/json',
