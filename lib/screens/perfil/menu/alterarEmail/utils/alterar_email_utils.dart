@@ -12,7 +12,7 @@ String corrigirEncoding(String textoOriginal) {
 }
 
 /// Exibe um flushbar de erro na parte superior da tela
-void exibirErro(BuildContext context, String mensagem) {
+void exibirErro(BuildContext context, String mensagem, {bool teste = false}) {
   final mensagemCorrigida = corrigirEncoding(mensagem);
   Flushbar(
     title: 'Verifique suas credenciais',
@@ -27,7 +27,7 @@ void exibirErro(BuildContext context, String mensagem) {
 }
 
 /// Analisa o body da resposta e exibe mensagens de erro específicas
-void tratarErroResposta(BuildContext context, dynamic response) {
+void tratarErroResposta(BuildContext context, dynamic response, {bool teste = false}) {
   if (response.body.isNotEmpty) {
     try {
       final responseBody = jsonDecode(response.body);
