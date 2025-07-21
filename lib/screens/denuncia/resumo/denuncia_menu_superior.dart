@@ -30,6 +30,8 @@ class DenunciaMenuSuperior extends StatelessWidget {
                 ),
               ),
             ),
+            child: FittedBox(
+            fit: BoxFit.scaleDown,
             child: Text(
               _etapas[index],
               textAlign: TextAlign.center,
@@ -39,6 +41,7 @@ class DenunciaMenuSuperior extends StatelessWidget {
                 color: selecionado ? Colors.black : Colors.grey,
               ),
             ),
+          ),
           ),
         );
       }),
