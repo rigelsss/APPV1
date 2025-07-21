@@ -20,6 +20,9 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
   final TextEditingController _buscaController = TextEditingController();
   late GoogleMapController _mapController;
 
+  final GlobalKey _painelKey = GlobalKey();
+  double _alturaPainel = 0;
+
   void atualizarEndereco(LatLng novaPosicao, String endereco) {
     setState(() {
       _posicaoAtual = novaPosicao;
@@ -74,6 +77,15 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
         DenunciaData().endereco!.isNotEmpty &&
         DenunciaData().endereco != 'Endereço não encontrado';
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final renderBox = _painelKey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox != null && mounted) {
+        setState(() {
+          _alturaPainel = renderBox.size.height;
+        });
+      }
+    });
+
     return Container(
       color: Colors.white,
       child: Stack(
@@ -84,20 +96,27 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
             onMapCreatedExternal: (controller) {
               _mapController = controller;
             },
+            paddingBottom: _alturaPainel, 
           ),
 
           if (_posicaoAtual == null)
             const Center(child: CircularProgressIndicator()),
 
-          const Center(
-            child: Icon(
-              Icons.location_pin,
-              size: 40,
-              color: Colors.red,
+          if (_alturaPainel > 0)
+            Positioned(
+              top: (MediaQuery.of(context).size.height - _alturaPainel) / 2 - 125,
+              left: MediaQuery.of(context).size.width / 2 - 20,
+              child: const Icon(
+                Icons.location_pin,
+                size: 40,
+                color: Colors.red,
+              ),
             ),
-          ),
+
+
 
           PainelConfirmarEndereco(
+            key: _painelKey,
             controller: _buscaController,
             enderecoValido: enderecoValido,
             onPesquisarPress: abrirBuscaManual,

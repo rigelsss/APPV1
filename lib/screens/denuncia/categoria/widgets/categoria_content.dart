@@ -27,7 +27,7 @@ class CategoriaContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(
               'Categoria da infração',
               style: GoogleFonts.lato(fontSize: 24),
