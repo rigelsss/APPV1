@@ -108,7 +108,7 @@ class DenunciaController {
   final DateTime? picked = await showDatePicker(
     context: context,
     initialDate: DateTime.now(),
-    firstDate: DateTime(2000),
+    firstDate: DateTime(2020),
     lastDate: DateTime.now(),
     locale: const Locale('pt', 'BR'),
     builder: (context, child) {
