@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/home/home_screen.dart';
-import 'widgets/navbar.dart';
-import 'denuncia/PageDenuncia.dart';
-import 'balneabilidade/balneabilidade.dart';
-import 'noticias/pagina_noticias/pagina_noticias.dart';
+import '../widgets/navbar.dart';
+import '../denuncia/PageDenuncia.dart';
+import '../balneabilidade/balneabilidade.dart';
+import '../noticias/pagina_noticias/pagina_noticias.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});

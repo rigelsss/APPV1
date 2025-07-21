@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sudema_app/screens/RecuperacaoSenha.dart';
-import 'package:sudema_app/screens/home/home_screen.dart';
+import 'package:sudema_app/screens/senhas/RecuperacaoSenha.dart';
 import 'package:sudema_app/screens/registerUser/RegistroUser.dart';
-import 'package:sudema_app/services/AuthMe.dart';
-import 'package:sudema_app/services/controllerLogin.dart';
-import 'package:another_flushbar/flushbar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sudema_app/screens/login/controller/login_controller.dart';
 import 'package:sudema_app/screens/widgets/appbar_login.dart';
-import '../reativar_conta.dart';
-import '/screens/registerUser/confirmarRegistro.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,130 +15,11 @@ class _LoginPageState extends State<LoginPage> {
   String? voltarPara;
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final LoginScreenController _loginController = LoginScreenController();
   bool _checkboxValue = false;
   bool _obscureText = true;
+  // ignore: unused_field
   String? _token;
-
-  Future<void> _obterESalvarDeviceToken() async {
-    try {
-      final fcmToken = await FirebaseMessaging.instance.getToken();
-      if (fcmToken != null) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('deviceToken', fcmToken);
-        print('Device Token salvo no SharedPreferences: $fcmToken');
-      } else {
-        print('Não foi possível obter o deviceToken do Firebase Messaging');
-      }
-    } catch (e) {
-      print('Erro ao obter deviceToken: $e');
-    }
-  }
-
-  Future<Map<String, dynamic>?> obterInformacoesUsuario() async {
-    if (_token == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Token não encontrado!')),
-      );
-      return null;
-    }
-
-    try {
-      final data = await AuthController.obterInformacoesUsuario(_token!);
-
-      if (data != null) {
-        print('Dados do usuário: $data');
-        return data;
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Erro ao buscar dados do usuário')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao obter informações do usuário: $e')),
-      );
-    }
-
-    return null;
-  }
-
-  Future<void> realizarLogin() async {
-    final email = emailController.text.trim();
-    final senha = passwordController.text.trim();
-
-    if (email.isEmpty || senha.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Preencha todos os campos')),
-      );
-      return;
-    }
-
-    try {
-      final resultado = await LoginController.realizarLogin(email, senha);
-
-      if (resultado['success']) {
-        final token = resultado['data']['token'];
-        setState(() {
-          _token = token;
-        });
-
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', token);
-
-        await _obterESalvarDeviceToken();
-
-        final dadosUsuario = await obterInformacoesUsuario();
-
-        if (dadosUsuario != null) {
-          final destino = voltarPara;
-          if (destino != null) {
-            Navigator.pushReplacementNamed(context, destino);
-          } else {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => HomeScreen(
-                  initialIndex: 0,
-                  userInfo: dadosUsuario,
-                ),
-              ),
-            );
-          }
-        }
-      } else if (resultado['disabledUser'] == true) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ReativarContaPage(email: email, senha: senha),
-          ),
-        );
-      } else if (resultado['nonVerifiedUser'] == true || resultado['statusCode'] == 423) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => CodigoRegistro(
-              email: resultado['email'],
-            ),
-          ),
-        );
-      } else {
-        Flushbar(
-          title: 'Erro',
-          message: 'E-mail ou senha inválidos. Verifique suas credenciais.',
-          duration: const Duration(seconds: 5),
-          backgroundColor: Colors.red.shade600,
-          icon: const Icon(Icons.error_outline, color: Colors.white),
-          flushbarPosition: FlushbarPosition.TOP,
-          borderRadius: BorderRadius.circular(10),
-          margin: const EdgeInsets.all(8),
-        ).show(context);
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao realizar login: $e')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const Recuperacaoosenha(),
+                            builder: (context) => const RecuperacaoSenha(),
                           ),
                         );
                       },
@@ -256,7 +130,25 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   height: 60,
                   child: ElevatedButton(
-                    onPressed: realizarLogin,
+                    onPressed: () {
+                      final email = emailController.text.trim();
+                      final senha = passwordController.text.trim();
+
+                      _loginController.realizarLogin(
+                        context: context,
+                        email: email,
+                        senha: senha,
+                        voltarPara: voltarPara,
+                        onTokenReceived: (token) {
+                          setState(() {
+                            _token = token;
+                          });
+                        },
+                        onUserDataReceived: (userData) {
+                          print('Usuário autenticado: $userData');
+                        },
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2A2F8C),
                       minimumSize: const Size(300, 60),
@@ -270,61 +162,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                /*SizedBox(height: 12,),*/
-                /*Row(
-                  children: [
-                    const Expanded(
-                      child: Divider(
-                        color: Colors.grey,
-                        thickness: 1,
-                        endIndent: 10,
-                      ),
-                    ),
-                    const Text(
-                      'ou',
-                      style: TextStyle(fontSize: 16, color: Colors.black),
-                    ),
-                    const Expanded(
-                      child: Divider(
-                        color: Colors.grey,
-                        thickness: 1,
-                        indent: 10,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 12,),
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: realizarLogin,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      minimumSize: const Size(300, 60),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        side: const BorderSide(color: Colors.grey, width: 1.5),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/icon/googleicon.png',
-                          height: 25,
-                          width: 25,
-                        ),
-                        const SizedBox(width: 12),
-                        const Text(
-                          'Entrar com o Google',
-                          style: TextStyle(color: Colors.black, fontSize: 16),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),*/
-                /*const SizedBox(height: 12),*/
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

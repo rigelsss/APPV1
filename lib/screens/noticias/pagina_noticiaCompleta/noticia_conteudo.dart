@@ -47,8 +47,7 @@ class NoticiaConteudo extends StatelessWidget {
             Image.network(
               noticia['imagem_url'],
               width: double.infinity,
-              height: 500,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain, 
             ),
           const SizedBox(height: 16),
           Html(
