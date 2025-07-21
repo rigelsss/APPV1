@@ -10,9 +10,9 @@ import 'package:sudema_app/screens/notificacao/notificacoes.dart';
 import 'package:sudema_app/screens/perfil/perfil/perfil_page.dart';
 import 'package:sudema_app/screens/home/home_screen.dart';
 import 'package:sudema_app/screens/login/login.dart';
-import 'package:sudema_app/screens/splash_screen.dart';
+import 'package:sudema_app/screens/diversos/splash_screen.dart';
 import 'package:sudema_app/screens/perfil/menu/alterarperfil/editar_perfil.dart';
-import 'package:sudema_app/screens/reativar_conta.dart';
+import 'package:sudema_app/screens/diversos/reativar_conta.dart';
 import 'package:sudema_app/services/notification_handler.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sudema_app/screens/registerUser/confirmarRegistro.dart';
@@ -61,6 +61,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         showPerformanceOverlay: false,
         title: 'SUDEMA',
+        locale: Locale('pt', 'BR'), 
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

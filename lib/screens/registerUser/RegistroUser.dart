@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:sudema_app/screens/TermosCondicoes.dart';
+import 'package:sudema_app/screens/diversos/TermosCondicoes.dart';
 import 'package:sudema_app/screens/widgets/appbar_login.dart';
 import '../login/login.dart';
 import 'package:sudema_app/services/ControllerRegister.dart';

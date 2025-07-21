@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/perfil/menu/alterarsenha/controller/alterar_senha_controller.dart';
-import 'package:sudema_app/screens/RecuperacaoSenha.dart';
+import 'package:sudema_app/screens/senhas/RecuperacaoSenha.dart';
 
 class AlterarSenhaForm extends StatefulWidget {
   const AlterarSenhaForm({super.key});
@@ -164,7 +164,7 @@ class _AlterarSenhaFormState extends State<AlterarSenhaForm> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Recuperacaoosenha(),
+                        builder: (context) => RecuperacaoSenha(),
                       ),
                     );
                   },
