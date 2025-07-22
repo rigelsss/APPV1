@@ -61,15 +61,22 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         showPerformanceOverlay: false,
         title: 'SUDEMA',
-        locale: Locale('pt', 'BR'), 
-        localizationsDelegates: [
+        locale: const Locale('pt', 'BR'),
+        localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: [
-          const Locale('pt', 'BR'),
+        supportedLocales: const [
+          Locale('pt', 'BR'),
         ],
+        theme: ThemeData(
+          textSelectionTheme: const TextSelectionThemeData(
+            cursorColor: Color(0xFF2A2F8C),           // cursor
+            selectionColor: Color(0x332A2F8C),        // fundo da seleção (com opacidade)
+            selectionHandleColor: Color(0xFF2A2F8C),  // "gotinha"
+          ),
+        ),
         initialRoute: '/',
         routes: {
           '/': (context) => const SplashScreen(),

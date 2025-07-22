@@ -5,7 +5,7 @@ import 'package:sudema_app/models/denuncia_data.dart';
 
 class IdentificacaoController {
   String username = 'Acessar';
-  String email = '';
+  String? email;
   String? token;
 
   bool get isTokenValido {
