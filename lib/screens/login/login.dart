@@ -109,6 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                               offset: const Offset(-4, 0),
                               child: Checkbox(
                                 value: _checkboxValue,
+                                activeColor: const Color(0xFF2A2F8C), 
                                 onChanged: (bool? value) {
                                   setState(() {
                                     _checkboxValue = value ?? false;
