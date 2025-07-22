@@ -15,13 +15,28 @@ class _AlterarEmailFormState extends State<AlterarEmailForm> {
   final TextEditingController _confirmarEmailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  final FocusNode _novoEmailFocus = FocusNode();
+  final FocusNode _confirmarEmailFocus = FocusNode();
+
   bool _obscureText = true;
+
+  @override
+  void dispose() {
+    _senhaController.dispose();
+    _novoEmailController.dispose();
+    _confirmarEmailController.dispose();
+    _novoEmailFocus.dispose();
+    _confirmarEmailFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       child: ListView(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           const Text('Senha', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
@@ -51,7 +66,10 @@ class _AlterarEmailFormState extends State<AlterarEmailForm> {
           TextFormField(
             key: const Key('novoEmailField'),
             controller: _novoEmailController,
-            keyboardType: TextInputType.emailAddress,
+            focusNode: _novoEmailFocus,
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.next,
+            autofillHints: const <String>[],
             decoration: inputDecoration(),
             validator: (value) =>
                 value == null || value.isEmpty ? 'Informe o novo e-mail' : null,
@@ -63,7 +81,10 @@ class _AlterarEmailFormState extends State<AlterarEmailForm> {
           TextFormField(
             key: const Key('confirmarEmailField'),
             controller: _confirmarEmailController,
-            keyboardType: TextInputType.emailAddress,
+            focusNode: _confirmarEmailFocus,
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.done,
+            autofillHints: const <String>[],
             decoration: inputDecoration(),
             validator: (value) {
               if (value == null || value.isEmpty) return 'Confirme o novo e-mail';

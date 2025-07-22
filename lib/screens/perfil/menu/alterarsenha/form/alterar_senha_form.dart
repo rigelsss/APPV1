@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/perfil/menu/alterarsenha/controller/alterar_senha_controller.dart';
 import 'package:sudema_app/screens/senhas/RecuperacaoSenha.dart';
+import '../widgets/alterar_senha_widget_decoration.dart'; 
 
 class AlterarSenhaForm extends StatefulWidget {
   const AlterarSenhaForm({super.key});
@@ -29,7 +30,6 @@ class _AlterarSenhaFormState extends State<AlterarSenhaForm> {
   }
 
   void _confirmarAlteracao() async {
-    // Verifica se algum campo está vazio
     if (_senhaAtualController.text.trim().isEmpty ||
         _novaSenhaController.text.trim().isEmpty ||
         _confirmarSenhaController.text.trim().isEmpty) {
@@ -84,19 +84,13 @@ class _AlterarSenhaFormState extends State<AlterarSenhaForm> {
       TextField(
         controller: _senhaAtualController,
         obscureText: _obscureCurrent,
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          suffixIcon: IconButton(
-            icon: Icon(
-              _obscureCurrent ? Icons.visibility_off : Icons.visibility,
-              color: Colors.grey,
-            ),
-            onPressed: () {
-              setState(() {
-                _obscureCurrent = !_obscureCurrent;
-              });
-            },
-          ),
+        decoration: inputDecoration(
+          obscure: _obscureCurrent,
+          onToggle: () {
+            setState(() {
+              _obscureCurrent = !_obscureCurrent;
+            });
+          },
         ),
       ),
       const SizedBox(height: 24),
@@ -105,19 +99,13 @@ class _AlterarSenhaFormState extends State<AlterarSenhaForm> {
       TextField(
         controller: _novaSenhaController,
         obscureText: _obscureNew,
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          suffixIcon: IconButton(
-            icon: Icon(
-              _obscureNew ? Icons.visibility_off : Icons.visibility,
-              color: Colors.grey,
-            ),
-            onPressed: () {
-              setState(() {
-                _obscureNew = !_obscureNew;
-              });
-            },
-          ),
+        decoration: inputDecoration(
+          obscure: _obscureNew,
+          onToggle: () {
+            setState(() {
+              _obscureNew = !_obscureNew;
+            });
+          },
         ),
       ),
       const SizedBox(height: 10),
@@ -131,19 +119,13 @@ class _AlterarSenhaFormState extends State<AlterarSenhaForm> {
       TextField(
         controller: _confirmarSenhaController,
         obscureText: _obscureConfirm,
-        decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          suffixIcon: IconButton(
-            icon: Icon(
-              _obscureConfirm ? Icons.visibility_off : Icons.visibility,
-              color: Colors.grey,
-            ),
-            onPressed: () {
-              setState(() {
-                _obscureConfirm = !_obscureConfirm;
-              });
-            },
-          ),
+        decoration: inputDecoration(
+          obscure: _obscureConfirm,
+          onToggle: () {
+            setState(() {
+              _obscureConfirm = !_obscureConfirm;
+            });
+          },
         ),
       ),
       const SizedBox(height: 20),

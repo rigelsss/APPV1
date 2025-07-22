@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:sudema_app/screens/widgets/drawer.dart';
-
 import 'form/alterar_email_form.dart';
 
 class EditarEmail extends StatefulWidget {
@@ -47,11 +46,25 @@ class _EditarEmailState extends State<EditarEmail> {
           color: Colors.black,
         ),
         elevation: 0,
+        surfaceTintColor: Colors.white,
       ),
       drawer: CustomDrawer(onItemSelected: (int index) {}),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: AlterarEmailForm(),
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: AlterarEmailForm(),
+                ),
+              );
+            },
+          ),
+        ),
       ),
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,

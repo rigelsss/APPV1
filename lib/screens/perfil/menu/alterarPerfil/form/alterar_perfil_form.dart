@@ -3,7 +3,7 @@ import 'package:sudema_app/screens/perfil/menu/alterarperfil/controller/alterar_
 import 'package:sudema_app/utils/validarCPF.dart';
 import 'package:sudema_app/screens/perfil/menu/alterarperfil/utils/alterar_perfil_validadores.dart';
 import 'package:sudema_app/screens/perfil/perfil/perfil_page.dart';
-import 'package:sudema_app/screens/widgets/custom_form_field.dart';
+import 'package:sudema_app/screens/perfil/menu/alterarperfil/widgets/alterar_perfil_widget_decoration.dart';
 
 class EditarPerfilForm extends StatelessWidget {
   final EditarPerfilController controller;

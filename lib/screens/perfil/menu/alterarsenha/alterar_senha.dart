@@ -36,17 +36,36 @@ class _EditarSenhaState extends State<EditarSenha> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Alterar senha'),
         backgroundColor: Colors.white,
-        leading: BackButton(onPressed: () {
-          Navigator.pop(context);
-        }),
+        surfaceTintColor: Colors.white,
+        leading: BackButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: AlterarSenhaForm(),
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: const IntrinsicHeight(
+                    child: AlterarSenhaForm(),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ),
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
