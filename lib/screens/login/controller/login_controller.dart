@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sudema_app/screens/home/home_screen.dart';
 import 'package:sudema_app/screens/diversos/reativar_conta.dart';
 import 'package:sudema_app/screens/registerUser/confirmarRegistro.dart';
@@ -56,9 +57,22 @@ class LoginScreenController {
     String? voltarPara,
   }) async {
     if (email.isEmpty || senha.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Preencha todos os campos')),
-      );
+      Flushbar(
+        flushbarPosition: FlushbarPosition.TOP,
+        messageText: Text('preencha todos os campos',
+          style: TextStyle(color: Colors.red, fontSize: 16),),
+      duration: Duration(seconds: 3),
+      backgroundColor: Color(0xFFF8DFDD),
+        icon: SvgPicture.asset(
+          'assets/icon/x-circle.svg',
+          width: 28,
+          height: 28,
+          color: Colors.red,
+        ),
+        borderRadius: BorderRadius.circular(10),
+        margin: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(16),
+      ).show(context);
       return;
     }
 
@@ -106,13 +120,13 @@ class LoginScreenController {
           ),
         );
       } else {
-        Flushbar(
-          title: 'Erro',
-          message: 'E-mail ou senha inválidos. Verifique suas credenciais.',
-          duration: const Duration(seconds: 5),
-          backgroundColor: Colors.red.shade600,
-          icon: const Icon(Icons.error_outline, color: Colors.white),
-          flushbarPosition: FlushbarPosition.TOP,
+        Flushbar(flushbarPosition: FlushbarPosition.TOP,
+          messageText: Text('E-mail ou senha inválidos. Verifique suas credenciais.',
+          style: TextStyle(color: Colors.red, fontSize: 16),),
+          duration: const Duration(seconds: 3),
+          backgroundColor: Color(0xFFF8DFDD),
+          icon: SvgPicture.asset('assets/icon/x-circle.svg',
+          width: 28, height: 28, color: Colors.red,),
           borderRadius: BorderRadius.circular(10),
           margin: const EdgeInsets.all(8),
         ).show(context);
