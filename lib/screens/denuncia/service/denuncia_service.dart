@@ -129,6 +129,9 @@ class DenunciaService {
         case 403:
           CustomSnackbar.erro(context, 'Acesso negado.');
           break;
+        case 429:
+          CustomSnackbar.erro(context, 'Você atingiu o limite de denúncias permitido por dia.');
+          break;
         case 500:
           CustomSnackbar.erro(context, 'Erro interno do servidor. Tente novamente mais tarde.');
           break;
