@@ -30,9 +30,9 @@ class _ResumoDenunciaScreenState extends State<ResumoDenunciaScreen> {
           context,
           MaterialPageRoute(builder: (context) => const DenunciaConcluida()),
         );
-      } else {
+      } /*else {
         _mostrarErro('❌ Erro inesperado: o envio falhou, mas sem detalhes do servidor.');
-      }
+      }*/
     } catch (e) {
       _mostrarErro('Erro ao enviar denúncia: ${e.toString()}');
     } finally {
