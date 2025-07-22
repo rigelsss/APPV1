@@ -60,7 +60,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
     return SafeArea(
       child: Container(
         color: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        padding: const EdgeInsets.only(left: 20, top: 0, right: 20, bottom: 0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,6 +125,7 @@ class _DenunciaScreenState extends State<DenunciaScreen> {
                   ),
                 ),
               ),
+              SizedBox(height: 10)
             ],
           ),
         ),

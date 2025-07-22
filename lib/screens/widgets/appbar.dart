@@ -143,7 +143,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
               if (widget.onLoginTap != null) {
                 widget.onLoginTap!();
               } else {
-                // Caso não tenha callback, abre rota padrão de login:
                 Navigator.pushNamed(context, '/login');
               }
             }

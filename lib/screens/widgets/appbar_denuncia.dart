@@ -28,7 +28,6 @@ class _DenunciaAppBarState extends State<DenunciaAppBar> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     if (token != null) {
-      // Usa a função injetada, se existir, senão a padrão do JwtDecoder
       final isExpired = widget.isTokenExpired?.call(token) ?? JwtDecoder.isExpired(token);
       if (!isExpired) {
         setState(() {

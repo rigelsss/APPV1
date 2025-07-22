@@ -94,37 +94,62 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Transform.translate(
-                      offset: const Offset(-14, 0),
-                      child: Checkbox(
-                        value: _checkboxValue,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _checkboxValue = value ?? false;
-                          });
-                        },
-                      ),
-                    ),
-                    Transform.translate(
-                      offset: const Offset(-20, 0),
-                      child: const Text('Mantenha-me conectado'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RecuperacaoSenha(),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final largura = constraints.maxWidth;
+                    final bool telaPequena = largura < 360;
+
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Transform.translate(
+                              offset: const Offset(-4, 0),
+                              child: Checkbox(
+                                value: _checkboxValue,
+                                activeColor: const Color(0xFF2A2F8C), 
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    _checkboxValue = value ?? false;
+                                  });
+                                },
+                              ),
+                            ),
+                            Transform.translate(
+                              offset: const Offset(-4, 0),
+                              child: Text(
+                                'Mantenha-me conectado',
+                                style: TextStyle(fontSize: telaPequena ? 11 : 14),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Flexible(
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const RecuperacaoSenha(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Esqueceu a senha?',
+                              style: TextStyle(
+                                fontSize: telaPequena ? 11 : 14,
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
-                        );
-                      },
-                      child: const Text('Esqueceu a senha?', style: TextStyle(color: Colors.black)),
-                    ),
-                  ],
+                        ),
+                      ],
+                    );
+                  },
                 ),
+
                 const SizedBox(height: 8),
                 SizedBox(
                   width: double.infinity,
@@ -162,33 +187,42 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Ainda não possui uma conta?',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(width: 8),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegistroUser(),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'Cadastre-se',
-                        style: TextStyle(
-                          color: Color(0xFF2A2F8C),
-                          fontWeight: FontWeight.bold,
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final bool telaPequena = constraints.maxWidth < 360;
+
+                    return Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(
+                          'Ainda não possui uma conta?',
+                          style: TextStyle(fontSize: telaPequena ? 14 : 16),
                         ),
-                      ),
-                    ),
-                  ],
+                        const SizedBox(width: 4),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RegistroUser(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Cadastre-se',
+                            style: TextStyle(
+                              fontSize: telaPequena ? 14 : 16,
+                              color: const Color(0xFF2A2F8C),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
+
                 const SizedBox(height: 24),
               ],
             ),

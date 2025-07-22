@@ -11,12 +11,14 @@ class MapaInterativo extends StatefulWidget {
   final LatLng? posicaoAtual;
   final void Function(LatLng novaPosicao, String enderecoFormatado) onAtualizarPosicao;
   final void Function(GoogleMapController)? onMapCreatedExternal;
+  final double paddingBottom;
 
   const MapaInterativo({
     super.key,
     required this.posicaoAtual,
     required this.onAtualizarPosicao,
     this.onMapCreatedExternal,
+    this.paddingBottom = 0,
   });
 
   @override
@@ -27,6 +29,8 @@ class _MapaInterativoState extends State<MapaInterativo> {
   late GoogleMapController _mapController;
   Timer? _debounce;
   LatLng? _posicaoCentral;
+  bool _usuarioMovendoMapa = false;
+  bool _jaCentralizouInicial = false;
 
   static const String _googleApiKey = 'AIzaSyD-XTfAdL3WxwtBeKfvPhiu1m3niVn1CaM';
 
@@ -47,10 +51,26 @@ class _MapaInterativoState extends State<MapaInterativo> {
       _posicaoCentral = latLng;
     });
 
-    await _buscarEnderecoGoogle(latLng);
-  }
+    await _buscarEnderecoGoogle(latLng, atualizarCallback: false);
 
-  Future<void> _buscarEnderecoGoogle(LatLng posicao) async {
+    if (!_jaCentralizouInicial) {
+      _jaCentralizouInicial = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _mapController.animateCamera(
+            CameraUpdate.newCameraPosition(
+              CameraPosition(
+                target: latLng,
+                zoom: 17,
+              ),
+            ),
+          );
+        }
+      });
+    }
+  }
+  
+  Future<void> _buscarEnderecoGoogle(LatLng posicao, {bool atualizarCallback = false}) async {
     try {
       final url = Uri.parse(
         'https://maps.googleapis.com/maps/api/geocode/json?latlng=${posicao.latitude},${posicao.longitude}&key=$_googleApiKey&language=pt-BR',
@@ -101,7 +121,9 @@ class _MapaInterativoState extends State<MapaInterativo> {
               : enderecoFormatado;
         }
 
-        widget.onAtualizarPosicao(posicao, enderecoFormatado);
+        if (atualizarCallback) {
+          widget.onAtualizarPosicao(posicao, enderecoFormatado);
+        }
       } else {
         throw Exception('Nenhum resultado');
       }
@@ -123,7 +145,16 @@ class _MapaInterativoState extends State<MapaInterativo> {
         _mapController = controller;
         widget.onMapCreatedExternal?.call(controller);
       },
+      padding: EdgeInsets.only(bottom: widget.paddingBottom),
+      myLocationEnabled: true,
+      myLocationButtonEnabled: true,
+      onCameraMoveStarted: () {
+        _usuarioMovendoMapa = true;
+      },
       onCameraIdle: () async {
+        if (!_usuarioMovendoMapa) return;
+        _usuarioMovendoMapa = false;
+
         _debounce?.cancel();
         _debounce = Timer(const Duration(milliseconds: 500), () async {
           LatLngBounds bounds = await _mapController.getVisibleRegion();
@@ -135,11 +166,9 @@ class _MapaInterativoState extends State<MapaInterativo> {
             _posicaoCentral = center;
           });
 
-          _buscarEnderecoGoogle(center);
+          await _buscarEnderecoGoogle(center, atualizarCallback: true);
         });
       },
-      myLocationEnabled: true,
-      myLocationButtonEnabled: true,
     );
   }
 }

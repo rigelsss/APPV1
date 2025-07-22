@@ -94,7 +94,13 @@ class CamposDenunciaForm extends StatelessWidget {
           controller.selecionarData(context, onUpdate);
         },
       ),
-      errorText: controller.exibirErroData && !controller.dataValida ? 'Data inválida' : null,
+      errorText: controller.exibirErroData && !controller.dataValida 
+      ? (
+        controller.dataForaDoIntervalo
+        ? 'A data deve estar entre 01/01/2020 e hoje.'
+        : 'Data em formato inválido.'
+        )
+        : null,
       enabledBorder: base,
       focusedBorder: base,
       errorBorder: base.copyWith(borderSide: const BorderSide(color: Colors.red, width: 1.5)),
