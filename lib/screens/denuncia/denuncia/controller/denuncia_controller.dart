@@ -23,6 +23,7 @@ class DenunciaController {
   bool erroDescricao = false;
   bool erroReferencia = false;
   bool erroDenunciado = false;
+  bool dataForaDoIntervalo = false;
 
   void dispose() {
     dataController.dispose();
@@ -52,12 +53,22 @@ class DenunciaController {
 
   bool validarData(String input) {
     final regex = RegExp(r'^\d{2}/\d{2}/\d{4}$');
+    dataForaDoIntervalo = false;
+
     if (!regex.hasMatch(input)) return false;
 
     try {
       final data = DateFormat('dd/MM/yyyy').parseStrict(input);
       final agora = DateTime.now();
-      return !data.isAfter(agora);
+      final dataMinima = DateTime(2020, 1, 1);
+
+      if (data.isBefore(dataMinima) || data.isAfter(agora)) {
+        dataForaDoIntervalo = true;
+        return false;
+      }
+      
+      return true;
+
     } catch (_) {
       return false;
     }
