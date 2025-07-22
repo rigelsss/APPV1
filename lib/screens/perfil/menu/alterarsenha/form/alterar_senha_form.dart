@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/perfil/menu/alterarsenha/controller/alterar_senha_controller.dart';
@@ -28,6 +29,29 @@ class _AlterarSenhaFormState extends State<AlterarSenhaForm> {
   }
 
   void _confirmarAlteracao() async {
+    // Verifica se algum campo está vazio
+    if (_senhaAtualController.text.trim().isEmpty ||
+        _novaSenhaController.text.trim().isEmpty ||
+        _confirmarSenhaController.text.trim().isEmpty) {
+      await Flushbar(
+        message: 'Por favor, preencha todos os campos',
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.red,
+        icon: const Icon(Icons.error, color: Colors.white),
+      ).show(context);
+      return;
+    }
+
+    if (_novaSenhaController.text.trim() != _confirmarSenhaController.text.trim()) {
+      await Flushbar(
+        message: 'As senhas novas não coincidem',
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.red,
+        icon: const Icon(Icons.error, color: Colors.white),
+      ).show(context);
+      return;
+    }
+
     final mensagem = await AlterarSenhaController.alterarSenha(
       senhaAtual: _senhaAtualController.text.trim(),
       novaSenha: _novaSenhaController.text.trim(),
@@ -35,14 +59,20 @@ class _AlterarSenhaFormState extends State<AlterarSenhaForm> {
     );
 
     if (mensagem == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Senha alterada com sucesso!')),
-      );
+      await Flushbar(
+        message: 'Senha alterada com sucesso!',
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.green,
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+      ).show(context);
       Navigator.pushReplacementNamed(context, '/home');
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(mensagem)),
-      );
+      await Flushbar(
+        message: mensagem,
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.red,
+        icon: const Icon(Icons.error, color: Colors.white),
+      ).show(context);
     }
   }
 

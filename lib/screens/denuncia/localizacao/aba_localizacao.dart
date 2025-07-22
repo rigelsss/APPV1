@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:sudema_app/screens/denuncia/localizacao/endereco_modal_sheet.dart';
@@ -33,12 +35,24 @@ class _AbaLocalizacaoState extends State<AbaLocalizacao> {
 
     final dados = DenunciaData();
     if ([dados.estado, dados.bairro, dados.municipio, dados.logradouro].any((e) => e == null || e.isEmpty)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Endereço incompleto. Tente reposicionar o mapa ou buscar manualmente.'),
-          backgroundColor: Colors.red,
+      Flushbar(
+        flushbarPosition: FlushbarPosition.TOP,
+        duration: Duration(seconds: 3),
+        backgroundColor: Color(0xFFF8DFDD),
+        icon: SvgPicture.asset(
+          'assets/icon/x-circle.svg',
+          width: 28,
+          height: 28,
+          color: Colors.red,
         ),
-      );
+        messageText: Text(
+          'Endereço incompleto. Tente reposicionar o mapa ou buscar manualmente.',
+          style: TextStyle(
+            color: Colors.red,
+            fontSize: 16,
+          ),
+        ),
+      ).show(context);
       return;
     }
 
