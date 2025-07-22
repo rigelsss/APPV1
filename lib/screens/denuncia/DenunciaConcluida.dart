@@ -71,7 +71,7 @@ class _DenunciaConcluida extends State<DenunciaConcluida> {
                 children: [
                   Text(
                     'Denúncias',
-                    style: GoogleFonts.lato(fontSize: 24,),
+                    style: GoogleFonts.lato(fontSize: 24),
                   ),
                   const SizedBox(height: 30),
                   Center(
@@ -86,25 +86,36 @@ class _DenunciaConcluida extends State<DenunciaConcluida> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children:  [
-                            Icon(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Icon(
                               Icons.check_circle_outline,
                               color: Color(0xFF1B8C00),
                               size: 32,
                             ),
-                            SizedBox(width: 8),
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                'Denúncia realizada com sucesso!',
-                                style: GoogleFonts.lato(
-                                  fontSize: 18,
-                                  color: Color(0xFF1B8C00),
-                                ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: LayoutBuilder(
+                                builder: (context, innerConstraints) {
+                                  double fontSize = 18;
+                                  if (innerConstraints.maxWidth < 350) {
+                                    fontSize = 14;
+                                  } else if (innerConstraints.maxWidth < 400) {
+                                    fontSize = 16;
+                                  }
+
+                                  return Text(
+                                    'Denúncia realizada com sucesso!',
+                                    style: GoogleFonts.lato(
+                                      fontSize: fontSize,
+                                      color: const Color(0xFF1B8C00),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  );
+                                },
                               ),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -132,9 +143,10 @@ class _DenunciaConcluida extends State<DenunciaConcluida> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                           ),
-                          child:  Text(
+                          child: Text(
                             'Voltar à página inicial',
-                            style: GoogleFonts.lato(fontSize: 18, color: Colors.white),
+                            style: GoogleFonts.lato(
+                                fontSize: 18, color: Colors.white),
                             textAlign: TextAlign.center,
                           ),
                         ),
