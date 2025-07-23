@@ -1,5 +1,7 @@
 # SUDEMA - MOBILE_FRONTEND
 
+Para a versao em Portugues, consulte [README_pt_BR.md](README_pt_BR.md).
+
 
 
 ## Getting started
