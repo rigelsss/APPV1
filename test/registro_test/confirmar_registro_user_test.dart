@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:sudema_app/screens/registerUser/confirmarRegistro.dart';
+import 'package:sudema_app/screens/cadastro/confirmar_cadastro.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 

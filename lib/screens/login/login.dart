@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/senhas/RecuperacaoSenha.dart';
-import 'package:sudema_app/screens/registerUser/RegistroUser.dart';
+import 'package:sudema_app/screens/cadastro/cadastro_screen.dart';
 import 'package:sudema_app/screens/login/controller/login_controller.dart';
 import 'package:sudema_app/screens/widgets/appbar_login.dart';
 
