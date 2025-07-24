@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sudema_app/screens/home/home_screen.dart';
 import 'package:sudema_app/screens/diversos/reativar_conta.dart';
-import 'package:sudema_app/screens/registerUser/confirmarRegistro.dart';
+import 'package:sudema_app/screens/cadastro/confirmar_cadastro.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sudema_app/services/controllerLogin.dart';

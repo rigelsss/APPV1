@@ -25,15 +25,15 @@ Widget buildLabeledField({
           isDense: true,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Colors.grey, width: 1),
+            borderSide: const BorderSide(color: Colors.grey, width: 1.5),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Colors.grey, width: 1),
+            borderSide: const BorderSide(color: Colors.grey, width: 1.5),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(color: Colors.grey, width: 1.2),
+            borderSide: const BorderSide(color: Colors.grey, width: 1.5),
           ),
           contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         ),

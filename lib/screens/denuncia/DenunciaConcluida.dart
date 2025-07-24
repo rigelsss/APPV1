@@ -99,9 +99,9 @@ class _DenunciaConcluida extends State<DenunciaConcluida> {
                                 builder: (context, innerConstraints) {
                                   double fontSize = 18;
                                   if (innerConstraints.maxWidth < 350) {
-                                    fontSize = 14;
-                                  } else if (innerConstraints.maxWidth < 400) {
                                     fontSize = 16;
+                                  } else if (innerConstraints.maxWidth < 400) {
+                                    fontSize = 18;
                                   }
 
                                   return Text(
