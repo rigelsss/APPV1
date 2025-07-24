@@ -67,97 +67,117 @@ class _ResumoDenunciaScreenState extends State<ResumoDenunciaScreen> {
           ),
 
           const SizedBox(height: 24),
-          Text('Identificação', style: GoogleFonts.lato(fontSize: 14)),
-          const SizedBox(height: 8),
-          _buildCard([
-            if (dados.anonimo == true)
-              _infoValorNegrito('Denúncia Anônima')
-            else
-              _infoValorNegrito(dados.usuarioEmail ?? 'Não informado'),
-          ]),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final bool isTablet = constraints.maxWidth >= 600;
 
-          const SizedBox(height: 24),
-          Text('Categoria', style: GoogleFonts.lato(fontSize: 14)),
-          const SizedBox(height: 8),
-          _buildCard([
-            _infoValorNormal(dados.nomeCategoriaSelecionada ?? 'Não informada'),
-            _infoValorNegrito(dados.nomeSubcategoriaSelecionada ?? 'Não informada'),
-          ]),
+              final Widget conteudo = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Identificação', style: GoogleFonts.lato(fontSize: 14)),
+                  const SizedBox(height: 8),
+                  _buildCard([
+                    if (dados.anonimo == true)
+                      _infoValorNegrito('Denúncia Anônima')
+                    else
+                      _infoValorNegrito(dados.usuarioEmail ?? 'Não informado'),
+                  ]),
 
-          const SizedBox(height: 24),
-          Text('Localização', style: GoogleFonts.lato(fontSize: 14)),
-          const SizedBox(height: 8),
-          _buildCard([
-            _infoValorNormal(dados.municipio ?? 'Não informado'),
-            _infoValorNegrito(dados.logradouro ?? 'Não informado'),
-          ]),
+                  const SizedBox(height: 24),
+                  Text('Categoria', style: GoogleFonts.lato(fontSize: 14)),
+                  const SizedBox(height: 8),
+                  _buildCard([
+                    _infoValorNormal(dados.nomeCategoriaSelecionada ?? 'Não informada'),
+                    _infoValorNegrito(dados.nomeSubcategoriaSelecionada ?? 'Não informada'),
+                  ]),
 
-          const SizedBox(height: 24),
-          Text('Denúncia', style: GoogleFonts.lato(fontSize: 14)),
-          const SizedBox(height: 8),
-          _buildCard([
-            _infoRowEspacado('Data', dados.dataOcorrencia ?? 'Não informada'),
-            _infoRowEspacado('Descrição', dados.descricao ?? 'Não informada'),
-            _infoRowEspacado('Ponto de referência', dados.referencia ?? 'Não informado'),
-            _infoRowEspacado('Inf. do denunciado', dados.informacaoDenunciado ?? 'Não informado'),
-            if (dados.imagemPaths.isNotEmpty)
-              _infoRowEspacado(
-                'Anexos',
-                dados.imagemPaths.map((e) => e.split('/').last).join('     '),
-              ),
-          ]),
+                  const SizedBox(height: 24),
+                  Text('Localização', style: GoogleFonts.lato(fontSize: 14)),
+                  const SizedBox(height: 8),
+                  _buildCard([
+                    _infoValorNormal(dados.municipio ?? 'Não informado'),
+                    _infoValorNegrito(dados.logradouro ?? 'Não informado'),
+                  ]),
 
-          const SizedBox(height: 16),
-          if (dados.imagemPaths.isNotEmpty) ...[
-            Text('Anexos', style: GoogleFonts.lato(fontSize: 14)),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 100,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: dados.imagemPaths.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (context, index) {
-                  return Image.file(
-                    File(dados.imagemPaths[index]),
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  );
-                },
-              ),
-            ),
-          ],
-          Center(
-            child: Text(
-              'Todas as informações estão corretas?',
-              style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-          ),
+                  const SizedBox(height: 24),
+                  Text('Denúncia', style: GoogleFonts.lato(fontSize: 14)),
+                  const SizedBox(height: 8),
+                  _buildCard([
+                    _infoRowEspacado('Data', dados.dataOcorrencia ?? 'Não informada'),
+                    _infoRowEspacado('Descrição', dados.descricao ?? 'Não informada'),
+                    _infoRowEspacado('Ponto de referência', dados.referencia ?? 'Não informado'),
+                    _infoRowEspacado('Inf. do denunciado', dados.informacaoDenunciado ?? 'Não informado'),
+                    if (dados.imagemPaths.isNotEmpty)
+                      _infoRowEspacado(
+                        'Anexos',
+                        dados.imagemPaths.map((e) => e.split('/').last).join('     '),
+                      ),
+                  ]),
 
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: _enviando ? null : _enviar,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1B8C00),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              ),
-              child: _enviando
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : Text('Concluir denúncia', style: GoogleFonts.lato(fontSize: 18, color: Colors.white)),
-            ),
-          ),
+                  const SizedBox(height: 16),
+                  if (dados.imagemPaths.isNotEmpty) ...[
+                    Text('Anexos', style: GoogleFonts.lato(fontSize: 14)),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 100,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: dados.imagemPaths.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 8),
+                        itemBuilder: (context, index) {
+                          return Image.file(
+                            File(dados.imagemPaths[index]),
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
 
-          const SizedBox(height: 12),
-          Center(
-            child: TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('Voltar', style: GoogleFonts.lato(fontSize: 14, color: const Color(0xFF747474))),
-            ),
+                  const SizedBox(height: 24),
+                  Center(
+                    child: Text(
+                      'Todas as informações estão corretas?',
+                      style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: _enviando ? null : _enviar,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1B8C00),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      ),
+                      child: _enviando
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : Text('Concluir denúncia', style: GoogleFonts.lato(fontSize: 18, color: Colors.white)),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Center(
+                    child: TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text('Voltar', style: GoogleFonts.lato(fontSize: 14, color: const Color(0xFF747474))),
+                    ),
+                  ),
+                ],
+              );
+
+              return isTablet
+                  ? Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: conteudo,
+                ),
+              )
+                  : conteudo;
+            },
           ),
         ],
       ),
