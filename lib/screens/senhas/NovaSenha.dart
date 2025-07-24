@@ -103,76 +103,106 @@ class _NovasenhaState extends State<Novasenha> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isTablet = screenWidth >= 600;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBarDenuncia(title: 'Crie uma nova senha'),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-             Text(
-              'Crie uma senha forte com, no mínimo, oito caracteres, contendo uma combinação de letras, números e símbolos.',
-              style: GoogleFonts.lato(fontSize: 16,),
-            ),
-            const SizedBox(height: 20),
-            const Text('Nova senha', style: TextStyle(fontSize: 16)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _novaSenhaController,
-              obscureText: _obscureNovaSenha,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(_obscureNovaSenha ? Icons.visibility_off : Icons.visibility),
-                  onPressed: () {
-                    setState(() {
-                      _obscureNovaSenha = !_obscureNovaSenha;
-                    });
-                  },
-                ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final content = Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: isTablet ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Crie uma senha forte com, no mínimo, oito caracteres, contendo uma combinação de letras, números e símbolos.',
+                style: GoogleFonts.lato(fontSize: 16),
+                textAlign: isTablet ? TextAlign.center : TextAlign.start,
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text('Confirmar a nova senha', style: TextStyle(fontSize: 16)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _confirmarSenhaController,
-              obscureText: _obscureConfirmarSenha,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(_obscureConfirmarSenha ? Icons.visibility_off : Icons.visibility),
-                  onPressed: () {
-                    setState(() {
-                      _obscureConfirmarSenha = !_obscureConfirmarSenha;
-                    });
-                  },
-                ),
+              const SizedBox(height: 20),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text('Nova senha', style: TextStyle(fontSize: 16)),
               ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                onPressed: _resetarSenha,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF11B8C00),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _novaSenhaController,
+                obscureText: _obscureNovaSenha,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscureNovaSenha ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _obscureNovaSenha = !_obscureNovaSenha;
+                      });
+                    },
                   ),
                 ),
-                child: const Text(
-                  'Redefinir',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+              const SizedBox(height: 20),
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text('Confirmar a nova senha', style: TextStyle(fontSize: 16)),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _confirmarSenhaController,
+                obscureText: _obscureConfirmarSenha,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscureConfirmarSenha ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () {
+                      setState(() {
+                        _obscureConfirmarSenha = !_obscureConfirmarSenha;
+                      });
+                    },
+                  ),
                 ),
               ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ElevatedButton(
+                  onPressed: _resetarSenha,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF11B8C00),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: const Text(
+                    'Redefinir',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          );
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: isTablet ? 24 : 16,
+              vertical: isTablet ? 0 : 16,
             ),
-          ],
-        ),
+            child: isTablet
+                ? Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 500,
+                  minHeight: constraints.maxHeight,
+                ),
+                child: Center(child: content),
+              ),
+            )
+                : content,
+          );
+        },
       ),
     );
   }
