@@ -5,7 +5,6 @@ import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:sudema_app/screens/widgets/drawer.dart';
 import 'package:sudema_app/screens/contatos/controler/controller_contatos.dart' as controller;
 
-
 class Contatoss extends StatefulWidget {
   const Contatoss({super.key});
 
@@ -13,17 +12,16 @@ class Contatoss extends StatefulWidget {
   State<Contatoss> createState() => _ContatossState();
 }
 
-
 class _ContatossState extends State<Contatoss> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: HomeAppBar(
-          isLoggedIn: false,
-          onLoginTap: () {
-            Navigator.pushNamed(context, '/login');
-          },
-        ),
+      appBar: HomeAppBar(
+        isLoggedIn: false,
+        onLoginTap: () {
+          Navigator.pushNamed(context, '/login');
+        },
+      ),
       bottomNavigationBar: NavBar(
         currentIndex: -1,
         onTap: (index) {
@@ -64,12 +62,31 @@ class _ContatossState extends State<Contatoss> {
           final paddingHorizontal = isWide ? constraints.maxWidth * 0.2 : 16.0;
 
           return SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: paddingHorizontal,
-                vertical: 24,
-              ),
-              child: _buildContatosBody(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // TÍTULO: sempre alinhado à esquerda da tela
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0, top: 24),
+                  child: Text(
+                    'Contatos',
+                    style: GoogleFonts.lato(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 28),
+
+                // CONTEÚDO: com padding horizontal variável
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: paddingHorizontal,
+                    vertical: 4,
+                  ),
+                  child: _buildContatosBody(),
+                ),
+              ],
             ),
           );
         },
@@ -77,13 +94,10 @@ class _ContatossState extends State<Contatoss> {
     );
   }
 
-  Widget _buildContatosBody(){
+  Widget _buildContatosBody() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 8,),
-        Text('Contatos', style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 28),
         Text(
           'Horário de funcionamento da SUDEMA:',
           style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.normal),
@@ -138,7 +152,9 @@ class _ContatossState extends State<Contatoss> {
               backgroundColor: const Color(0xFF2A2F8C),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 18),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
             child: Text(
               'Acessar sistema de agendamento (SAAP)',
@@ -174,10 +190,17 @@ class _ContatossState extends State<Contatoss> {
     );
   }
 
-  Widget _buildInfoBox({required IconData icon, required String title, required String subtitle}) {
+  Widget _buildInfoBox({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: const Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Row(
         children: [
           Icon(icon, color: Colors.black),
@@ -200,12 +223,17 @@ class _ContatossState extends State<Contatoss> {
   Widget _buildPhoneBox(String number) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: const Color(0xFFF5F5F5), borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Row(
         children: [
           const Icon(Icons.phone_in_talk_outlined),
           const SizedBox(width: 10),
-          Flexible(child: Text(number, style: GoogleFonts.lato(fontSize: 16))),
+          Flexible(
+            child: Text(number, style: GoogleFonts.lato(fontSize: 16)),
+          ),
         ],
       ),
     );

@@ -15,8 +15,14 @@ class PainelConfirmarEndereco extends StatelessWidget {
     required this.onConfirmarPress,
   });
 
+  bool isTablet(BuildContext context) {
+    return MediaQuery.of(context).size.width >= 500;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final bool tablet = isTablet(context);
+
     return Positioned(
       bottom: 0,
       left: 0,
@@ -28,70 +34,74 @@ class PainelConfirmarEndereco extends StatelessWidget {
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 10)],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Localização da Infração',
-              style: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Arraste o mapa para mover o marcador',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 20),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: tablet
+                ? const BoxConstraints(maxWidth: 500)
+                : const BoxConstraints(maxWidth: double.infinity),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Localização da Infração',
+                  style: GoogleFonts.lato(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Arraste o mapa para mover o marcador',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+                const SizedBox(height: 20),
 
-            // Campo de busca
-            GestureDetector(
-              onTap: onPesquisarPress,
-              child: AbsorbPointer(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.9,
-                  child: TextField(
-                    controller: controller,
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      hintText: 'Pesquisar',
-                      hintStyle: const TextStyle(color: Colors.grey),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                      suffixIcon: const Icon(Icons.search, color: Colors.grey),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
-                        borderRadius: BorderRadius.circular(16),
+                // Campo de busca
+                GestureDetector(
+                  onTap: onPesquisarPress,
+                  child: AbsorbPointer(
+                    child: TextField(
+                      controller: controller,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        hintText: 'Pesquisar',
+                        hintStyle: const TextStyle(color: Colors.grey),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                        suffixIcon: const Icon(Icons.search, color: Colors.grey),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ),
 
-            const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-            // Botão
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: enderecoValido ? onConfirmarPress : onPesquisarPress,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2A2F8C),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                // Botão
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: enderecoValido ? onConfirmarPress : onPesquisarPress,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2A2F8C),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: Text(
+                      enderecoValido ? 'Confirmar endereço' : 'Pesquisar',
+                      style: const TextStyle(fontSize: 16, color: Colors.white),
+                    ),
                   ),
                 ),
-                child: Text(
-                  enderecoValido ? 'Confirmar endereço' : 'Pesquisar',
-                  style: const TextStyle(fontSize: 16, color: Colors.white),
-                ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

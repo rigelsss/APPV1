@@ -21,63 +21,85 @@ class CategoriaContent extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Container(
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: Text(
-              'Categoria da infração',
-              style: GoogleFonts.lato(fontSize: 24),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bool isTablet = constraints.maxWidth >= 600;
+
+        return Container(
+          color: Colors.white,
+          alignment: Alignment.topCenter,
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: isTablet ? 500 : double.infinity,
             ),
-          ),
-          Expanded(
-            child: CategoriaSelector(
-              categorias: controller.categorias,
-              iconesPorCategoria: controller.iconesPorCategoria,
-              categoriaSelecionada: controller.categoriaSelecionada,
-              subcategoriaSelecionada: controller.subcategoriaSelecionada,
-              categoriasExpandidas: controller.categoriasExpandidas,
-              onCategoriaSelecionada: (texto) {
-                controller.selecionarCategoria(texto);
-                onRebuild();
-              },
-              onSubcategoriaSelecionada: (nome, id, texto) {
-                controller.selecionarSubcategoria(nome, id, texto);
-                onRebuild();
-              },
-              onToggleExpand: (index) {
-                controller.alternarExpansaoCategoria(index);
-                onRebuild();
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2A2F8C),
-                disabledBackgroundColor: Colors.grey[500],
-                minimumSize: const Size.fromHeight(52.8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              ),
-              onPressed: (controller.categoriaSelecionada != null &&
-                      controller.subcategoriaSelecionada != null &&
-                      controller.subcategoriaSelecionada!.isNotEmpty)
-                  ? onAvancar
-                  : null,
-              child: Center(
-                child: Text(
-                  'Selecionar Categoria',
-                  style: GoogleFonts.lato(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Text(
+                    'Categoria da infração',
+                    style: GoogleFonts.lato(fontSize: 24),
+                  ),
                 ),
-              ),
+                Expanded(
+                  child: CategoriaSelector(
+                    categorias: controller.categorias,
+                    iconesPorCategoria: controller.iconesPorCategoria,
+                    categoriaSelecionada: controller.categoriaSelecionada,
+                    subcategoriaSelecionada: controller.subcategoriaSelecionada,
+                    categoriasExpandidas: controller.categoriasExpandidas,
+                    onCategoriaSelecionada: (texto) {
+                      controller.selecionarCategoria(texto);
+                      onRebuild();
+                    },
+                    onSubcategoriaSelecionada: (nome, id, texto) {
+                      controller.selecionarSubcategoria(nome, id, texto);
+                      onRebuild();
+                    },
+                    onToggleExpand: (index) {
+                      controller.alternarExpansaoCategoria(index);
+                      onRebuild();
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2A2F8C),
+                        disabledBackgroundColor: Colors.grey[500],
+                        minimumSize: const Size.fromHeight(52.8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      onPressed: (controller.categoriaSelecionada != null &&
+                          controller.subcategoriaSelecionada != null &&
+                          controller.subcategoriaSelecionada!.isNotEmpty)
+                          ? onAvancar
+                          : null,
+                      child: Center(
+                        child: Text(
+                          'Selecionar Categoria',
+                          style: GoogleFonts.lato(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

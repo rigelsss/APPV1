@@ -107,6 +107,112 @@ class _CodigodesenhaState extends State<Codigodesenha> {
 
   @override
   Widget build(BuildContext context) {
+    final larguraTela = MediaQuery.of(context).size.width;
+    final bool isTablet = larguraTela >= 600; // geralmente tablet a partir de 600dp de largura
+
+    Widget conteudo = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Um código de verificação foi enviado para o seu e-mail. Por favor, insira-o abaixo.\n\n'
+              'Caso não receba o código em sua caixa de entrada, verifique sua caixa de spam.\n\n'
+              'Este código é válido por até 5 minutos.',
+          style: GoogleFonts.lato(fontSize: 16),
+        ),
+        const SizedBox(height: 30),
+        PinCodeTextField(
+          appContext: context,
+          length: 6,
+          onChanged: (value) => _codigo = value,
+          keyboardType: TextInputType.number,
+          autoFocus: true,
+          pinTheme: PinTheme(
+            shape: PinCodeFieldShape.box,
+            borderRadius: BorderRadius.circular(10),
+            fieldHeight: 50,
+            fieldWidth: 40,
+            activeFillColor: Colors.white,
+            selectedFillColor: Colors.white,
+            inactiveFillColor: Colors.white,
+            activeColor: const Color(0xFF2A2F8C),
+            selectedColor: const Color(0xFF2A2F8C),
+            inactiveColor: Colors.grey.shade400,
+          ),
+          enableActiveFill: false,
+        ),
+        const SizedBox(height: 24),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: _verificarCodigo,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2A2F8C),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 4,
+            ),
+            child: Text(
+              'Verificar',
+              style: GoogleFonts.lato(fontSize: 14, color: Colors.white),
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+        Row(
+          children: [
+            Expanded(
+              child: Divider(
+                color: Colors.grey,
+                thickness: 1,
+                endIndent: 10,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Center(
+              child: Text(
+                'Não recebeu o código?',
+                style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.normal),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Divider(
+                color: Colors.grey,
+                thickness: 1,
+                endIndent: 10,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: _reenviando ? null : _reenviarCodigo,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: const BorderSide(color: Color(0xFF2A2F8C), width: 2),
+              ),
+              elevation: 4,
+            ),
+            child: _reenviando
+                ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+                : const Text('Enviar novamente', style: TextStyle(fontSize: 16)),
+          ),
+        ),
+      ],
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Insira o código'),
@@ -116,107 +222,21 @@ class _CodigodesenhaState extends State<Codigodesenha> {
       ),
       backgroundColor: Colors.white,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-             Text(
-              'Um código de verificação foi enviado para o seu e-mail. Por favor, insira-o abaixo.\n\n'
-                  'Caso não receba o código em sua caixa de entrada, verifique sua caixa de spam.\n\n'
-                  'Este código é válido por até 5 minutos.',
-          style: GoogleFonts.lato(fontSize: 16,),
-            ),
-            const SizedBox(height: 30),
-            PinCodeTextField(
-              appContext: context,
-              length: 6,
-              onChanged: (value) => _codigo = value,
-              keyboardType: TextInputType.number,
-              autoFocus: true,
-              pinTheme: PinTheme(
-                shape: PinCodeFieldShape.box,
-                borderRadius: BorderRadius.circular(10),
-                fieldHeight: 50,
-                fieldWidth: 40,
-                activeFillColor: Colors.white,
-                selectedFillColor: Colors.white,
-                inactiveFillColor: Colors.white,
-                activeColor: const Color(0xFF2A2F8C),
-                selectedColor: const Color(0xFF2A2F8C),
-                inactiveColor: Colors.grey.shade400,
-              ),
-              enableActiveFill: false,
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _verificarCodigo,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2A2F8C),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 4,
-                ),
-                child: Text(
-                  'Verificar',
-                  style: GoogleFonts.lato(fontSize: 14, color: Colors.white),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: Divider(
-                    color: Colors.grey,
-                    thickness: 1,
-                    endIndent: 10,
-                  ),),
-                SizedBox(width: 10),
-                Center(
-                  child: Text(
-                    'Não recebeu o código?',
-                    style: GoogleFonts.lato(fontSize: 14, fontWeight: FontWeight.normal),
-                  ),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Divider(
-                    color: Colors.grey,
-                    thickness: 1,
-                    endIndent: 10,
-                  ),),
-              ],
-            ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _reenviando ? null : _reenviarCodigo,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: const BorderSide(color: Color(0xFF2A2F8C), width: 2),
-                  ),
-                  elevation: 4,
-                ),
-                child: _reenviando
-                    ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-                    : const Text('Enviar novamente', style: TextStyle(fontSize: 16)),
-              ),
-            ),
-          ],
+        padding: EdgeInsets.symmetric(
+          horizontal: isTablet ? larguraTela * 0.25 : 24,
+          vertical: 16,
+        ),
+        child: isTablet
+            ? Center(
+          child: SingleChildScrollView(
+            child: conteudo,
+          ),
+        )
+            : SingleChildScrollView(
+          child: conteudo,
         ),
       ),
     );
   }
+
 }

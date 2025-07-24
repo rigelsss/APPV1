@@ -158,36 +158,52 @@ class _RecuperacaoSenhaState extends State<RecuperacaoSenha> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isTablet = screenWidth >= 600;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBarDenuncia(title: 'Recuperação de senha'),
       body: LayoutBuilder(
         builder: (context, constraints) {
+          final content = Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: isTablet ? CrossAxisAlignment.center : CrossAxisAlignment.start, // <-- centraliza horizontalmente
+            children: [
+              Text(
+                'Informe o e-mail associado à sua conta para alteração de senha.',
+                style: GoogleFonts.lato(fontSize: 16),
+                textAlign: isTablet ? TextAlign.center : TextAlign.start,
+              ),
+              SizedBox(height: 20),
+              _buildEmailTextField(),
+              SizedBox(height: 24),
+              _buildSubmitButton(),
+            ],
+          );
+
           return SingleChildScrollView(
             padding: EdgeInsets.symmetric(
-              horizontal: screenWidth < _smallScreenWidth ? 16 : screenWidth * 0.15,
-              vertical: 24,
+              horizontal: isTablet ? 24 : 16,
+              vertical: isTablet ? 0 : 24,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Informe o e-mail associado à sua conta para alteração de senha.',
-                  style: GoogleFonts.lato(fontSize: 16),
+            child: isTablet
+                ? Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: 500,
+                  minHeight: constraints.maxHeight,
                 ),
-                SizedBox(height: 20),
-                _buildEmailTextField(),
-                SizedBox(height: 24),
-                Center(child: _buildSubmitButton()),
-              ],
-            ),
+                child: Center(child: content), // centraliza vertical e horizontal
+              ),
+            )
+                : content,
           );
         },
       ),
     );
   }
-  
+
+
   void _mostrarFlushbarPadrao(String mensagem, TipoMensagem tipo) {
     Color cor;
     Icon icone;

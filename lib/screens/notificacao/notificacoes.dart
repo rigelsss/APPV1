@@ -137,17 +137,52 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth >= 600; // você pode ajustar esse breakpoint
+
+    Widget bodyContent = _notificacoes.isEmpty
+        ? const Center(
+      child: Text(
+        'Você ainda não possui notificações.',
+        style: TextStyle(fontSize: 18),
+      ),
+    )
+        : ListView.builder(
+      itemCount: _notificacoes.length + 1,
+      itemBuilder: (context, index) {
+        if (index == 0) return const SizedBox(height: 20);
+        final notificacao = _notificacoes[index - 1];
+        return NotificacaoWidget(
+          notificacao: notificacao,
+          index: index - 1,
+          onMarcarComoLida: () async {
+            await NotificacoesService.marcarComoLida(
+              notificacao['id'].toString(),
+              index - 1,
+              _notificacoes,
+                  () {
+                setState(() {});
+              },
+            );
+          },
+        );
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         titleSpacing: 0,
-        title: Text('Notificações',
-          style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),),
+        title: Text(
+          'Notificações',
+          style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
+        ),
         actions: [
           Row(
             children: [
-              const Text('Ativar notificações', style: TextStyle(fontSize: 14, color: Colors.black54)),
+              const Text('Ativar notificações',
+                  style: TextStyle(fontSize: 14, color: Colors.black54)),
               Transform.scale(
                 scale: 0.65,
                 child: Switch(value: _ativado, onChanged: _alternarNotificacoes),
@@ -157,29 +192,15 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
         ],
       ),
       backgroundColor: Colors.white,
-      body: _notificacoes.isEmpty
-          ? const Center(child: Text('Você ainda não possui notificações.', style: TextStyle(fontSize: 18)))
-          : ListView.builder(
-        itemCount: _notificacoes.length + 1,
-        itemBuilder: (context, index) {
-          if (index == 0) return const SizedBox(height: 20);
-          final notificacao = _notificacoes[index - 1];
-          return NotificacaoWidget(
-            notificacao: notificacao,
-            index: index - 1,
-            onMarcarComoLida: () async {
-              await NotificacoesService.marcarComoLida(
-                notificacao['id'].toString(),
-                index - 1,
-                _notificacoes,
-                    () {
-                  setState(() {});
-                },
-              );
-            },
-          );
-        },
-      ),
+      body: isTablet
+          ? Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: bodyContent,
+        ),
+      )
+          : bodyContent,
       bottomNavigationBar: NavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -199,4 +220,5 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
       ),
     );
   }
+
 }

@@ -4,7 +4,6 @@ import 'package:sudema_app/screens/widgets/appbar.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:sudema_app/screens/widgets/drawer.dart';
 
-
 class Monumentos extends StatefulWidget {
   const Monumentos({super.key});
 
@@ -55,7 +54,6 @@ class _MonumentosState extends State<Monumentos> {
           }
         },
       ),
-
       backgroundColor: Colors.white,
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -63,12 +61,29 @@ class _MonumentosState extends State<Monumentos> {
           final paddingHorizontal = isWide ? constraints.maxWidth * 0.2 : 16.0;
 
           return SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: paddingHorizontal,
-                vertical: 24,
-              ),
-              child: _buildMonumentosBody(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Título solto fora do padding lateral
+                const SizedBox(height: 24),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    'Monumento Natural Vale dos Dinossauros (MONA)',
+                    style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Conteúdo centralizado
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: paddingHorizontal,
+                    vertical: 4,
+                  ),
+                  child: _buildMonumentosBody(),
+                ),
+              ],
             ),
           );
         },
@@ -80,12 +95,6 @@ class _MonumentosState extends State<Monumentos> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 8,),
-        Text(
-          'Monumento Natural Vale dos Dinossauros (MONA)',
-        style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
-        ),
-        SizedBox(height: 12,),
         Center(
           child: Image.asset(
             'assets/images/imagevale.png',
@@ -93,33 +102,33 @@ class _MonumentosState extends State<Monumentos> {
             fit: BoxFit.cover,
           ),
         ),
-        SizedBox(height: 24),
+        const SizedBox(height: 24),
         Text(
           'O Vale dos Dinossauros é uma unidade de conservação que fica localizada no sítio Passagem de Pedras, na cidade de Sousa, Sertão do Estado, e é reconhecido como um dos sítios paleontológicos mais importantes do mundo. O local possui uma grande bagagem histórica, com diversas marcas de dinossauros que remetem a aproximadamente 80 espécies que habitavam uma área de 704 quilômetros quadrados na Bacia do Rio do Peixe, no período pré-histórico.',
           style: GoogleFonts.lato(fontSize: 14),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Text(
           'No espaço, você encontra passarelas e mirantes que levam às trilhas formadas pelas pegadas e um museu com grande material de pesquisa paleontológica com informações das espécies que habitavam a região e fotos de achados.',
           style: GoogleFonts.lato(fontSize: 14),
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Text(
           'Horário de funcionamento:',
           style: GoogleFonts.lato(fontSize: 14),
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         _buildInfoBox(
           icon: Icons.access_time,
           title: 'Terça a domingo',
           subtitle: '08:00 às 12:00  |  14:00 às 17:00',
         ),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         Text(
           'Atividades:',
           style: GoogleFonts.lato(fontSize: 14),
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         _buildInfoBoxNoIcon(
           title: 'Museu e trilhas de pegadas',
           subtitle: 'Visitas guiadas às 9h, 10h, 11h, 15h e 16h',
