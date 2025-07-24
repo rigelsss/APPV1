@@ -61,12 +61,30 @@ class _JardimState extends State<Jardim> {
           final paddingHorizontal = isWide ? constraints.maxWidth * 0.2 : 16.0;
 
           return SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: paddingHorizontal,
-                vertical: 24,
-              ),
-              child: _buildJardimBody(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
+                // Título alinhado à esquerda da tela (fora do padding)
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    'Jardim Botânico Benjamim Maranhão',
+                    style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Conteúdo com padding horizontal variável
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: paddingHorizontal,
+                    vertical: 4,
+                  ),
+                  child: _buildJardimBody(),
+                ),
+              ],
             ),
           );
         },
@@ -74,18 +92,10 @@ class _JardimState extends State<Jardim> {
     );
   }
 
-  Widget _buildJardimBody(){
+  Widget _buildJardimBody() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 0),
-        ),
-        SizedBox(height: 8,),
-        Text('Jardim Botânico Benjamim Maranhão',
-        style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
-        ),
-        SizedBox(height: 12,),
         Center(
           child: Image.asset(
             'assets/images/jardim.png',
@@ -93,28 +103,33 @@ class _JardimState extends State<Jardim> {
             fit: BoxFit.cover,
           ),
         ),
-        SizedBox(height: 24,),
-        Text('O Jardim Botânico Benjamin Maranhão (JBBM) está localizado na Avenida Dom Pedro II, Bairro da Torre, João Pessoa-PB. Antes conhecido como Mata do Buraquinho, considerada um dos maiores remanescentes de Mata Atlântica natural em área urbana do Brasil.',
+        const SizedBox(height: 24),
+        Text(
+          'O Jardim Botânico Benjamin Maranhão (JBBM) está localizado na Avenida Dom Pedro II, Bairro da Torre, João Pessoa-PB. Antes conhecido como Mata do Buraquinho, considerada um dos maiores remanescentes de Mata Atlântica natural em área urbana do Brasil.',
           style: GoogleFonts.lato(fontSize: 14),
         ),
-        SizedBox(height: 20,),
-        Text('A área possui cerca de 515ha, dos quais 343ha abrigam o Jardim Botânico, onde a flora revela-se sem timidez nas atividades recreativas e educativas promovidas no local.',
-          style: TextStyle(fontSize: 14),
+        const SizedBox(height: 20),
+        Text(
+          'A área possui cerca de 515ha, dos quais 343ha abrigam o Jardim Botânico, onde a flora revela-se sem timidez nas atividades recreativas e educativas promovidas no local.',
+          style: GoogleFonts.lato(fontSize: 14),
         ),
-        SizedBox(height: 24,),
-        Text('Horário de funcionamento:',
-          style: GoogleFonts.lato(fontSize: 14),),
-        SizedBox(height: 12,),
+        const SizedBox(height: 24),
+        Text(
+          'Horário de funcionamento:',
+          style: GoogleFonts.lato(fontSize: 14),
+        ),
+        const SizedBox(height: 12),
         _buildInfoBox(
           icon: Icons.access_time,
           title: 'Terça a sábado',
           subtitle: '08:00 às 16:30',
         ),
-        SizedBox(height: 24,),
-        Text('Atividades',
+        const SizedBox(height: 24),
+        Text(
+          'Atividades',
           style: GoogleFonts.lato(fontSize: 14),
         ),
-        SizedBox(height: 12,),
+        const SizedBox(height: 12),
         _buildInfoBoxNoIcon(
           title: 'Trilhas guiadas às 9h e 14h',
         ),
