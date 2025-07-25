@@ -12,21 +12,28 @@ class NoticiaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final data = noticia.dataHoraPublicacao;
-    final dataFormatada = "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
-    final horaFormatada = "${data.hour.toString().padLeft(2, '0')}h${data.minute.toString().padLeft(2, '0')}";
+    final dataFormatada =
+        "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year}";
+    final horaFormatada =
+        "${data.hour.toString().padLeft(2, '0')}h${data.minute.toString().padLeft(2, '0')}";
 
     final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isTablet = screenWidth >= 600;
 
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => NoticiaCompletaPage(id: noticia.id)),
+          MaterialPageRoute(
+              builder: (_) => NoticiaCompletaPage(id: noticia.id)),
         );
       },
       child: Container(
-        width: screenWidth * 0.97,
-        margin: EdgeInsets.zero,
+        width: isTablet ? screenWidth * 0.6 : screenWidth * 0.97, // menor no celular, maior no tablet
+        margin: EdgeInsets.symmetric(
+          horizontal: isTablet ? 10 : 0,
+          vertical: isTablet ? 12 : 0,
+        ),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade200),
           borderRadius: BorderRadius.circular(16),
@@ -42,20 +49,23 @@ class NoticiaCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius:
+              const BorderRadius.vertical(top: Radius.circular(16)),
               child: CachedNetworkImage(
                 imageUrl: noticia.imagemUrl,
-                height: 272.48,
+                height: isTablet ? 246 : 262.48, // imagem maior no tablet
                 width: double.infinity,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                placeholder: (context, url) =>
+                const Center(child: CircularProgressIndicator()),
                 errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
             Container(
               decoration: const BoxDecoration(
                 color: Color.fromARGB(255, 238, 238, 238),
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+                borderRadius:
+                BorderRadius.vertical(bottom: Radius.circular(16)),
               ),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
@@ -66,20 +76,24 @@ class NoticiaCard extends StatelessWidget {
                       alignment: Alignment.centerRight,
                       child: Text(
                         "$dataFormatada   $horaFormatada",
-                        style: GoogleFonts.lato(fontSize: 12, color: Colors.grey),
+                        style: GoogleFonts.lato(
+                            fontSize: 12, color: Colors.grey),
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       noticia.titulo,
-                      style: GoogleFonts.lato(fontWeight: FontWeight.bold, fontSize: 14),
+                      style: GoogleFonts.lato(
+                          fontWeight: FontWeight.bold, fontSize: 14),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
                     Text(
                       noticia.resumo,
-                      style: GoogleFonts.lato(fontSize: 12, color: Color.fromARGB(255, 120, 120, 120)),
+                      style: GoogleFonts.lato(
+                          fontSize: 12,
+                          color: Color.fromARGB(255, 120, 120, 120)),
                       maxLines: 4,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -92,4 +106,5 @@ class NoticiaCard extends StatelessWidget {
       ),
     );
   }
+
 }
