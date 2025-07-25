@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:sudema_app/screens/cadastro/ConfirmarRegistro.dart';
+//import 'package:sudema_app/screens/cadastro/ConfirmarRegistro.dart';
+import 'package:sudema_app/screens/cadastro/cadastro_screen.dart';
 import 'package:sudema_app/screens/cadastro/widgets/cadastro_form.dart';
 
 void main() {

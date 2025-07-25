@@ -77,13 +77,21 @@ class _ServicosCarrosselState extends State<ServicosCarrossel> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth >= 600;
+
+    // Altura e largura dinâmicas
+    final itemHeight = isTablet ? 200.0 : 130.0;
+    final imageHeight = isTablet ? 140.0 : 80.0;
+    final itemWidth = isTablet ? 200.0 : 120.0;
+
     return Column(
       children: [
         Row(
           children: [
             Expanded(
               child: SizedBox(
-                height: 130,
+                height: itemHeight,
                 child: ListView.builder(
                   controller: _scrollController,
                   scrollDirection: Axis.horizontal,
@@ -99,7 +107,7 @@ class _ServicosCarrosselState extends State<ServicosCarrossel> {
                         }
                       },
                       child: Container(
-                        width: 120,
+                        width: itemWidth,
                         margin: const EdgeInsets.only(right: 12),
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
@@ -109,23 +117,23 @@ class _ServicosCarrosselState extends State<ServicosCarrossel> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(12)),
+                              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
                               child: Image.asset(
                                 servico['image'],
                                 fit: BoxFit.cover,
-                                height: 80,
+                                height: imageHeight,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Text(
                                 servico['label'],
                                 textAlign: TextAlign.center,
                                 style: GoogleFonts.lato(
-                                    fontSize: 14, fontWeight: FontWeight.bold),
+                                  fontSize: isTablet ? 16 : 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -150,6 +158,7 @@ class _ServicosCarrosselState extends State<ServicosCarrossel> {
       ],
     );
   }
+
 
   Widget _buildIndicador({required bool ativo}) {
     return AnimatedContainer(

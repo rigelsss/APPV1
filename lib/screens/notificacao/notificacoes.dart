@@ -196,7 +196,7 @@ class _NotificacoesPageState extends State<NotificacoesPage> {
           ? Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
+          constraints: const BoxConstraints(maxWidth: 500),
           child: bodyContent,
         ),
       )
