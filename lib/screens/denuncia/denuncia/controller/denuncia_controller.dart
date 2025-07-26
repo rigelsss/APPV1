@@ -1,3 +1,16 @@
+/// DENUNCIA_CONTROLLER
+///
+/// Responsável por: Gerenciar estado e lógica da etapa final de denúncias.
+/// Utilizado em: Controle da quarta etapa do fluxo de denúncias (preenchimento final).
+/// 
+/// Este controller gerencia:
+/// - Controladores de texto para todos os campos do formulário
+/// - Validação de campos obrigatórios e formato de data
+/// - Upload e gerenciamento de imagens
+/// - Confirmação de termos e condições
+/// - Envio final da denúncia para a API
+/// - Autenticação e recuperação de token
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,24 +20,34 @@ import 'package:sudema_app/services/AuthMe.dart';
 import 'package:sudema_app/screens/denuncia/service/denuncia_service.dart';
 
 class DenunciaController {
-  final dataController = TextEditingController();
-  final descricaoController = TextEditingController();
-  final referenciaController = TextEditingController();
-  final denunciadoController = TextEditingController();
-  final dataFocus = FocusNode();
+  // Controladores de texto para campos do formulário
+  final dataController = TextEditingController();      // Data da ocorrência
+  final descricaoController = TextEditingController(); // Descrição da infração
+  final referenciaController = TextEditingController(); // Ponto de referência
+  final denunciadoController = TextEditingController(); // Informações do denunciado
+  final dataFocus = FocusNode();                       // Controle de foco do campo data
 
-  List<XFile> imagens = [];
-  bool confirmacao = false;
-  bool erroConfirmacao = false;
-  bool enviando = false;
+  // Dados da denúncia
+  List<XFile> imagens = [];           // Lista de imagens selecionadas
+  bool confirmacao = false;           // Estado do checkbox de termos
+  bool erroConfirmacao = false;       // Erro de confirmação de termos
+  bool enviando = false;              // Estado de envio da denúncia
 
-  bool dataValida = true;
-  bool exibirErroData = false;
-  bool erroDescricao = false;
-  bool erroReferencia = false;
-  bool erroDenunciado = false;
-  bool dataForaDoIntervalo = false;
+  // Estados de validação dos campos
+  bool dataValida = true;             // Validação do formato da data
+  bool exibirErroData = false;        // Controle de exibição de erro de data
+  bool erroDescricao = false;         // Erro no campo descrição
+  bool erroReferencia = false;        // Erro no campo referência
+  bool erroDenunciado = false;        // Erro no campo denunciado
+  bool dataForaDoIntervalo = false;   // Data fora do intervalo permitido
 
+  /// dispose
+  ///
+  /// Descrição: Libera recursos dos controladores e listeners.
+  /// Parâmetros: nenhum
+  /// Retorno: void
+  ///
+  /// Deve ser chamado quando o widget é descartado.
   void dispose() {
     dataController.dispose();
     descricaoController.dispose();
@@ -33,19 +56,28 @@ class DenunciaController {
     dataFocus.dispose();
   }
 
+  /// garantirToken
+  ///
+  /// Descrição: Garante que token de autenticação está disponível para envio.
+  /// Parâmetros: nenhum
+  /// Retorno: Future<void>
+  ///
+  /// Recupera token do SharedPreferences se não estiver em DenunciaData.
   Future<void> garantirToken() async {
     final dados = DenunciaData();
 
+    // Verifica se token já está disponível
     if (dados.tokenUsuario == null || dados.usuarioId == null) {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
       if (token != null) {
+        // Obtém informações do usuário a partir do token
         final info = await AuthController.obterInformacoesUsuario(token);
         if (info != null) {
           dados.usuarioId = info['id'];
           dados.tokenUsuario = token;
           dados.usuarioEmail = info['email'];
-          debugPrint('✅ Token recuperado na denúncia: ${dados.usuarioId}, ${dados.tokenUsuario}, ${dados.usuarioEmail}');
+          debugPrint('Token recuperado na denúncia: ${dados.usuarioId}, ${dados.tokenUsuario}, ${dados.usuarioEmail}');
         }
       }
     }

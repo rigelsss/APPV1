@@ -1,8 +1,18 @@
+/// ALTERAR_EMAIL
+///
+/// Responsável por: Tela para alteração de e-mail do usuário com formulário
+/// de validação, drawer e navegação integrada.
+/// Utilizado em: Menu de perfil para permitir alteração de e-mail.
+
 import 'package:flutter/material.dart';
 import 'package:sudema_app/screens/widgets/navbar.dart';
 import 'package:sudema_app/screens/widgets/drawer.dart';
 import 'form/alterar_email_form.dart';
 
+/// Widget EditarEmail
+///
+/// Descrição: Tela com formulário de alteração de e-mail, scroll responsivo,
+/// drawer lateral e navegação inferior.
 class EditarEmail extends StatefulWidget {
   const EditarEmail({super.key});
 

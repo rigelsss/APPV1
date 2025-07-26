@@ -1,3 +1,16 @@
+/// MAPA_INTERATIVO
+///
+/// Responsável por: Widget do Google Maps com funcionalidades de localização e geocodificação.
+/// Utilizado em: Etapa de localização das denúncias ambientais.
+/// 
+/// Este widget oferece:
+/// - Mapa interativo do Google Maps
+/// - Obtenção automática da localização atual via GPS
+/// - Geocodificação reversa para converter coordenadas em endereço
+/// - Debounce para otimizar requisições durante movimento do mapa
+/// - Parsing detalhado de endereços (estado, cidade, bairro, logradouro)
+/// - Integração com modelo global de dados da denúncia
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -8,10 +21,10 @@ import 'package:sudema_app/models/denuncia_data.dart';
 import 'package:geocoding/geocoding.dart' as geo;
 
 class MapaInterativo extends StatefulWidget {
-  final LatLng? posicaoAtual;
-  final void Function(LatLng novaPosicao, String enderecoFormatado) onAtualizarPosicao;
-  final void Function(GoogleMapController)? onMapCreatedExternal;
-  final double paddingBottom;
+  final LatLng? posicaoAtual;                                                      // Posição atual do mapa
+  final void Function(LatLng novaPosicao, String enderecoFormatado) onAtualizarPosicao; // Callback para atualizações
+  final void Function(GoogleMapController)? onMapCreatedExternal;                  // Callback quando mapa é criado
+  final double paddingBottom;                                                      // Padding inferior para painel
 
   const MapaInterativo({
     super.key,
@@ -26,12 +39,17 @@ class MapaInterativo extends StatefulWidget {
 }
 
 class _MapaInterativoState extends State<MapaInterativo> {
-  late GoogleMapController _mapController;
-  Timer? _debounce;
-  LatLng? _posicaoCentral;
-  bool _usuarioMovendoMapa = false;
-  bool _jaCentralizouInicial = false;
+  // Controles do mapa
+  late GoogleMapController _mapController;  // Controlador do Google Maps
+  Timer? _debounce;                        // Timer para debounce de requisições
+  LatLng? _posicaoCentral;                 // Posição central atual do mapa
+  
+  // Estados de controle
+  bool _usuarioMovendoMapa = false;        // Flag para detectar movimento do usuário
+  bool _jaCentralizouInicial = false;      // Flag para centralizar apenas uma vez
 
+  // Chave da API do Google para geocodificação
+  // TODO: Mover para variáveis de ambiente por segurança
   static const String _googleApiKey = 'AIzaSyD-XTfAdL3WxwtBeKfvPhiu1m3niVn1CaM';
 
   @override

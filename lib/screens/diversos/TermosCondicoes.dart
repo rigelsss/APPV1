@@ -1,3 +1,15 @@
+/// TERMOS_CONDICOES
+///
+/// Responsável por: Exibir os termos e condições de uso do aplicativo SUDEMA.
+/// Utilizado em: Fluxo de cadastro, antes do usuário criar sua conta no sistema.
+/// 
+/// Esta tela apresenta todos os termos legais, políticas de privacidade e
+/// condições de uso do aplicativo da SUDEMA, incluindo informações sobre:
+/// - Coleta de dados pessoais (LGPD)
+/// - Funcionalidades de denúncias ambientais
+/// - Segurança e proteção de dados
+/// - Responsabilidades do usuário
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sudema_app/screens/cadastro/cadastro_screen.dart';
@@ -11,6 +23,10 @@ class Termoscondicoes extends StatefulWidget {
 }
 
 class _TermoscondicoesState extends State<Termoscondicoes> {
+  /// Widget TermosCondicoes
+  ///
+  /// Descrição: Interface completa dos termos e condições de uso do app SUDEMA.
+  /// Contém texto scrollável com todas as cláusulas legais e botão de aceite.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,37 +37,44 @@ class _TermoscondicoesState extends State<Termoscondicoes> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Seção 1: Introdução ao aplicativo SUDEMA
             Text(
               '1. Introdução',
               style: GoogleFonts.lato(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
+            // Explicação sobre o propósito oficial do aplicativo SUDEMA
             Text(
               'Este aplicativo é uma ferramenta oficial da Superintendência de Administração do Meio Ambiente da Paraíba (SUDEMA), criado com o objetivo de aproximar a população das ações de proteção ambiental no estado da Paraíba. Por meio dele, os cidadãos poderão realizar denúncias ambientais, visualizar a balneabilidade das praias, acompanhar informações relevantes e colaborar com a fiscalização ambiental de forma ágil e segura.',
               style: TextStyle(fontSize: 14),
               textAlign: TextAlign.justify,
             ),
             SizedBox(height: 12,),
+            // Cláusula de aceitação dos termos
             Text(' O uso deste aplicativo implica na aceitação integral destes Termos e Condições de Uso, bem como da nossa Política de Privacidade. Leia com atenção antes de se cadastrar ou utilizar nossos serviços.',
               style: TextStyle(fontSize: 14),
               textAlign: TextAlign.justify,),
             SizedBox(height: 20,),
+            // Seção 2: Políticas de coleta de dados pessoais (LGPD)
             Text(
               '2. Coleta de dados',
               style: GoogleFonts.lato(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
+            // Lista dos dados coletados no cadastro e finalidade (LGPD)
             Text(
               'Para utilizar algumas funcionalidades do aplicativo, será necessário realizar um cadastro com os seguintes dados pessoais: nome completo; CPF; e-mail; telefone; e senha de acesso. Esses dados serão utilizados exclusivamente para autenticação do usuário, comunicação e para fins de segurança, conforme previsto na Lei nº 13.709/2018 (LGPD).',
               style: TextStyle(fontSize: 14),
               textAlign: TextAlign.justify,
             ),
             SizedBox(height: 20,),
+            // Seção 3: Funcionalidade principal - Denúncias Ambientais
             Text(
               '3. Denúncias Ambientais',
               style: GoogleFonts.lato(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
+            // Explicação sobre denúncias identificadas vs anônimas
             Text(
               'O aplicativo permite o envio de denúncias ambientais, que podem ser realizadas de forma identificada ou anônima. No entanto, mesmo no modo anônimo, os dados do denunciante serão armazenados com segurança, visando garantir a integridade das informações, prevenir fraudes e permitir eventual investigação, se necessário.',
               style: TextStyle(fontSize: 14),
@@ -105,10 +128,12 @@ class _TermoscondicoesState extends State<Termoscondicoes> {
               style: TextStyle(fontSize: 14),
               textAlign: TextAlign.justify,),
             SizedBox(height: 32),
+            // Botão para aceitar os termos e prosseguir para o cadastro
             SizedBox(
               width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
+                    // Navega para a tela de cadastro após aceitar os termos
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -117,7 +142,7 @@ class _TermoscondicoesState extends State<Termoscondicoes> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF2A2F8C),
+                    backgroundColor: Color(0xFF2A2F8C), // Azul institucional da SUDEMA
                     padding: EdgeInsets.symmetric(horizontal: 124, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

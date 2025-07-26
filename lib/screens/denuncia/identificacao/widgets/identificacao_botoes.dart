@@ -1,11 +1,23 @@
+/// IDENTIFICACAO_BOTOES
+///
+/// Responsável por: Widget com botões de escolha entre denúncia anônima ou identificada.
+/// Utilizado em: Etapa de identificação quando usuário está logado.
+/// 
+/// Este widget contém:
+/// - Mensagem mostrando email do usuário logado
+/// - Botão para denúncia identificada (com dados do usuário)
+/// - Botão para denúncia anônima (sem vincular usuário)
+/// - Estados visuais diferentes baseado na seleção
+/// - Layout responsivo para tablets e celulares
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class IdentificacaoBotoes extends StatelessWidget {
-  final VoidCallback onSelecionarAnonimo;
-  final VoidCallback onSelecionarIdentificado;
-  final bool anonimo;
-  final String? usuarioEmail;
+  final VoidCallback onSelecionarAnonimo;      // Callback para denúncia anônima
+  final VoidCallback onSelecionarIdentificado; // Callback para denúncia identificada
+  final bool anonimo;                          // Estado atual da seleção
+  final String? usuarioEmail;                  // Email do usuário logado
 
   const IdentificacaoBotoes({
     super.key,
@@ -15,6 +27,10 @@ class IdentificacaoBotoes extends StatelessWidget {
     required this.usuarioEmail,
   });
 
+  /// Widget IdentificacaoBotoes
+  ///
+  /// Descrição: Interface de escolha entre denúncia anônima ou identificada.
+  /// Layout responsivo com botões que mudam de estado visual.
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -24,6 +40,7 @@ class IdentificacaoBotoes extends StatelessWidget {
         final Widget conteudo = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Mensagem mostrando usuário logado
             RichText(
               text: TextSpan(
                 style: const TextStyle(fontSize: 14, color: Colors.black),
@@ -42,12 +59,14 @@ class IdentificacaoBotoes extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            // Botão para denúncia identificada
             SizedBox(
               width: double.infinity,
               height: 58,
               child: ElevatedButton(
                 onPressed: onSelecionarIdentificado,
                 style: ElevatedButton.styleFrom(
+                  // Cores dinâmicas baseadas na seleção
                   backgroundColor:
                   anonimo ? Colors.white : const Color(0xFF2A2F8C),
                   foregroundColor:
@@ -64,12 +83,15 @@ class IdentificacaoBotoes extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            
+            // Botão para denúncia anônima
             SizedBox(
               width: double.infinity,
               height: 58,
               child: ElevatedButton(
                 onPressed: onSelecionarAnonimo,
                 style: ElevatedButton.styleFrom(
+                  // Cores dinâmicas baseadas na seleção
                   backgroundColor:
                   anonimo ? const Color(0xFF2A2F8C) : Colors.white,
                   foregroundColor:
@@ -88,6 +110,7 @@ class IdentificacaoBotoes extends StatelessWidget {
           ],
         );
 
+        // Layout responsivo: centraliza e limita largura em tablets
         if (isTablet) {
           return Center(
             child: ConstrainedBox(
@@ -97,6 +120,7 @@ class IdentificacaoBotoes extends StatelessWidget {
           );
         }
 
+        // Layout normal para celulares
         return conteudo;
       },
     );

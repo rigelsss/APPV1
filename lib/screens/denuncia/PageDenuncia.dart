@@ -1,3 +1,15 @@
+/// PAGE_DENUNCIA
+///
+/// Responsável por: Exibir a tela inicial do módulo de denúncias ambientais da SUDEMA.
+/// Utilizado em: Aba "Denúncias" da navegação principal do aplicativo.
+/// 
+/// Esta tela apresenta informações educativas sobre denúncias ambientais,
+/// incluindo orientações sobre o que constitui infração ambiental e
+/// o processo após a denúncia. Contém:
+/// - Botão principal para iniciar nova denúncia
+/// - Informações sobre importância das denúncias
+/// - Link para decreto estadual sobre infrações ambientais
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../diversos/webview_screen.dart';
@@ -6,29 +18,34 @@ import 'denunciawraprellerscreen.dart';
 class DenunciaPage extends StatelessWidget {
   const DenunciaPage({super.key});
 
+  /// Widget DenunciaPage
+  ///
+  /// Descrição: Interface inicial do módulo de denúncias com informações educativas.
+  /// Contém botão de ação principal e conteúdo informativo sobre denúncias ambientais.
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600;
+    final isTablet = screenWidth > 600; // Detecta se é tablet para layout responsivo
 
+    // Estilos de texto padronizados para a tela
     final tituloStyle = GoogleFonts.lato(
       fontSize: 14,
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w700, // Negrito para títulos das seções
     );
     final textoStyle = GoogleFonts.lato(
       fontSize: 14,
-      fontWeight: FontWeight.w300,
+      fontWeight: FontWeight.w300, // Texto normal para conteúdo
     );
     final botaoStyle = GoogleFonts.lato(
       fontSize: 18,
       fontWeight: FontWeight.w500,
-      color: Colors.white,
+      color: Colors.white, // Texto branco para botão principal
     );
     final linkStyle = GoogleFonts.lato(
       fontSize: 14,
       fontWeight: FontWeight.w500,
-      color: const Color(0xFF2A2F8C),
-      decoration: TextDecoration.underline,
+      color: const Color(0xFF2A2F8C), // Azul institucional da SUDEMA
+      decoration: TextDecoration.underline, // Sublinhado para indicar link
     );
 
     return Scaffold(
@@ -39,32 +56,35 @@ class DenunciaPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Título sempre à esquerda
+              // Título da seção sempre alinhado à esquerda
               Text(
                 'Denúncias',
                 style: GoogleFonts.lato(fontSize: 22, fontWeight: FontWeight.w400),
               ),
               const SizedBox(height: 20),
 
-              // Conteúdo centralizado apenas em telas largas (tablets)
+              // Conteúdo principal com layout responsivo
+              // Centralizado em tablets, largura total em celulares
               Center(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: isTablet ? 600 : double.infinity),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Botão principal para iniciar nova denúncia
                       SizedBox(
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
                           onPressed: () {
+                            // Navega para o fluxo completo de denúncia
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => const DenunciaWrapperScreen()),
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2A2F8C),
+                            backgroundColor: const Color(0xFF2A2F8C), // Azul institucional SUDEMA
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -75,6 +95,7 @@ class DenunciaPage extends StatelessWidget {
                             children: [
                               Text('Realizar denúncia', style: botaoStyle),
                               const SizedBox(width: 10),
+                              // Ícone de denúncia ao lado do texto
                               Image.asset(
                                 'assets/icon/img_1.png',
                                 width: 28,
@@ -86,6 +107,8 @@ class DenunciaPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 20),
+                      
+                      // Seção educativa: Importância das denúncias
                       Text('Por que denunciar?', style: tituloStyle),
                       const SizedBox(height: 12),
                       Text(
@@ -93,6 +116,8 @@ class DenunciaPage extends StatelessWidget {
                         style: textoStyle,
                       ),
                       const SizedBox(height: 12),
+                      
+                      // Seção educativa: Processo após denúncia
                       Text('O que acontece após a denúncia?', style: tituloStyle),
                       const SizedBox(height: 12),
                       Text(
@@ -100,6 +125,8 @@ class DenunciaPage extends StatelessWidget {
                         style: textoStyle,
                       ),
                       const SizedBox(height: 12),
+                      
+                      // Seção educativa: Definição de infrações ambientais
                       Text('O que é considerado infração ambiental?', style: tituloStyle),
                       const SizedBox(height: 12),
                       Text(
@@ -107,8 +134,11 @@ class DenunciaPage extends StatelessWidget {
                         style: textoStyle,
                       ),
                       const SizedBox(height: 24),
+                      
+                      // Link para visualizar o decreto estadual em WebView
                       GestureDetector(
                         onTap: () {
+                          // Abre o decreto em WebView para consulta
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -118,16 +148,17 @@ class DenunciaPage extends StatelessWidget {
                             ),
                           );
                         },
+                        // Container estilizado como botão de link
                         child: Container(
                           width: double.infinity,
                           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF5F5F5),
+                            color: const Color(0xFFF5F5F5), // Fundo cinza claro
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: const Color(0xFF2A2F8C)),
+                            border: Border.all(color: const Color(0xFF2A2F8C)), // Borda azul SUDEMA
                           ),
                           child: FittedBox(
-                            fit: BoxFit.scaleDown,
+                            fit: BoxFit.scaleDown, // Ajusta texto se necessário
                             child: Text(
                               'Decreto Estadual nº 44.889, de 26 de março de 2024',
                               style: linkStyle,

@@ -1,8 +1,23 @@
+/// ENDERECO_MODAL_SHEET
+///
+/// Responsável por: Modal de busca manual de endereços via Google Places API.
+/// Utilizado em: Busca alternativa quando GPS não é preciso ou usuário quer endereço específico.
+/// 
+/// Este modal oferece:
+/// - Campo de busca com autocomplete
+/// - Integração com Google Places API
+/// - Debounce para otimizar requisições
+/// - Lista de sugestões com detalhes
+/// - Retorno de coordenadas e endereço formatado
+/// - Filtro para resultados apenas do Brasil
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_place/google_place.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+// Chave da API do Google Places para busca de endereços
+// TODO: Mover para variáveis de ambiente por segurança
 const kGoogleApiKey = "AIzaSyD-XTfAdL3WxwtBeKfvPhiu1m3niVn1CaM";
 
 class EnderecoModalSheet extends StatefulWidget {
@@ -13,26 +28,47 @@ class EnderecoModalSheet extends StatefulWidget {
 }
 
 class _EnderecoModalSheetState extends State<EnderecoModalSheet> {
-  final TextEditingController _controller = TextEditingController();
-  late GooglePlace _googlePlace;
-  List<AutocompletePrediction> _predictions = [];
-  Timer? _debounce;
-  bool _carregando = false;
+  // Controles da interface
+  final TextEditingController _controller = TextEditingController(); // Campo de busca
+  late GooglePlace _googlePlace;                                     // Cliente da Google Places API
+  List<AutocompletePrediction> _predictions = [];                    // Lista de sugestões
+  Timer? _debounce;                                                  // Timer para debounce
+  bool _carregando = false;                                          // Estado de carregamento
 
   @override
   void initState() {
     super.initState();
+    // Inicializa cliente da Google Places API
     _googlePlace = GooglePlace(kGoogleApiKey);
   }
 
+  /// _buscarComDebounce
+  ///
+  /// Descrição: Implementa debounce para evitar muitas requisições durante digitação.
+  /// Parâmetros:
+  /// - value: texto digitado pelo usuário
+  /// Retorno: void
+  ///
+  /// Aguarda 500ms após última digitação antes de buscar.
   void _buscarComDebounce(String value) {
+    // Cancela timer anterior se ainda estiver ativo
     if (_debounce?.isActive ?? false) _debounce!.cancel();
+    // Cria novo timer para buscar após delay
     _debounce = Timer(const Duration(milliseconds: 500), () {
       _buscar(value);
     });
   }
 
+  /// _buscar
+  ///
+  /// Descrição: Executa busca na Google Places API com filtros para o Brasil.
+  /// Parâmetros:
+  /// - input: termo de busca digitado
+  /// Retorno: void
+  ///
+  /// Busca endereços com autocomplete limitado ao Brasil em português.
   void _buscar(String input) async {
+    // Limpa resultados se campo estiver vazio
     if (input.isEmpty) {
       setState(() => _predictions = []);
       return;
@@ -40,16 +76,18 @@ class _EnderecoModalSheetState extends State<EnderecoModalSheet> {
 
     setState(() => _carregando = true);
 
+    // Busca na Google Places API com filtros
     final result = await _googlePlace.autocomplete.get(
       input,
-      language: 'pt',
-      components: [Component('country', 'br')],
+      language: 'pt',                              // Resultados em português
+      components: [Component('country', 'br')],    // Apenas resultados do Brasil
     );
 
+    // Atualiza lista de sugestões
     if (result != null && result.predictions != null) {
       setState(() => _predictions = result.predictions!);
     } else {
-      debugPrint("Erro ou sem resultados");
+      debugPrint("Erro ou sem resultados na busca de endereços");
     }
 
     setState(() => _carregando = false);
