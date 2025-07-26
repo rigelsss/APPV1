@@ -1,93 +1,557 @@
-# SUDEMA - MOBILE_FRONTEND
+# SUDEMA Mobile Frontend
 
+> Aplicativo móvel oficial da SUDEMA (Superintendência de Administração do Meio Ambiente) da Paraíba para denúncias ambientais, consulta de balneabilidade e notícias.
 
+## 📱 Sobre o Projeto
 
-## Getting started
+O SUDEMA Mobile é um aplicativo Flutter desenvolvido para facilitar o acesso dos cidadãos aos serviços da SUDEMA, permitindo:
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+- **Denúncias Ambientais**: Registro de ocorrências com localização e evidências
+- **Balneabilidade**: Consulta da qualidade das praias paraibanas
+- **Notícias**: Informações atualizadas sobre meio ambiente
+- **Perfil do Usuário**: Gerenciamento de conta e dados pessoais
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## 🏗️ Arquitetura do Projeto
 
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+### Estrutura de Pastas
 
 ```
-cd existing_repo
-git remote add origin https://gitcodata.pb.gov.br/ti-idema/sudema-mobile_frontend.git
-git branch -M main
-git push -uf origin main
+lib/screens/
+├── home/                      # Tela principal do aplicativo
+│   ├── home_screen.dart       # Container principal com navegação
+│   ├── home_body.dart         # Conteúdo da home
+│   ├── banner_carrossel.dart  # Carrossel de banners
+│   ├── noticias_carrossel.dart # Carrossel de notícias
+│   └── servicos_carrossel.dart # Carrossel de serviços
+├── login/                     # Sistema de autenticação
+│   ├── login.dart             # Tela de login
+│   └── controller/            # Lógica de autenticação
+├── cadastro/                  # Sistema de registro
+│   ├── cadastro_screen.dart   # Tela principal de cadastro
+│   ├── confirmar_cadastro.dart # Confirmação por código
+│   ├── controller/            # Lógica de cadastro
+│   ├── service/               # Integração com API
+│   └── widgets/               # Componentes do formulário
+├── senhas/                    # Recuperação de senha (3 etapas)
+│   ├── RecuperacaoSenha.dart  # 1ª etapa: inserção de e-mail
+│   ├── CodigoDeSenha.dart     # 2ª etapa: validação do código
+│   └── NovaSenha.dart         # 3ª etapa: redefinição
+├── perfil/                    # Sistema de perfil do usuário
+│   ├── perfil/                # Tela principal do perfil
+│   │   ├── perfil_page.dart   # Container principal
+│   │   ├── perfil_*.dart      # Componentes do perfil
+│   │   └── controller/        # Lógica de gerenciamento
+│   └── menu/                  # Funcionalidades do menu
+│       ├── alterarsenha/      # Alteração de senha
+│       ├── alteraremail/      # Alteração de e-mail
+│       ├── alterarperfil/     # Edição de dados pessoais
+│       └── desativarConta/    # Desativação de conta
+├── denuncia/                  # Sistema de denúncias ambientais
+│   ├── PageDenuncia.dart      # Tela inicial com informações
+│   ├── denunciawraprellerscreen.dart # Wrapper do fluxo
+│   ├── categoria/             # Seleção de categoria
+│   ├── identificacao/         # Identificação do denunciante
+│   ├── localizacao/           # Localização da ocorrência
+│   ├── denuncia/              # Formulário principal
+│   ├── resumo/                # Revisão antes do envio
+│   └── service/               # Integração com API
+├── balneabilidade/            # Sistema de consulta de praias
+│   ├── balneabilidade.dart    # Tela principal
+│   ├── balneabilidade_mapa.dart # Mapa interativo
+│   ├── balneabilidade_filtros.dart # Sistema de filtros
+│   ├── controller/            # Lógica de gerenciamento
+│   └── services/              # Integração com API
+├── noticias/                  # Sistema de notícias
+│   ├── pagina_noticias/       # Lista de notícias
+│   ├── pagina_noticiaCompleta/ # Visualização completa
+│   └── service/               # Integração com API
+├── diversos/                  # Telas auxiliares
+│   ├── splash_screen.dart     # Tela de abertura
+│   ├── mainscreen.dart        # Container de navegação
+│   ├── reativar_conta.dart    # Reativação de conta
+│   └── webview_screen.dart    # Visualização web
+└── widgets/                   # Componentes reutilizáveis
+    ├── navbar.dart            # Navegação inferior
+    ├── drawer.dart            # Menu lateral
+    ├── appbar*.dart           # AppBars customizadas
+    └── custom_snackbar.dart   # Feedback visual
 ```
 
-## Integrate with your tools
+### Padrões Arquiteturais
 
-- [ ] [Set up project integrations](https://gitcodata.pb.gov.br/ti-idema/sudema-mobile_frontend/-/settings/integrations)
+- **MVC Pattern**: Controllers para lógica de negócio
+- **Widget Composition**: Componentes reutilizáveis
+- **Service Layer**: Abstração da comunicação com API
+- **State Management**: StatefulWidget com setState e Provider
+- **Responsive Design**: Layout adaptativo mobile/tablet
 
-## Collaborate with your team
+## 🔐 Sistema de Autenticação
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+### Fluxo de Login
+- Autenticação via JWT (JSON Web Token)
+- Persistência local com SharedPreferences
+- Validação de expiração automática
+- Redirecionamento seguro para login
+- Integração com Firebase Messaging para notificações
 
-## Test and Deploy
+### Recuperação de Senha (3 Etapas)
 
-Use the built-in continuous integration in GitLab.
+#### 1. **RecuperacaoSenha** - Inserção de E-mail
+```dart
+// Validação de e-mail via regex
+bool _isValidEmail(String email) {
+  return RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$").hasMatch(email);
+}
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+// Endpoint: POST /password-reset/forgot-password
+```
 
-***
+#### 2. **CodigoDeSenha** - Validação do Código
+```dart
+// Campo PIN de 6 dígitos com PinCodeTextField
+// Timeout de 5 minutos
+// Opção de reenvio com prevenção de spam
 
-# Editing this README
+// Endpoint: POST /password-reset/verify-token
+```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+#### 3. **NovaSenha** - Redefinição
+```dart
+// Validações: mínimo 8 caracteres + coincidência
+// Toggle de visibilidade independente
+// Navegação para login com limpeza de stack
 
-## Suggestions for a good README
+// Endpoint: POST /password-reset/reset-password
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### Sistema de Cadastro
+- Formulário completo com validações brasileiras
+- Máscaras automáticas (CPF, telefone)
+- Confirmação por código via e-mail
+- Integração com API de registro
 
-## Name
-Choose a self-explaining name for your project.
+## 👤 Sistema de Perfil
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+### Funcionalidades Principais
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+#### **Visualização de Perfil**
+- Carregamento de dados via JWT decode
+- Formatação automática (CPF: XXX.XXX.XXX-XX, Telefone: +55 (XX) XXXXX-XXXX)
+- Estados de loading/erro com feedback visual
+- Menu de opções integrado
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+#### **Alteração de Senha**
+```dart
+// 3 campos: atual, nova, confirmação
+// Toggle de visibilidade independente
+// Validações locais + API
+// Feedback via Flushbar
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+// Endpoint: PUT /usuarios/mobile/{id}/alterar-senha
+```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+#### **Alteração de E-mail**
+```dart
+// Validação por senha atual
+// Atualização automática de token JWT
+// Tratamento de encoding (latin1 → utf8)
+// Mensagens específicas para erros comuns
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+// Endpoint: PUT /usuarios/mobile/{id}/alterar-email
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+#### **Edição de Perfil**
+```dart
+// Máscaras automáticas brasileiras
+// Validações específicas por campo
+// Preenchimento inicial formatado
+// Integração com API SUDEMA
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+// Endpoint: PUT /usuarios/mobile/{id}
+```
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+#### **Desativação de Conta**
+```dart
+// Confirmação obrigatória por senha
+// Feedback visual com instruções de reativação
+// Logout automático pós-desativação
+// Navegação com limpeza de stack
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+// Endpoint: PATCH /usuarios/mobile/{id}/desativar
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## 🚨 Sistema de Denúncias
 
-## License
-For open source projects, say how it is licensed.
+### Fluxo Completo de Denúncia
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+#### **Tela Inicial (PageDenuncia)**
+- Informações educativas sobre denúncias ambientais
+- Link para Decreto Estadual nº 44.889/2024
+- Botão principal para iniciar denúncia
+
+#### **Fluxo de Denúncia (DenunciaWrapperScreen)**
+1. **Seleção de Categoria**: Tipos de infrações ambientais
+2. **Identificação**: Opção anônima ou identificada
+3. **Localização**: Mapa interativo para marcar local
+4. **Formulário**: Descrição detalhada e upload de imagens
+5. **Resumo**: Revisão antes do envio
+6. **Confirmação**: Feedback de sucesso
+
+### Recursos Técnicos
+- Upload de múltiplas imagens
+- Geolocalização integrada
+- Validações específicas por categoria
+- Termos de uso obrigatórios
+- Integração completa com API SUDEMA
+
+## 🏖️ Sistema de Balneabilidade
+
+### Funcionalidades
+
+#### **Mapa Interativo**
+- Visualização de estações de monitoramento
+- Marcadores com status de qualidade da água
+- Zoom e navegação fluida
+
+#### **Sistema de Filtros**
+- Filtro por município
+- Filtro por praia específica
+- Filtro por classificação (Própria/Imprópria)
+- Aplicação em tempo real
+
+#### **Dados das Praias**
+- Informações de qualidade da água
+- Histórico de monitoramento
+- Status atualizado via API
+- Cards informativos por estação
+
+### Arquitetura Técnica
+- Provider para gerenciamento de estado
+- Controller dedicado para lógica de negócio
+- Services especializados (localização, filtros, ícones)
+- Integração com API de balneabilidade
+
+## 📰 Sistema de Notícias
+
+### Funcionalidades
+
+#### **Lista de Notícias**
+- Feed completo de notícias da SUDEMA
+- Sistema de busca integrado
+- Carregamento paginado
+- Cards responsivos com imagens
+
+#### **Visualização Completa**
+- Tela dedicada para leitura
+- Formatação HTML preservada
+- Imagens em alta resolução
+- Compartilhamento integrado
+
+### Recursos Técnicos
+- Remoção automática de tags HTML
+- Cache de imagens
+- Estados de loading e erro
+- Navegação fluida entre telas
+
+## 🎨 Design System
+
+### Cores Institucionais
+```dart
+static const Color primaryColor = Color(0xFF2A2F8C);    // Azul SUDEMA
+static const Color successColor = Color(0xFF1B8C00);    // Verde (ações positivas)
+static const Color errorColor = Colors.red;             // Vermelho (erros)
+static const Color backgroundColor = Colors.white;      // Fundo padrão
+```
+
+### Componentes Reutilizáveis
+
+#### **InputDecoration Padronizada**
+```dart
+// Bordas arredondadas (8-12px)
+// Estados consistentes (normal, focado, erro)
+// Cores semânticas
+// Toggle de visibilidade para senhas
+```
+
+#### **Flushbar Feedback**
+```dart
+// Posição TOP com animação suave
+// Cores semânticas por tipo
+// Ícones apropriados
+// Duração configurável (3-5s)
+```
+
+#### **Layout Responsivo**
+```dart
+// Breakpoint: 600dp para tablet
+// Padding diferenciado por dispositivo
+// Centralização adaptativa
+// Largura máxima controlada (500px)
+```
+
+### Navegação
+
+#### **Bottom Navigation (NavBar)**
+- 4 abas principais: Home, Denúncias, Balneabilidade, Notícias
+- Ícones SVG customizados
+- Indicador visual de seleção
+- Labels condicionais
+
+#### **Drawer Lateral**
+- Acesso rápido às funcionalidades
+- Informações do usuário logado
+- Botões de login/logout
+- Links para contato
+
+## 🌐 Integração com API
+
+### Configuração
+```dart
+// URL base via flutter_dotenv
+final baseUrl = dotenv.env['URL_API'];
+
+// Headers padrão
+headers: {
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer $token',
+}
+```
+
+### Endpoints Principais
+
+#### **Autenticação**
+- `POST /auth/login` - Login do usuário
+- `POST /auth/register` - Cadastro de novo usuário
+- `POST /auth/register/resend-confirm` - Reenvio de código
+- `POST /password-reset/forgot-password` - Solicitar código
+- `POST /password-reset/verify-token` - Validar código
+- `POST /password-reset/reset-password` - Redefinir senha
+
+#### **Perfil do Usuário**
+- `GET /usuarios/mobile/me` - Obter dados do usuário
+- `PUT /usuarios/mobile/{id}` - Atualizar perfil
+- `PUT /usuarios/mobile/{id}/alterar-senha` - Alterar senha
+- `PUT /usuarios/mobile/{id}/alterar-email` - Alterar e-mail
+- `PATCH /usuarios/mobile/{id}/desativar` - Desativar conta
+
+#### **Denúncias**
+- `POST /denuncias` - Criar nova denúncia
+- `GET /categorias` - Listar categorias
+- `POST /upload` - Upload de imagens
+
+#### **Balneabilidade**
+- `GET /estacoes` - Listar estações de monitoramento
+- `GET /municipios` - Listar municípios
+- `GET /praias` - Listar praias
+
+#### **Notícias**
+- `GET /noticias` - Listar notícias
+- `GET /noticias/{id}` - Obter notícia específica
+
+### Tratamento de Erros
+```dart
+// Status codes específicos
+// 200/204: Sucesso
+// 400: Dados inválidos
+// 401: Token inválido/expirado
+// 404: Recurso não encontrado
+// 500: Erro interno
+
+// Extração de mensagens da API
+final error = jsonDecode(response.body)['message'] ?? 'Erro genérico';
+```
+
+## 📱 Responsividade
+
+### Breakpoints
+```dart
+final bool isTablet = screenWidth >= 600;  // 600dp breakpoint
+```
+
+### Adaptações por Dispositivo
+
+#### **Mobile (< 600dp)**
+- Padding: 16-24px
+- Alinhamento: esquerda
+- Layout: direto sem centralização
+
+#### **Tablet (≥ 600dp)**
+- Padding: 24px+
+- Alinhamento: centro
+- Layout: ConstrainedBox com maxWidth: 500px
+- Centralização dupla
+
+## 🔧 Validações
+
+### E-mail
+```dart
+RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$")
+```
+
+### CPF
+```dart
+// Algoritmo oficial de verificação
+// Máscara: XXX.XXX.XXX-XX
+```
+
+### Telefone
+```dart
+// 11 dígitos exatos (celular brasileiro)
+// Máscara: (XX) XXXXX-XXXX
+```
+
+### Senha
+```dart
+// Mínimo 8 caracteres
+// Combinação de letras, números e símbolos
+// Confirmação obrigatória
+```
+
+### Nome
+```dart
+// Mínimo 2 palavras (nome + sobrenome)
+// Trim automático
+```
+
+## 🛠️ Tecnologias Utilizadas
+
+### Core
+- **Flutter**: Framework principal
+- **Dart**: Linguagem de programação
+
+### Packages Principais
+```yaml
+dependencies:
+  flutter_dotenv: ^5.0.2          # Variáveis de ambiente
+  shared_preferences: ^2.0.15     # Persistência local
+  http: ^0.13.5                   # Requisições HTTP
+  jwt_decoder: ^2.0.1             # Decodificação JWT
+  google_fonts: ^4.0.3            # Fontes Google
+  another_flushbar: ^1.12.29      # Feedback visual
+  pin_code_fields: ^7.4.0         # Campo PIN
+  mask_text_input_formatter: ^2.4.0  # Máscaras de entrada
+  flutter_svg: ^2.0.5             # Ícones SVG
+  provider: ^6.0.0                # Gerenciamento de estado
+  firebase_messaging: ^14.0.0     # Notificações push
+```
+
+## 🚀 Como Executar
+
+### Pré-requisitos
+- Flutter SDK ≥ 3.0.0
+- Dart SDK ≥ 2.17.0
+- Android Studio / VS Code
+- Dispositivo/Emulador Android/iOS
+
+### Instalação
+```bash
+# Clone o repositório
+git clone https://gitcodata.pb.gov.br/ti-idema/sudema-mobile_frontend.git
+
+# Entre no diretório
+cd sudema-mobile_frontend
+
+# Instale as dependências
+flutter pub get
+
+# Configure as variáveis de ambiente
+cp .env.example .env
+# Edite o arquivo .env com as configurações necessárias
+
+# Execute o aplicativo
+flutter run
+```
+
+### Configuração do Ambiente
+```env
+URL_API=https://homolog.sigma.pb.gov.br/sislia/api/v1
+```
+
+## 🧪 Testes
+
+### Estrutura de Testes
+```dart
+// Keys para testes automatizados
+key: const Key('emailField')
+key: const Key('senhaField')
+key: const Key('submitButton')
+```
+
+### Executar Testes
+```bash
+flutter test
+```
+
+## 📋 Funcionalidades Implementadas
+
+### ✅ Sistema de Autenticação
+- [x] Login com JWT
+- [x] Cadastro de usuários
+- [x] Recuperação de senha (3 etapas)
+- [x] Persistência de sessão
+- [x] Logout seguro
+- [x] Reativação de conta
+
+### ✅ Perfil do Usuário
+- [x] Visualização de dados
+- [x] Edição de perfil
+- [x] Alteração de senha
+- [x] Alteração de e-mail
+- [x] Desativação de conta
+
+### ✅ Sistema de Denúncias
+- [x] Fluxo completo de denúncia
+- [x] Seleção de categorias
+- [x] Geolocalização
+- [x] Upload de imagens
+- [x] Denúncias anônimas/identificadas
+
+### ✅ Balneabilidade
+- [x] Mapa interativo
+- [x] Sistema de filtros
+- [x] Dados de qualidade da água
+- [x] Estações de monitoramento
+
+### ✅ Sistema de Notícias
+- [x] Feed de notícias
+- [x] Busca integrada
+- [x] Visualização completa
+- [x] Carrossel na home
+
+### ✅ UX/UI
+- [x] Design responsivo
+- [x] Feedback visual
+- [x] Validações em tempo real
+- [x] Estados de loading
+- [x] Tratamento de erros
+- [x] Splash screen animada
+
+### ✅ Integração
+- [x] API SUDEMA completa
+- [x] Formatação de dados brasileiros
+- [x] Máscaras de entrada
+- [x] Validações robustas
+- [x] Notificações push
+
+## 🔮 Roadmap
+
+### Próximas Funcionalidades
+- [ ] Modo offline
+- [ ] Testes automatizados
+- [ ] Melhorias de performance
+- [ ] Acessibilidade aprimorada
+- [ ] Internacionalização
+
+## 👥 Equipe
+
+**Desenvolvimento**: Equipe TI-IDEMA  
+**Órgão**: SUDEMA - Superintendência de Administração do Meio Ambiente  
+**Estado**: Paraíba - Brasil
+
+## 📄 Licença
+
+Este projeto é propriedade do Governo do Estado da Paraíba e está licenciado para uso interno da SUDEMA.
+
+---
+
+**SUDEMA Mobile** - Protegendo o meio ambiente da Paraíba através da tecnologia 🌱📱

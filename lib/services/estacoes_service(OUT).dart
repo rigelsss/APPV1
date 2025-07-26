@@ -1,16 +1,35 @@
+/// ESTACOES_SERVICE (OUT)
+///
+/// Responsável por: Serviço DESCONTINUADO para carregar estações de arquivo JSON local
+/// com simulação de classificação aleatória.
+/// Status: FORA DE USO - substituído por integração com API real.
+/// 
+/// NOTA: Este arquivo está marcado como (OUT) e não deve ser usado em produção.
+/// Mantido apenas para referência histórica.
+
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+/// Classe EstacaoMonitoramento (DUPLICADA)
+///
+/// Descrição: Modelo duplicado - existe versão oficial em /models/
+/// Status: DESCONTINUADO - usar modelo oficial
+/// 
+/// AVISO: Esta classe é uma duplicação desnecessária.
 class EstacaoMonitoramento {
-  final String nome;
-  final String codigo;
-  final String endereco;
-  final String municipio;
-  final LatLng coordenadas;
-  final String classificacao;
+  final String nome;           // Nome da estação
+  final String codigo;         // Código identificador
+  final String endereco;       // Endereço da estação
+  final String municipio;      // Município
+  final LatLng coordenadas;    // Coordenadas geográficas
+  final String classificacao;  // Classificação da água
 
+  /// CONSTRUTOR (DUPLICADO)
+  ///
+  /// Descrição: Construtor idêntico ao modelo oficial.
+  /// Status: DESCONTINUADO
   EstacaoMonitoramento({
     required this.nome,
     required this.codigo,
@@ -20,8 +39,14 @@ class EstacaoMonitoramento {
     required this.classificacao,
   });
 
+  /// FROMJSON (DUPLICADO)
+  ///
+  /// Descrição: Factory constructor para JSON local (não API).
+  /// Status: DESCONTINUADO - usar modelo oficial
+  /// 
+  /// Diferença: Estrutura JSON diferente do modelo oficial.
   factory EstacaoMonitoramento.fromJson(Map<String, dynamic> json) {
-    // aqui definimos coord a partir do JSON
+    // Extrai coordenadas de objeto aninhado (formato local)
     final coord = json['coordenadas'] as Map<String, dynamic>;
     return EstacaoMonitoramento(
       nome: json['nome'] as String,
@@ -29,7 +54,7 @@ class EstacaoMonitoramento {
       endereco: json['endereco'] as String,
       municipio: json['municipio'] as String,
       coordenadas: LatLng(
-        // convertendo num para double, caso venha int
+        // Conversão num → double para compatibilidade
         (coord['latitude'] as num).toDouble(),
         (coord['longitude'] as num).toDouble(),
       ),
@@ -38,34 +63,79 @@ class EstacaoMonitoramento {
   }
 }
 
+/// Classe EstacoesService (DESCONTINUADA)
+///
+/// Descrição: Serviço para carregar dados de arquivo JSON local com simulação.
+/// Status: FORA DE USO - substituído por integração com API real
+/// 
+/// PROBLEMA: Usa dados estáticos + classificação aleatória (não real)
 class EstacoesService {
-  /// Carrega todo o JSON e simula classificação aleatória
+  /// CARREGARESTACOES (DESCONTINUADO)
+  ///
+  /// Descrição: Carrega estações de arquivo JSON local com classificação FALSA.
+  /// Parâmetros: nenhum
+  /// Retorno: Future<List<EstacaoMonitoramento>>
+  /// 
+  /// PROBLEMA CRÍTICO: Usa Random() para simular classificação - dados FALSOS!
+  /// Status: DESCONTINUADO - usar API real
   static Future<List<EstacaoMonitoramento>> carregarEstacoes() async {
+    // Carrega arquivo JSON estático dos assets
     final jsonString =
         await rootBundle.loadString('assets/json/balneabilidade.json');
     final List<dynamic> jsonList = json.decode(jsonString);
 
     final random = Random();
-    // Adiciona classificação simulada no próprio objeto JSON
+    // ⚠️ PROBLEMA: Adiciona classificação ALEATÓRIA (não real!)
     for (var item in jsonList) {
       item['classificacao'] =
-          random.nextBool() ? 'Próprias' : 'Impróprias';
+          random.nextBool() ? 'Próprias' : 'Impróprias';  // DADOS FALSOS!
     }
 
-    // Converte cada mapa em EstacaoMonitoramento via fromJson
+    // Converte lista dinâmica para modelos tipados
     return jsonList
         .map((item) =>
             EstacaoMonitoramento.fromJson(item as Map<String, dynamic>))
         .toList();
   }
 
-  /// Opcional: filtra por município
+  /// FILTRARESTACAESPORMUNICIPIO (DESCONTINUADO)
+  ///
+  /// Descrição: Filtra estações por município usando dados locais.
+  /// Parâmetros:
+  /// - municipio: Nome do município para filtrar
+  /// Retorno: Future<List<EstacaoMonitoramento>>
+  /// 
+  /// Status: DESCONTINUADO - usar API com filtros reais
   static Future<List<EstacaoMonitoramento>> filtrarEstacoesPorMunicipio(
       String municipio) async {
+    // Carrega todas as estações (com dados falsos)
     final estacoes = await carregarEstacoes();
+    // Filtra por município (case-insensitive)
     return estacoes
         .where((e) =>
             e.municipio.toLowerCase() == municipio.toLowerCase())
         .toList();
   }
+
+  // Fim da classe EstacoesService (DESCONTINUADA)
+  // 
+  // ⚠️ SERVIÇO DESCONTINUADO - NÃO USAR!
+  // 
+  // 🚨 PROBLEMAS CRÍTICOS:
+  // - Classificação aleatória (Random.nextBool())
+  // - Dados estáticos desatualizados
+  // - Não reflete realidade das praias
+  // - Pode causar problemas de segurança pública
+  // 
+  // 🔄 SUBSTITUIÇÃO:
+  // - Usar integração com API SUDEMA real
+  // - Modelo oficial em /models/estacao_monitoramento.dart
+  // - Dados atualizados e confiáveis
+  // - Classificação baseada em análises reais
+  // 
+  // 📋 HISTÓRICO:
+  // - Usado durante desenvolvimento inicial
+  // - Substituído por API real
+  // - Mantido apenas para referência
+  // - Arquivo marcado como (OUT)
 }
