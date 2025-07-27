@@ -1,14 +1,24 @@
+/// CATEGORIA_SELECTOR
+///
+/// Responsável por: Widget expansivo para seleção de categorias e subcategorias
+/// de denúncias com ícones, estados visuais e callbacks.
+/// Utilizado em: Sistema de denúncias para escolha do tipo de infração.
+
 import 'package:flutter/material.dart';
 
+/// Widget CategoriaSelector
+///
+/// Descrição: Lista expansiva de categorias com subcategorias aninhadas,
+/// ícones personalizados e estados de seleção visuais.
 class CategoriaSelector extends StatelessWidget {
-  final List<dynamic> categorias;
-  final Map<int, String> iconesPorCategoria;
-  final String? categoriaSelecionada;
-  final String? subcategoriaSelecionada;
-  final Set<int> categoriasExpandidas;
-  final Function(String, int, String) onSubcategoriaSelecionada;
-  final Function(String) onCategoriaSelecionada;
-  final Function(int) onToggleExpand;
+  final List<dynamic> categorias;                              // Lista de categorias da API
+  final Map<int, String> iconesPorCategoria;                   // Mapeamento ID → caminho do ícone
+  final String? categoriaSelecionada;                          // Categoria atualmente selecionada
+  final String? subcategoriaSelecionada;                       // Subcategoria atualmente selecionada
+  final Set<int> categoriasExpandidas;                         // Índices das categorias expandidas
+  final Function(String, int, String) onSubcategoriaSelecionada; // Callback: (nome, id, categoria)
+  final Function(String) onCategoriaSelecionada;              // Callback: (nome)
+  final Function(int) onToggleExpand;                         // Callback: (índice)
 
   const CategoriaSelector({
     super.key,
@@ -22,21 +32,30 @@ class CategoriaSelector extends StatelessWidget {
     required this.onToggleExpand,
   });
 
+  /// BUILD
+  ///
+  /// Descrição: Constrói lista expansiva de categorias com subcategorias aninhadas.
+  /// Parâmetros:
+  /// - context: Contexto do widget
+  /// Retorno: Widget ListView com categorias expansivas
   @override
   Widget build(BuildContext context) {
+    // Estado vazio: exibe mensagem centralizada
     if (categorias.isEmpty) {
       return const Center(child: Text('Nenhuma categoria disponível.'));
     }
 
+    // Lista principal de categorias
     return ListView.builder(
       itemCount: categorias.length,
       itemBuilder: (context, index) {
+        // Extração de dados da categoria
         final categoria = categorias[index];
-        final int id = categoria['id'];
-        final String texto = categoria['nome'] ?? 'Cateoria sem nome';
-        final String imagem = iconesPorCategoria[id] ?? 'assets/images/image-break.png';
-        final List<dynamic> tiposDenuncia = categoria['tiposDenuncia'] ?? [];
-        final isExpanded = categoriasExpandidas.contains(index);
+        final int id = categoria['id'];                                    // ID da categoria
+        final String texto = categoria['nome'] ?? 'Cateoria sem nome';     // Nome (com typo original)
+        final String imagem = iconesPorCategoria[id] ?? 'assets/images/image-break.png'; // Ícone ou fallback
+        final List<dynamic> tiposDenuncia = categoria['tiposDenuncia'] ?? []; // Subcategorias
+        final isExpanded = categoriasExpandidas.contains(index);           // Estado de expansão
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 4),
